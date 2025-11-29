@@ -1,5 +1,6 @@
 import Vue from 'vue';
-import 'babel-polyfill';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 import 'indexeddbshim/dist/indexeddbshim';
 import * as OfflinePluginRuntime from 'offline-plugin/runtime';
 import './extensions';
@@ -8,6 +9,7 @@ import './icons';
 import App from './components/App';
 import store from './store';
 import localDbSvc from './services/localDbSvc';
+import aiService from './services/aiService';
 
 if (!indexedDB) {
   throw new Error('Your browser is not supported. Please upgrade to the latest version.');
@@ -57,3 +59,6 @@ new Vue({
   store,
   render: h => h(App),
 });
+
+// Initialize AI service connection (will auto-reconnect)
+aiService.init();

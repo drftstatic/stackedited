@@ -2,17 +2,25 @@
 
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
+  parser: 'vue-eslint-parser',
   parserOptions: {
-    sourceType: 'module'
+    parser: '@babel/eslint-parser',
+    sourceType: 'module',
+    requireConfigFile: false,
+    babelOptions: {
+      presets: ['@babel/preset-env']
+    }
   },
   env: {
     browser: true,
+    node: true,
   },
-  extends: 'airbnb-base',
-  // required to lint *.vue files
+  extends: [
+    'airbnb-base',
+    'plugin:vue/recommended'
+  ],
   plugins: [
-    'html'
+    'vue'
   ],
   globals: {
     "NODE_ENV": false,
@@ -21,6 +29,9 @@ module.exports = {
   // check if imports actually resolve
   'settings': {
     'import/resolver': {
+      'node': {
+        'extensions': ['.js', '.vue', '.json']
+      },
       'webpack': {
         'config': 'build/webpack.base.conf.js'
       }
@@ -39,6 +50,29 @@ module.exports = {
       'optionalDependencies': ['test/unit/index.js']
     }],
     // allow debugger during development
-    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
-  }
+    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
+    // Vue-specific rules (relaxed for existing code)
+    'vue/multi-word-component-names': 'off',
+    'vue/no-v-html': 'off',
+    'vue/require-default-prop': 'off',
+    'vue/require-prop-types': 'off',
+    'vue/max-attributes-per-line': 'off',
+    'vue/singleline-html-element-content-newline': 'off'
+  },
+  overrides: [
+    {
+      files: ['server/**/*.js'],
+      env: {
+        node: true,
+        browser: false
+      },
+      settings: {
+        'import/resolver': {
+          'node': {
+            'extensions': ['.js', '.json']
+          }
+        }
+      }
+    }
+  ]
 }

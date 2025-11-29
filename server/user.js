@@ -1,57 +1,67 @@
-const request = require('request');
-const AWS = require('aws-sdk');
-const verifier = require('google-id-token-verifier');
+const fetch = require('node-fetch');
+const { S3Client, GetObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { OAuth2Client } = require('google-auth-library');
 const conf = require('./conf');
 
-const s3Client = new AWS.S3();
+const s3Client = new S3Client({});
+const googleClient = new OAuth2Client(conf.values.googleClientId);
 
-const cb = (resolve, reject) => (err, res) => {
-  if (err) {
-    reject(err);
-  } else {
-    resolve(res);
+const streamToString = (stream) =>
+  new Promise((resolve, reject) => {
+    const chunks = [];
+    stream.on('data', (chunk) => chunks.push(chunk));
+    stream.on('error', reject);
+    stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf-8')));
+  });
+
+exports.getUser = async (id) => {
+  try {
+    const command = new GetObjectCommand({
+      Bucket: conf.values.userBucketName,
+      Key: id,
+    });
+    const response = await s3Client.send(command);
+    const body = await streamToString(response.Body);
+    return JSON.parse(body);
+  } catch (err) {
+    if (err.name === 'NoSuchKey') {
+      return undefined;
+    }
+    throw err;
   }
 };
 
-exports.getUser = id => new Promise((resolve, reject) => {
-  s3Client.getObject({
-    Bucket: conf.values.userBucketName,
-    Key: id,
-  }, cb(resolve, reject));
-})
-  .then(
-    res => JSON.parse(res.Body.toString('utf-8')),
-    (err) => {
-      if (err.code !== 'NoSuchKey') {
-        throw err;
-      }
-    },
-  );
-
-exports.putUser = (id, user) => new Promise((resolve, reject) => {
-  s3Client.putObject({
+exports.putUser = async (id, user) => {
+  const command = new PutObjectCommand({
     Bucket: conf.values.userBucketName,
     Key: id,
     Body: JSON.stringify(user),
-  }, cb(resolve, reject));
-});
+  });
+  return s3Client.send(command);
+};
 
-exports.getUserFromToken = idToken => new Promise((resolve, reject) => verifier
-  .verify(idToken, conf.values.googleClientId, cb(resolve, reject)))
-  .then(tokenInfo => exports.getUser(tokenInfo.sub));
+exports.getUserFromToken = async (idToken) => {
+  const ticket = await googleClient.verifyIdToken({
+    idToken,
+    audience: conf.values.googleClientId,
+  });
+  const payload = ticket.getPayload();
+  return exports.getUser(payload.sub);
+};
 
-exports.userInfo = (req, res) => exports.getUserFromToken(req.query.idToken)
-  .then(
-    user => res.send(Object.assign({
+exports.userInfo = async (req, res) => {
+  try {
+    const user = await exports.getUserFromToken(req.query.idToken);
+    res.send(Object.assign({
       sponsorUntil: 0,
-    }, user)),
-    err => res
-      .status(400)
-      .send(err ? err.message || err.toString() : 'invalid_token'),
-  );
+    }, user));
+  } catch (err) {
+    res.status(400).send(err ? err.message || err.toString() : 'invalid_token');
+  }
+};
 
-exports.paypalIpn = (req, res, next) => Promise.resolve()
-  .then(() => {
+exports.paypalIpn = async (req, res, next) => {
+  try {
     const userId = req.body.custom;
     const paypalEmail = req.body.payer_email;
     const gross = parseFloat(req.body.mc_gross);
@@ -75,35 +85,43 @@ exports.paypalIpn = (req, res, next) => Promise.resolve()
       // Ignoring PayPal IPN
       return res.end();
     }
-    // Processing PayPal IPN
-    req.body.cmd = '_notify-validate';
-    return new Promise((resolve, reject) => request.post({
-      uri: conf.values.paypalUri,
-      form: req.body,
-    }, (err, response, body) => {
-      if (err) {
-        reject(err);
-      } else if (body !== 'VERIFIED') {
-        reject(new Error('PayPal IPN unverified'));
-      } else {
-        resolve();
-      }
-    }))
-      .then(() => exports.putUser(userId, {
-        paypalEmail,
-        sponsorUntil,
-      }))
-      .then(() => res.end());
-  })
-  .catch(next);
 
-exports.checkSponsor = (idToken) => {
+    // Processing PayPal IPN - verify with PayPal
+    const params = new URLSearchParams(req.body);
+    params.set('cmd', '_notify-validate');
+
+    const response = await fetch(conf.values.paypalUri, {
+      method: 'POST',
+      body: params,
+    });
+    const body = await response.text();
+
+    if (body !== 'VERIFIED') {
+      throw new Error('PayPal IPN unverified');
+    }
+
+    await exports.putUser(userId, {
+      paypalEmail,
+      sponsorUntil,
+    });
+
+    return res.end();
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.checkSponsor = async (idToken) => {
   if (!conf.publicValues.allowSponsorship) {
-    return Promise.resolve(true);
+    return true;
   }
   if (!idToken) {
-    return Promise.resolve(false);
+    return false;
   }
-  return exports.getUserFromToken(idToken)
-    .then(userInfo => userInfo && userInfo.sponsorUntil > Date.now(), () => false);
+  try {
+    const userInfo = await exports.getUserFromToken(idToken);
+    return userInfo && userInfo.sponsorUntil > Date.now();
+  } catch {
+    return false;
+  }
 };

@@ -66,6 +66,12 @@
       <span>Add metadata and configure extensions.</span>
     </menu-entry>
     <hr>
+    <menu-entry @click.native="setPanel('ai')">
+      <icon-message slot="icon"></icon-message>
+      <div>AI Assistant</div>
+      <span>Chat with AI to edit and improve your documents.</span>
+    </menu-entry>
+    <hr>
     <menu-entry @click.native="setPanel('toc')">
       <icon-toc slot="icon"></icon-toc>
       Table of contents

@@ -1,0 +1,32 @@
+{
+  "name": "stackedit-ai-daemon",
+  "version": "1.0.0",
+  "description": "AI daemon for StackEdit - routes to Claude, Gemini, and Codex CLI tools",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0",
+    "express": "^4.21.0",
+    "dotenv": "^16.4.5",
+    "toml": "^3.0.0",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "ai",
+    "markdown",
+    "editor",
+    "claude",
+    "gemini",
+    "openai"
+  ],
+  "author": "Fladry Creative",
+  "license": "MIT"
+}

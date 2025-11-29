@@ -20,6 +20,7 @@
       <export-menu v-else-if="panel === 'export'"></export-menu>
       <import-export-menu v-else-if="panel === 'importExport'"></import-export-menu>
       <workspace-backup-menu v-else-if="panel === 'workspaceBackups'"></workspace-backup-menu>
+      <ai-chat v-else-if="panel === 'ai'"></ai-chat>
       <div v-else-if="panel === 'help'" class="side-bar__panel side-bar__panel--help">
         <pre class="markdown-highlighting" v-html="markdownSample"></pre>
       </div>
@@ -41,6 +42,7 @@ import PublishMenu from './menus/PublishMenu';
 import HistoryMenu from './menus/HistoryMenu';
 import ImportExportMenu from './menus/ImportExportMenu';
 import WorkspaceBackupMenu from './menus/WorkspaceBackupMenu';
+import AiChat from './AiChat';
 import markdownSample from '../data/markdownSample.md';
 import markdownConversionSvc from '../services/markdownConversionSvc';
 import store from '../store';
@@ -55,6 +57,7 @@ const panelNames = {
   history: 'File history',
   importExport: 'Import/export',
   workspaceBackups: 'Workspace backups',
+  ai: 'AI Assistant',
 };
 
 export default {
@@ -67,6 +70,7 @@ export default {
     HistoryMenu,
     ImportExportMenu,
     WorkspaceBackupMenu,
+    AiChat,
   },
   data: () => ({
     markdownSample: markdownConversionSvc.highlight(markdownSample),
