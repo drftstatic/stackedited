@@ -28,13 +28,13 @@ const config = {
     cli: process.env.CLAUDE_CLI_PATH || 'claude',
     model: process.env.CLAUDE_MODEL || 'claude-opus-4-5-20251101'
   },
-  codex: {
+  openai: {
     cli: process.env.CODEX_CLI_PATH || 'codex',
-    model: process.env.CODEX_MODEL || 'gpt-5.1-codex-max'
+    model: process.env.CODEX_MODEL || 'gpt-5-codex'
   },
   gemini: {
     cli: process.env.GEMINI_CLI_PATH || 'gemini',
-    model: process.env.GEMINI_MODEL || 'gemini-3-pro'
+    model: process.env.GEMINI_MODEL || 'gemini-3-pro-preview'
   }
 };
 

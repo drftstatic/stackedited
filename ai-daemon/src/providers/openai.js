@@ -12,9 +12,9 @@ export class OpenAIProvider extends BaseProvider {
   constructor(config = {}) {
     super({
       id: 'openai',
-      name: 'GPT-4o',
-      cli: config.cli || 'openai',
-      model: config.model || 'gpt-4o',
+      name: 'OpenAI Codex',
+      cli: config.cli || 'codex',
+      model: config.model || 'gpt-5-codex',
       capabilities: ['editing', 'code', 'reasoning', 'analysis'],
       ...config
     });

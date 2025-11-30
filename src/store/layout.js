@@ -22,14 +22,33 @@ const navigationBarTitleMargin = 8;
 const maxTitleMaxWidth = 800;
 const minTitleMaxWidth = 200;
 
-const constants = {
+const defaultConstants = {
   editorMinWidth: 320,
-  explorerWidth: 260,
+  defaultExplorerWidth: 260,
   gutterWidth: 250,
-  sideBarWidth: 280,
+  defaultSideBarWidth: 280,
   navigationBarHeight: 44,
   buttonBarWidth: 26,
   statusBarHeight: 20,
+  // Constraints for resizable panels
+  sideBarMinWidth: 200,
+  sideBarMaxWidth: 600,
+  explorerMinWidth: 180,
+  explorerMaxWidth: 500,
+};
+
+// Dynamic constants getter that uses user preferences or defaults
+const getConstants = (layoutSettings) => ({
+  ...defaultConstants,
+  sideBarWidth: layoutSettings?.sideBarWidth || defaultConstants.defaultSideBarWidth,
+  explorerWidth: layoutSettings?.explorerWidth || defaultConstants.defaultExplorerWidth,
+});
+
+// Legacy static reference (used in some places)
+const constants = {
+  ...defaultConstants,
+  sideBarWidth: defaultConstants.defaultSideBarWidth,
+  explorerWidth: defaultConstants.defaultExplorerWidth,
 };
 
 function computeStyles(state, getters, layoutSettings = getters['data/layoutSettings'], styles = {
@@ -46,38 +65,41 @@ function computeStyles(state, getters, layoutSettings = getters['data/layoutSett
   layoutOverflow: false,
   hideLocations: state.light,
 }) {
+  // Get dynamic constants based on user preferences
+  const dynConstants = getConstants(layoutSettings);
+
   styles.innerHeight = state.layout.bodyHeight;
   if (styles.showNavigationBar) {
-    styles.innerHeight -= constants.navigationBarHeight;
+    styles.innerHeight -= dynConstants.navigationBarHeight;
   }
   if (styles.showStatusBar) {
-    styles.innerHeight -= constants.statusBarHeight;
+    styles.innerHeight -= dynConstants.statusBarHeight;
   }
 
   styles.innerWidth = state.layout.bodyWidth;
-  if (styles.innerWidth < constants.editorMinWidth
-    + constants.gutterWidth + constants.buttonBarWidth
+  if (styles.innerWidth < dynConstants.editorMinWidth
+    + dynConstants.gutterWidth + dynConstants.buttonBarWidth
   ) {
     styles.layoutOverflow = true;
   }
   if (styles.showSideBar) {
-    styles.innerWidth -= constants.sideBarWidth;
+    styles.innerWidth -= dynConstants.sideBarWidth;
   }
   if (styles.showExplorer) {
-    styles.innerWidth -= constants.explorerWidth;
+    styles.innerWidth -= dynConstants.explorerWidth;
   }
 
-  let doublePanelWidth = styles.innerWidth - constants.buttonBarWidth;
+  let doublePanelWidth = styles.innerWidth - dynConstants.buttonBarWidth;
   // No commenting for temp files
   const showGutter = !getters['file/isCurrentTemp'] && !!getters['discussion/currentDiscussion'];
   if (showGutter) {
-    doublePanelWidth -= constants.gutterWidth;
+    doublePanelWidth -= dynConstants.gutterWidth;
   }
-  if (doublePanelWidth < constants.editorMinWidth) {
-    doublePanelWidth = constants.editorMinWidth;
+  if (doublePanelWidth < dynConstants.editorMinWidth) {
+    doublePanelWidth = dynConstants.editorMinWidth;
   }
 
-  if (styles.showSidePreview && doublePanelWidth / 2 < constants.editorMinWidth) {
+  if (styles.showSidePreview && doublePanelWidth / 2 < dynConstants.editorMinWidth) {
     styles.showSidePreview = false;
     styles.showPreview = false;
     styles.layoutOverflow = false;
@@ -111,10 +133,10 @@ function computeStyles(state, getters, layoutSettings = getters['data/layoutSett
   const previewRightPadding = Math
     .max(Math.floor((styles.previewWidth - styles.textWidth) / 2), minPadding);
   if (!styles.showSidePreview) {
-    styles.previewWidth += constants.buttonBarWidth;
+    styles.previewWidth += dynConstants.buttonBarWidth;
   }
   styles.previewGutterWidth = showGutter && !layoutSettings.showEditor
-    ? constants.gutterWidth
+    ? dynConstants.gutterWidth
     : 0;
   const previewLeftPadding = previewRightPadding + styles.previewGutterWidth;
   styles.previewGutterLeft = previewLeftPadding - minPadding;
@@ -125,7 +147,7 @@ function computeStyles(state, getters, layoutSettings = getters['data/layoutSett
   const editorRightPadding = Math
     .max(Math.floor((styles.editorWidth - styles.textWidth) / 2), minPadding);
   styles.editorGutterWidth = showGutter && layoutSettings.showEditor
-    ? constants.gutterWidth
+    ? dynConstants.gutterWidth
     : 0;
   const editorLeftPadding = editorRightPadding + styles.editorGutterWidth;
   styles.editorGutterLeft = editorLeftPadding - minPadding;
@@ -173,7 +195,10 @@ export default {
     },
   },
   getters: {
-    constants: () => constants,
+    constants: (state, getters, rootState, rootGetters) => {
+      const layoutSettings = rootGetters['data/layoutSettings'];
+      return getConstants(layoutSettings);
+    },
     styles: (state, getters, rootState, rootGetters) => computeStyles(rootState, rootGetters),
   },
   actions: {

@@ -11,4 +11,7 @@ export default () => ({
   findUseRegexp: false,
   sideBarPanel: 'menu',
   welcomeTourFinished: false,
+  // Resizable panel widths (null means use default)
+  sideBarWidth: null,
+  explorerWidth: null,
 });

@@ -12,9 +12,9 @@ export class GeminiProvider extends BaseProvider {
   constructor(config = {}) {
     super({
       id: 'gemini',
-      name: 'Gemini 2.0 Flash',
+      name: 'Gemini 3 Pro Preview',
       cli: config.cli || 'gemini',
-      model: config.model || 'gemini-2.0-flash',
+      model: config.model || 'gemini-3-pro-preview',
       capabilities: ['editing', 'code', 'speed', 'multimodal'],
       ...config
     });

@@ -16,6 +16,9 @@ import 'prismjs/components/prism-clike';
 // Load JavaScript - very commonly used
 import 'prismjs/components/prism-javascript';
 
+// Load markup-templating (required by PHP and other templating languages)
+import 'prismjs/components/prism-markup-templating';
+
 // Load common languages
 import 'prismjs/components/prism-c';
 import 'prismjs/components/prism-cpp';
