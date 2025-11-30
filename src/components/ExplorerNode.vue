@@ -197,74 +197,239 @@ export default {
 </script>
 
 <style lang="scss">
-$item-font-size: 14px;
+@import '../styles/variables.scss';
+
+// ═══════════════════════════════════════════════════════════════
+// EXPLORER NODE - Tree Items with Fever Dream Hover States
+// ═══════════════════════════════════════════════════════════════
+
+$item-font-size: 13px;
+$item-height: 24px;
+$new-child-height: 28px;
+
+.explorer-node {
+  // Subtle transition for all children
+  transition: opacity $transition-base;
+}
 
 .explorer-node--drag-target {
-  background-color: rgba(0, 128, 255, 0.2);
+  background: linear-gradient(
+    90deg,
+    rgba($fever-teal, 0.15) 0%,
+    rgba($fever-purple, 0.1) 100%
+  );
+  border-radius: $border-radius-base;
+
+  .app--dark & {
+    background: linear-gradient(
+      90deg,
+      rgba($fever-purple, 0.2) 0%,
+      rgba($fever-teal, 0.15) 100%
+    );
+  }
 }
 
 .explorer-node__item {
   position: relative;
   cursor: pointer;
+  font-family: $font-family-main;
   font-size: $item-font-size;
+  font-weight: 400;
+  line-height: $item-height;
+  height: $item-height;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  padding-right: 5px;
+  padding-right: 8px;
+  margin: 1px 4px;
+  border-radius: $border-radius-base;
+  transition: all $transition-base;
 
-  .explorer-node--selected > & {
-    background-color: rgba(0, 0, 0, 0.2);
+  // Hover state with fever glow
+  &:hover {
+    background: rgba($fever-purple, 0.06);
+    padding-left: calc(var(--depth-padding, 0px) + 4px) !important;
 
-    .explorer__tree:focus & {
-      background-color: #39f;
-      color: #fff;
+    .app--dark & {
+      background: rgba($fever-teal, 0.08);
     }
   }
 
-  .explorer__tree--new-item & {
-    opacity: 0.33;
+  // Selected state
+  .explorer-node--selected > & {
+    background: linear-gradient(
+      90deg,
+      rgba($fever-purple, 0.12) 0%,
+      rgba($fever-teal, 0.08) 100%
+    );
+    color: $fever-purple-deep;
+    font-weight: 500;
+
+    .app--dark & {
+      background: linear-gradient(
+        90deg,
+        rgba($fever-teal, 0.15) 0%,
+        rgba($fever-purple, 0.1) 100%
+      );
+      color: $fever-teal;
+    }
+
+    // Focused tree selected state - more prominent
+    .explorer__tree:focus & {
+      background: linear-gradient(
+        90deg,
+        $fever-purple 0%,
+        $fever-teal 100%
+      );
+      color: #fff;
+      box-shadow: 0 2px 8px rgba($fever-purple, 0.3);
+
+      .app--dark & {
+        background: linear-gradient(
+          90deg,
+          $fever-teal 0%,
+          $fever-purple 100%
+        );
+        box-shadow: 0 2px 8px rgba($fever-teal, 0.3);
+      }
+    }
   }
 
+  // Dimmed state when creating new item
+  .explorer__tree--new-item & {
+    opacity: 0.4;
+  }
+
+  // Location badges
   .explorer-node__location {
     float: right;
-    width: 18px;
-    height: 18px;
-    margin: 2px 1px;
+    width: 16px;
+    height: 16px;
+    margin: 4px 2px;
+    opacity: 0.6;
+    transition: opacity $transition-base;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 }
 
+// Trash and temp nodes - ghostly appearance
 .explorer-node--trash,
 .explorer-node--temp {
-  color: rgba(0, 0, 0, 0.5);
+  .explorer-node__item {
+    color: rgba(0, 0, 0, 0.45);
+    font-style: italic;
+
+    .app--dark & {
+      color: rgba(255, 255, 255, 0.35);
+    }
+  }
 }
 
+// Folder icons - custom arrows with fever colors
 .explorer-node--folder > .explorer-node__item,
 .explorer-node--folder > .explorer-node__item-editor,
 .explorer-node__new-child--folder {
   &::before {
-    content: '▹';
+    content: '';
     position: absolute;
-    margin-left: -13px;
+    margin-left: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid $fever-purple;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    transition: all $transition-base;
+
+    .app--dark & {
+      border-left-color: $fever-teal;
+    }
   }
 }
 
+// Open folder - rotated arrow
 .explorer-node--folder.explorer-node--open > .explorer-node__item,
 .explorer-node--folder.explorer-node--open > .explorer-node__item-editor {
   &::before {
-    content: '▾';
+    transform: translateY(-50%) rotate(90deg);
+    border-left-color: $fever-teal;
+
+    .app--dark & {
+      border-left-color: $fever-purple;
+    }
   }
 }
 
-$new-child-height: 25px;
+// Folder names slightly bolder
+.explorer-node--folder > .explorer-node__item {
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
 
+// Input editors
 .explorer-node__item-editor,
 .explorer-node__new-child {
-  padding: 1px 10px;
+  padding: 2px 8px;
+  margin: 1px 4px;
 
   .text-input {
+    font-family: $font-family-main;
     font-size: $item-font-size;
-    padding: 2px;
+    padding: 4px 8px;
     height: $new-child-height;
+    border: 1px solid rgba($fever-teal, 0.3);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: $border-radius-base;
+    box-shadow: 0 0 0 3px rgba($fever-teal, 0.1);
+    transition: all $transition-base;
+
+    .app--dark & {
+      border-color: rgba($fever-purple, 0.4);
+      background: rgba($fever-ghost-dark, 0.9);
+      box-shadow: 0 0 0 3px rgba($fever-purple, 0.15);
+    }
+
+    &:focus {
+      border-color: $fever-teal;
+      box-shadow: 0 0 0 3px rgba($fever-teal, 0.2), 0 0 12px rgba($fever-teal, 0.1);
+
+      .app--dark & {
+        border-color: $fever-purple;
+        box-shadow: 0 0 0 3px rgba($fever-purple, 0.25), 0 0 12px rgba($fever-purple, 0.15);
+      }
+    }
+  }
+}
+
+// Children container
+.explorer-node__children {
+  position: relative;
+
+  // Connecting line
+  &::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 12px;
+    width: 1px;
+    background: linear-gradient(
+      180deg,
+      rgba($fever-purple, 0.15) 0%,
+      rgba($fever-teal, 0.1) 100%
+    );
+
+    .app--dark & {
+      background: linear-gradient(
+        180deg,
+        rgba($fever-teal, 0.2) 0%,
+        rgba($fever-purple, 0.1) 100%
+      );
+    }
   }
 }
 </style>

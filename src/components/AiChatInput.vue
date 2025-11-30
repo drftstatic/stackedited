@@ -119,136 +119,266 @@ export default {
 <style lang="scss">
 @import '../styles/variables.scss';
 
+// ═══════════════════════════════════════════════════════════════
+// CHAT INPUT - The portal to Ted's consciousness
+// ═══════════════════════════════════════════════════════════════
+
 .ai-input {
-  border-top: 1px solid $border-color;
-  padding: 8px;
-  background: linear-gradient(180deg, transparent 0%, rgba($fever-purple, 0.02) 100%);
+  border-top: 1px solid rgba($fever-purple, 0.15);
+  padding: 12px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba($fever-purple, 0.03) 50%,
+    rgba($fever-teal, 0.02) 100%
+  );
+  position: relative;
 
   .app--dark & {
-    background: linear-gradient(180deg, transparent 0%, rgba($fever-teal, 0.03) 100%);
+    border-top-color: rgba($fever-teal, 0.15);
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba($fever-teal, 0.04) 50%,
+      rgba($fever-purple, 0.03) 100%
+    );
+  }
+
+  // Top accent line
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba($fever-purple, 0.3),
+      rgba($fever-teal, 0.3),
+      transparent
+    );
+
+    .app--dark & {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba($fever-teal, 0.4),
+        rgba($fever-purple, 0.4),
+        transparent
+      );
+    }
   }
 }
 
 .ai-input__container {
   display: flex;
   align-items: flex-end;
-  gap: 8px;
+  gap: 10px;
 }
 
 .ai-input__textarea {
   flex: 1;
   resize: none;
-  border: 1px solid $border-color;
-  border-radius: 8px;
-  padding: 8px 12px;
+  border: 1px solid rgba($fever-purple, 0.2);
+  border-radius: $border-radius-lg;
+  padding: 10px 14px;
+  font-family: $font-family-main;
   font-size: 14px;
-  font-family: inherit;
-  line-height: 1.4;
-  min-height: 36px;
+  line-height: 1.5;
+  min-height: 40px;
   max-height: 150px;
   overflow-y: auto;
-  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all $transition-base;
+
+  .app--dark & {
+    border-color: rgba($fever-teal, 0.25);
+    background: rgba($fever-ghost-dark, 0.8);
+    color: rgba(255, 255, 255, 0.9);
+  }
 
   &:focus {
     outline: none;
     border-color: $fever-teal;
-    box-shadow: 0 0 8px rgba($fever-teal, 0.3);
+    box-shadow:
+      0 0 0 3px rgba($fever-teal, 0.15),
+      0 0 20px rgba($fever-teal, 0.1);
 
     .app--dark & {
       border-color: $fever-purple;
-      box-shadow: 0 0 8px rgba($fever-purple, 0.3);
+      box-shadow:
+        0 0 0 3px rgba($fever-purple, 0.2),
+        0 0 20px rgba($fever-purple, 0.15);
     }
   }
 
   &::placeholder {
-    color: $secondary-text-color;
+    color: rgba($fever-purple, 0.4);
     font-style: italic;
+
+    .app--dark & {
+      color: rgba($fever-teal, 0.5);
+    }
   }
 }
 
+// ───────────────────────────────────────────────────────────────
+// SEND BUTTON - Launch into the fever
+// ───────────────────────────────────────────────────────────────
+
 .ai-input__send {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, $fever-purple 0%, $fever-teal 100%);
   color: white;
-  border-radius: 8px;
+  border-radius: $border-radius-lg;
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba($fever-purple, 0.3);
+  transition: all $transition-base;
+  box-shadow: 0 4px 12px rgba($fever-purple, 0.3);
+  position: relative;
+  overflow: hidden;
 
   .app--dark & {
     background: linear-gradient(135deg, $fever-teal 0%, $fever-purple 100%);
-    box-shadow: 0 2px 8px rgba($fever-teal, 0.3);
+    box-shadow: 0 4px 12px rgba($fever-teal, 0.3);
+  }
+
+  // Shimmer effect on button
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      transparent 100%
+    );
+    opacity: 0;
+    transition: opacity $transition-base;
   }
 
   &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba($fever-purple, 0.4);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow:
+      0 6px 16px rgba($fever-purple, 0.4),
+      0 0 30px rgba($fever-teal, 0.2);
 
     .app--dark & {
-      box-shadow: 0 4px 12px rgba($fever-teal, 0.4);
+      box-shadow:
+        0 6px 16px rgba($fever-teal, 0.4),
+        0 0 30px rgba($fever-purple, 0.2);
+    }
+
+    &::before {
+      opacity: 1;
     }
   }
 
+  &:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+  }
+
   &:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
     transform: none;
+    box-shadow: none;
   }
 
   svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
   }
 }
+
+// ───────────────────────────────────────────────────────────────
+// ACTION BUTTONS - Control Ted's behavior
+// ───────────────────────────────────────────────────────────────
 
 .ai-input__actions {
   display: flex;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
 }
 
 .ai-input__action {
-  font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background-color: rgba(0, 0, 0, 0.05);
-  border: none;
+  font-family: $font-family-ui;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: $border-radius-base;
+  background: rgba($fever-purple, 0.06);
+  border: 1px solid rgba($fever-purple, 0.1);
   cursor: pointer;
-  color: $secondary-text-color;
-  transition: all 0.3s ease;
-  letter-spacing: 0.5px;
+  color: $fever-purple-deep;
+  transition: all $transition-base;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
 
   .app--dark & {
-    background-color: rgba(255, 255, 255, 0.05);
+    background: rgba($fever-teal, 0.08);
+    border-color: rgba($fever-teal, 0.15);
+    color: $fever-teal;
   }
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background: rgba($fever-purple, 0.12);
+    border-color: rgba($fever-purple, 0.2);
     transform: translateY(-1px);
 
     .app--dark & {
-      background-color: rgba(255, 255, 255, 0.1);
+      background: rgba($fever-teal, 0.15);
+      border-color: rgba($fever-teal, 0.25);
     }
   }
 }
 
 .ai-input__action--active {
-  background: linear-gradient(135deg, rgba($fever-purple, 0.3) 0%, rgba($fever-teal, 0.3) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba($fever-purple, 0.2) 0%,
+    rgba($fever-teal, 0.15) 100%
+  );
+  border-color: rgba($fever-purple, 0.3);
   color: $fever-purple-deep;
   font-weight: 600;
+  box-shadow: 0 2px 8px rgba($fever-purple, 0.15);
 
   .app--dark & {
+    background: linear-gradient(
+      135deg,
+      rgba($fever-teal, 0.25) 0%,
+      rgba($fever-purple, 0.2) 100%
+    );
+    border-color: rgba($fever-teal, 0.35);
     color: $fever-teal;
+    box-shadow: 0 2px 8px rgba($fever-teal, 0.2);
   }
 
   &:hover {
-    background: linear-gradient(135deg, rgba($fever-purple, 0.4) 0%, rgba($fever-teal, 0.4) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba($fever-purple, 0.25) 0%,
+      rgba($fever-teal, 0.2) 100%
+    );
+
+    .app--dark & {
+      background: linear-gradient(
+        135deg,
+        rgba($fever-teal, 0.3) 0%,
+        rgba($fever-purple, 0.25) 100%
+      );
+    }
   }
 }
 </style>

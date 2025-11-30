@@ -1,31 +1,54 @@
 @import './variables.scss';
 
+// ═══════════════════════════════════════════════════════════════
+// GLOBAL APP STYLES - Controlled Drift Aesthetic
+// StackediTED - A Fladry Creative Fever Dream
+// ═══════════════════════════════════════════════════════════════
+
 body {
-  background-color: #fff;
+  background-color: $fever-ghost-white;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
   position: fixed;
   tab-size: 4;
-  text-rendering: auto;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
-  /* Prevent body overscroll on Chrome */
+  // Prevent body overscroll on Chrome
   overflow: hidden;
   -webkit-overflow-scrolling: touch;
 
-  /* Fever dream vibes - subtle background gradient shift */
-  background: linear-gradient(135deg, $fever-ghost-white 0%, #fff 50%, rgba($fever-teal, 0.03) 100%);
-  transition: background 0.3s ease-in-out;
+  // Fever dream background with subtle gradient
+  background: linear-gradient(
+    145deg,
+    $fever-ghost-white 0%,
+    #fff 40%,
+    rgba($fever-purple, 0.02) 70%,
+    rgba($fever-teal, 0.03) 100%
+  );
+  transition: background $transition-slow;
 
-  &.app--dark {
-    background: linear-gradient(135deg, $fever-ghost-dark 0%, #1e1e1e 50%, rgba($fever-purple, 0.05) 100%);
+  .app--dark & {
+    background: linear-gradient(
+      145deg,
+      $fever-ghost-abyss 0%,
+      $fever-ghost-dark 40%,
+      rgba($fever-purple, 0.06) 70%,
+      rgba($fever-teal, 0.04) 100%
+    );
   }
 }
 
 * {
   box-sizing: border-box;
 }
+
+// ───────────────────────────────────────────────────────────────
+// SCROLLBAR - Custom fever dream scrollbars
+// ───────────────────────────────────────────────────────────────
 
 ::-webkit-scrollbar-track {
   background-color: transparent;
@@ -34,12 +57,10 @@ body {
 ::-webkit-scrollbar {
   background-color: transparent;
 
-  /* stylelint-disable-next-line selector-pseudo-class-no-unknown */
   &:horizontal {
     height: 8px;
   }
 
-  /* stylelint-disable-next-line selector-pseudo-class-no-unknown */
   &:vertical {
     width: 8px;
   }
@@ -47,61 +68,80 @@ body {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 4px;
-  background-color: #bbb;
-  transition: background-color 0.3s ease;
+  background: linear-gradient(180deg, rgba($fever-purple, 0.4), rgba($fever-teal, 0.3));
+  transition: all $transition-base;
 
   .app--dark & {
-    background-color: #666;
+    background: linear-gradient(180deg, rgba($fever-teal, 0.4), rgba($fever-purple, 0.3));
   }
 
   &:hover {
-    background-color: $fever-teal;
+    background: linear-gradient(180deg, $fever-purple, $fever-teal);
 
     .app--dark & {
-      background-color: $fever-purple;
+      background: linear-gradient(180deg, $fever-teal, $fever-purple);
     }
   }
 }
+
+// ───────────────────────────────────────────────────────────────
+// FOCUS STATES - Accessible but stylish
+// ───────────────────────────────────────────────────────────────
 
 :focus {
   outline: none;
 }
 
-input[type=checkbox] {
-  outline: #349be8 auto 5px;
+:focus-visible {
+  outline: 2px solid rgba($fever-teal, 0.5);
+  outline-offset: 2px;
+
+  .app--dark & {
+    outline-color: rgba($fever-purple, 0.5);
+  }
 }
+
+input[type=checkbox] {
+  accent-color: $fever-teal;
+
+  .app--dark & {
+    accent-color: $fever-purple;
+  }
+}
+
+// ───────────────────────────────────────────────────────────────
+// ICONS - Fever dream hover effects
+// ───────────────────────────────────────────────────────────────
 
 .icon {
   width: 100%;
   height: 100%;
   display: block;
-  transition: transform 0.3s ease-in-out, filter 0.3s ease;
+  transition: transform $transition-base, filter $transition-base;
 
   * {
     fill: currentColor;
   }
 
-  /* Dreamlike hover effect */
   &:hover {
-    transform: scale(1.05);
-    filter: drop-shadow(0 0 3px rgba($fever-teal, 0.3));
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 4px rgba($fever-teal, 0.4));
 
     .app--dark & {
-      filter: drop-shadow(0 0 3px rgba($fever-purple, 0.3));
+      filter: drop-shadow(0 0 4px rgba($fever-purple, 0.4));
     }
   }
 }
 
-.table-wrapper {
-  max-width: 100%;
-  overflow: auto;
-}
+// ───────────────────────────────────────────────────────────────
+// FORM ELEMENTS - Controlled chaos inputs
+// ───────────────────────────────────────────────────────────────
 
 button,
 input,
 select,
 textarea {
-  font-family: inherit;
+  font-family: $font-family-main;
   font-size: inherit;
   line-height: inherit;
 }
@@ -115,69 +155,106 @@ textarea {
   font-size: inherit;
   line-height: 1.5;
   color: inherit;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.9);
   background-image: none;
-  border: 0;
+  border: 1px solid rgba($fever-purple, 0.15);
   border-radius: $border-radius-base;
-  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+  transition: all $transition-base;
+
+  .app--dark & {
+    background-color: rgba($fever-ghost-dark, 0.8);
+    border-color: rgba($fever-teal, 0.2);
+  }
 
   &:focus {
-    box-shadow: 0 0 8px rgba($fever-teal, 0.3);
+    border-color: $fever-teal;
+    box-shadow: 0 0 0 3px rgba($fever-teal, 0.15), 0 0 12px rgba($fever-teal, 0.1);
 
     .app--dark & {
-      box-shadow: 0 0 8px rgba($fever-purple, 0.3);
+      border-color: $fever-purple;
+      box-shadow: 0 0 0 3px rgba($fever-purple, 0.15), 0 0 12px rgba($fever-purple, 0.1);
     }
   }
 }
 
 .button {
-  color: #333;
+  font-family: $font-family-ui;
+  color: $fever-purple-deep;
   background-color: transparent;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   height: auto;
-  padding: 8px 16px;
-  font-size: 17px;
-  font-weight: 400;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
   line-height: 1.4;
   text-transform: uppercase;
+  letter-spacing: 1px;
   overflow: hidden;
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
-  -ms-touch-action: manipulation;
   touch-action: manipulation;
   cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
   background-image: none;
-  border: 0;
+  border: 1px solid rgba($fever-purple, 0.2);
   border-radius: $border-radius-base;
   text-decoration: none;
-  transition: all 0.3s ease-in-out;
-  letter-spacing: 0.5px; /* Slightly off feeling */
+  transition: all $transition-base;
+  position: relative;
+
+  // Hover glow effect
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba($fever-purple, 0.1), rgba($fever-teal, 0.1));
+    opacity: 0;
+    transition: opacity $transition-base;
+    border-radius: inherit;
+  }
 
   &:active,
   &:focus,
   &:hover,
   .hidden-file:focus + & {
-    color: #333;
-    background-color: rgba(0, 0, 0, 0.05);
+    color: $fever-purple;
+    background-color: rgba($fever-purple, 0.05);
+    border-color: rgba($fever-purple, 0.3);
     outline: 0;
     text-decoration: none;
     transform: translateY(-1px);
+
+    &::before {
+      opacity: 1;
+    }
   }
 
-  .app--dark .layout__panel--editor &,
-  .app--dark .layout__panel--preview & {
-    color: #ccc;
+  .app--dark & {
+    color: $fever-teal;
+    border-color: rgba($fever-teal, 0.2);
 
     &:active,
     &:focus,
     &:hover {
-      color: #ccc;
-      background-color: rgba(255, 255, 255, 0.067);
+      color: $fever-teal-light;
+      background-color: rgba($fever-teal, 0.1);
+      border-color: rgba($fever-teal, 0.3);
+    }
+  }
+
+  .app--dark .layout__panel--editor &,
+  .app--dark .layout__panel--preview & {
+    color: rgba(255, 255, 255, 0.8);
+
+    &:active,
+    &:focus,
+    &:hover {
+      color: #fff;
+      background-color: rgba(255, 255, 255, 0.1);
     }
   }
 
@@ -186,58 +263,83 @@ textarea {
     &:active,
     &:focus,
     &:hover {
-      opacity: 0.33;
+      opacity: 0.4;
       background-color: transparent;
       cursor: not-allowed;
       transform: none;
+
+      &::before {
+        opacity: 0;
+      }
     }
   }
 }
 
 .button--resolve {
-  background-color: #349be8;
+  background: linear-gradient(135deg, $fever-teal, $fever-teal-dark);
   color: #fff;
+  border: none;
   margin: -2px 0 -2px 4px;
-  padding: 10px 20px;
-  font-size: 18px;
+  padding: 12px 24px;
+  font-size: 15px;
+  box-shadow: 0 2px 8px rgba($fever-teal, 0.3);
 
   &:active,
   &:focus,
   &:hover {
+    background: linear-gradient(135deg, $fever-teal-light, $fever-teal);
     color: #fff;
-    background-color: darken(#349be8, 8%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($fever-teal, 0.4);
   }
 }
 
 .textfield {
-  background-color: #fff;
-  border: 0;
-  font-family: inherit;
+  font-family: $font-family-main;
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba($fever-purple, 0.15);
   font-weight: 400;
-  font-size: 1.05em;
-  padding: 0 0.6rem;
+  font-size: 1em;
+  padding: 0 0.75rem;
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
   color: inherit;
-  height: 2.4rem;
-  transition: box-shadow 0.3s ease;
+  height: 2.5rem;
+  border-radius: $border-radius-base;
+  transition: all $transition-base;
+
+  .app--dark & {
+    background-color: rgba($fever-ghost-dark, 0.8);
+    border-color: rgba($fever-teal, 0.2);
+  }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 8px rgba($fever-teal, 0.3);
+    border-color: $fever-teal;
+    box-shadow: 0 0 0 3px rgba($fever-teal, 0.15);
 
     .app--dark & {
-      box-shadow: 0 0 8px rgba($fever-purple, 0.3);
+      border-color: $fever-purple;
+      box-shadow: 0 0 0 3px rgba($fever-purple, 0.15);
     }
   }
 
   &[disabled] {
     cursor: not-allowed;
-    background-color: #f0f0f0;
-    color: #999;
+    background-color: rgba(0, 0, 0, 0.05);
+    color: rgba(0, 0, 0, 0.4);
+
+    .app--dark & {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.4);
+    }
   }
 }
+
+// ───────────────────────────────────────────────────────────────
+// LAYOUT UTILITIES
+// ───────────────────────────────────────────────────────────────
 
 .flex {
   display: flex;
@@ -271,64 +373,106 @@ textarea {
   align-items: flex-end;
 }
 
+.table-wrapper {
+  max-width: 100%;
+  overflow: auto;
+}
+
+// ───────────────────────────────────────────────────────────────
+// SIDE PANEL ELEMENTS
+// ───────────────────────────────────────────────────────────────
+
 .user-name {
+  font-family: $font-family-main;
   font-weight: 600;
 }
 
 .side-title {
-  height: 44px;
-  line-height: 36px;
-  padding: 4px 4px 0;
-  background-color: rgba(0, 0, 0, 0.1);
+  height: 48px;
+  line-height: 40px;
+  padding: 4px 8px;
+  background: linear-gradient(135deg, rgba($fever-purple, 0.08) 0%, rgba($fever-teal, 0.05) 100%);
   flex: none;
+  border-bottom: 1px solid rgba($fever-purple, 0.1);
+
+  .app--dark & {
+    background: linear-gradient(135deg, rgba($fever-teal, 0.08) 0%, rgba($fever-purple, 0.05) 100%);
+    border-bottom-color: rgba($fever-teal, 0.1);
+  }
 }
 
 .side-title__button {
   width: 38px;
-  height: 36px;
-  padding: 6px;
-  display: inline-block;
+  height: 38px;
+  padding: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background-color: transparent;
-  opacity: 0.75;
+  opacity: 0.7;
   flex: none;
-  transition: all 0.3s ease;
-
-  /* prevent from seeing wrapped buttons */
-  margin-bottom: 20px;
+  transition: all $transition-base;
+  border-radius: $border-radius-base;
+  margin-bottom: 0;
 
   &:active,
   &:focus,
   &:hover {
     opacity: 1;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba($fever-purple, 0.1);
+
+    .app--dark & {
+      background-color: rgba($fever-teal, 0.1);
+    }
   }
 }
 
 .side-title__title {
+  font-family: $font-family-display;
   text-transform: uppercase;
-  padding: 0 5px;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 2px;
+  padding: 0 8px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   width: 100%;
-  letter-spacing: 1px; /* Dreamy spacing */
+  color: $fever-purple-deep;
+
+  .app--dark & {
+    color: $fever-teal;
+  }
 }
+
+// ───────────────────────────────────────────────────────────────
+// LOGO - Dreamy floating effect
+// ───────────────────────────────────────────────────────────────
 
 .logo-background {
   background: no-repeat center url('../assets/logo.svg');
   background-size: contain;
-  animation: float 6s ease-in-out infinite;
+  animation: logo-float 6s ease-in-out infinite;
 }
 
-/* Dreamy floating animation */
-@keyframes float {
+@keyframes logo-float {
   0%, 100% {
-    transform: translateY(0px);
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-6px) rotate(0.5deg);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-10px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-4px) rotate(-0.5deg);
   }
 }
+
+// ───────────────────────────────────────────────────────────────
+// GUTTER & DISCUSSION ELEMENTS
+// ───────────────────────────────────────────────────────────────
 
 .gutter {
   position: absolute;
@@ -343,47 +487,51 @@ textarea {
 }
 
 .new-discussion-button {
-  color: rgba(0, 0, 0, 0.33);
+  color: rgba($fever-purple, 0.4);
   position: absolute;
   left: 0;
   padding: 3px 3px 3px 0;
   width: 22px;
   height: 21px;
   line-height: 1;
-  transition: all 0.3s ease;
+  transition: all $transition-base;
+  border-radius: $border-radius-base;
 
   .app--dark & {
-    color: rgba(255, 255, 255, 0.33);
+    color: rgba($fever-teal, 0.4);
   }
 
   &:active,
   &:focus,
   &:hover {
-    color: rgba(0, 0, 0, 0.4);
+    color: $fever-purple;
+    background-color: rgba($fever-purple, 0.1);
 
     .app--dark & {
-      color: rgba(255, 255, 255, 0.4);
+      color: $fever-teal;
+      background-color: rgba($fever-teal, 0.1);
     }
   }
 }
 
 .discussion-editor-highlighting,
 .discussion-preview-highlighting {
-  background-color: mix($editor-background-light, $selection-highlighting-color, 70%);
+  background-color: rgba($fever-amber, 0.2);
   padding: 0.25em 0;
-  transition: background-color 0.3s ease;
+  transition: background-color $transition-base;
+  border-radius: 2px;
 
   .app--dark & {
-    background-color: mix($editor-background-dark, $selection-highlighting-color, 70%);
+    background-color: rgba($fever-amber, 0.25);
   }
 }
 
 .discussion-editor-highlighting--hover,
 .discussion-preview-highlighting--hover {
-  background-color: mix($editor-background-light, $selection-highlighting-color, 50%);
+  background-color: rgba($fever-amber, 0.35);
 
   .app--dark & {
-    background-color: mix($editor-background-dark, $selection-highlighting-color, 50%);
+    background-color: rgba($fever-amber, 0.4);
   }
 
   * {
@@ -393,10 +541,10 @@ textarea {
 
 .discussion-editor-highlighting--selected,
 .discussion-preview-highlighting--selected {
-  background-color: mix($editor-background-light, $selection-highlighting-color, 20%);
+  background-color: rgba($fever-amber, 0.5);
 
   .app--dark & {
-    background-color: mix($editor-background-dark, $selection-highlighting-color, 20%);
+    background-color: rgba($fever-amber, 0.55);
   }
 
   * {
@@ -418,10 +566,14 @@ textarea {
   left: -1000px;
 }
 
+// ───────────────────────────────────────────────────────────────
+// PRINT STYLES
+// ───────────────────────────────────────────────────────────────
+
 @media print {
   body {
     background-color: transparent !important;
-    color: #000 !important; // Black prints faster
+    color: #000 !important;
     overflow: visible !important;
     position: absolute !important;
 
@@ -453,5 +605,4 @@ textarea {
   .preview__inner-2 {
     padding: 0 50px !important;
   }
-  // scss-lint:enable ImportantRule
 }

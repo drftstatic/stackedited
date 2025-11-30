@@ -100,38 +100,59 @@ export default {
 <style lang="scss">
 @import '../styles/variables.scss';
 
+// ═══════════════════════════════════════════════════════════════
+// CHAT MESSAGES - Conversation bubbles with fever personality
+// ═══════════════════════════════════════════════════════════════
+
 .ai-message {
-  margin-bottom: 12px;
-  padding: 8px 12px;
-  border-radius: 8px;
+  margin-bottom: 14px;
+  padding: 12px 16px;
+  border-radius: $border-radius-lg;
+  font-family: $font-family-main;
   font-size: 14px;
-  line-height: 1.4;
-  animation: message-appear 0.3s ease-in-out;
-  transition: all 0.3s ease;
+  line-height: 1.5;
+  animation: message-appear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all $transition-base;
+  position: relative;
 
   &:hover {
-    transform: translateX(2px);
+    transform: translateX(3px);
   }
 }
 
 @keyframes message-appear {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(12px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
+// ───────────────────────────────────────────────────────────────
+// USER MESSAGES - Your voice in the conversation
+// ───────────────────────────────────────────────────────────────
+
 .ai-message--user {
-  background: linear-gradient(135deg, $fever-teal-alpha 0%, transparent 100%);
-  margin-left: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba($fever-teal, 0.1) 0%,
+    rgba($fever-teal, 0.05) 50%,
+    transparent 100%
+  );
+  margin-left: 24px;
   border-left: 3px solid $fever-teal;
+  border-radius: $border-radius-lg $border-radius-lg $border-radius-lg 0;
 
   .app--dark & {
-    border-left-color: $fever-teal;
+    background: linear-gradient(
+      135deg,
+      rgba($fever-teal, 0.12) 0%,
+      rgba($fever-teal, 0.06) 50%,
+      transparent 100%
+    );
   }
 
   .ai-message__role {
@@ -143,64 +164,166 @@ export default {
   }
 }
 
+// ───────────────────────────────────────────────────────────────
+// TED'S MESSAGES - His fever dream responses
+// ───────────────────────────────────────────────────────────────
+
 .ai-message--assistant {
-  background: linear-gradient(135deg, $fever-purple-alpha 0%, transparent 100%);
-  margin-right: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba($fever-purple, 0.1) 0%,
+    rgba($fever-purple, 0.05) 50%,
+    transparent 100%
+  );
+  margin-right: 24px;
   border-left: 3px solid $fever-purple;
+  border-radius: $border-radius-lg $border-radius-lg 0 $border-radius-lg;
 
   .app--dark & {
-    border-left-color: $fever-purple;
+    background: linear-gradient(
+      135deg,
+      rgba($fever-purple, 0.12) 0%,
+      rgba($fever-purple, 0.06) 50%,
+      transparent 100%
+    );
+    border-left-color: $fever-purple-light;
   }
 
   .ai-message__role {
     color: $fever-purple-deep;
-    font-weight: 600;
+    font-weight: 700;
 
     .app--dark & {
-      color: $fever-purple;
+      color: $fever-purple-light;
     }
   }
-}
 
-.ai-message--system {
-  background: rgba(255, 193, 7, 0.1);
-  font-size: 12px;
-  margin: 8px 40px;
-  border-left: 3px solid #f57c00;
-
-  .ai-message__role {
-    color: #f57c00;
+  // Subtle shimmer on Ted's messages
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba($fever-purple, 0.03) 50%,
+      transparent 100%
+    );
+    border-radius: inherit;
+    animation: message-shimmer 6s ease-in-out infinite;
+    pointer-events: none;
   }
 }
 
+@keyframes message-shimmer {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+// ───────────────────────────────────────────────────────────────
+// SYSTEM MESSAGES - Ambient notifications
+// ───────────────────────────────────────────────────────────────
+
+.ai-message--system {
+  background: linear-gradient(
+    135deg,
+    rgba($fever-amber, 0.1) 0%,
+    transparent 100%
+  );
+  font-size: 12px;
+  margin: 8px 32px;
+  padding: 10px 14px;
+  border-left: 3px solid $fever-amber;
+  border-radius: $border-radius-base;
+
+  .app--dark & {
+    background: linear-gradient(
+      135deg,
+      rgba($fever-amber, 0.12) 0%,
+      transparent 100%
+    );
+  }
+
+  .ai-message__role {
+    color: $fever-amber;
+  }
+}
+
+// ───────────────────────────────────────────────────────────────
+// ERROR MESSAGES - When things go sideways
+// ───────────────────────────────────────────────────────────────
+
 .ai-message--error {
-  background: rgba($fever-coral, 0.1);
+  background: linear-gradient(
+    135deg,
+    rgba($fever-coral, 0.12) 0%,
+    rgba($fever-coral, 0.05) 100%
+  );
   border-left: 3px solid $fever-coral;
+  animation: error-shake 0.5s ease-in-out;
 
   .ai-message__role {
     color: $fever-coral;
   }
 }
 
+@keyframes error-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-4px);
+  }
+  40%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+// ───────────────────────────────────────────────────────────────
+// FUNCTION CALLS - Ted's actions in progress
+// ───────────────────────────────────────────────────────────────
+
 .ai-message--function {
-  background: linear-gradient(135deg, rgba($fever-lime, 0.1) 0%, transparent 100%);
+  background: linear-gradient(
+    135deg,
+    rgba($fever-lime, 0.1) 0%,
+    rgba($fever-teal, 0.05) 100%
+  );
   border-left: 3px solid $fever-lime;
+  padding: 10px 14px;
+
+  .app--dark & {
+    background: linear-gradient(
+      135deg,
+      rgba($fever-lime, 0.12) 0%,
+      rgba($fever-teal, 0.08) 100%
+    );
+  }
 
   .ai-message__role {
-    color: darken($fever-lime, 20%);
+    color: darken($fever-lime, 15%);
 
     .app--dark & {
-      color: $fever-lime;
+      color: $fever-lime-glow;
     }
   }
 }
 
+// ───────────────────────────────────────────────────────────────
+// MESSAGE INTERNALS - Content styling
+// ───────────────────────────────────────────────────────────────
+
 .ai-message__role {
-  font-size: 11px;
+  font-family: $font-family-ui;
+  font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
-  margin-bottom: 4px;
-  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  letter-spacing: 1.5px;
 }
 
 .ai-message__content {
@@ -209,29 +332,32 @@ export default {
 
 .ai-message__text {
   code {
-    background-color: rgba(0, 0, 0, 0.06);
-    padding: 2px 4px;
-    border-radius: 3px;
-    font-family: monospace;
-    font-size: 13px;
-    border: 1px solid rgba($fever-purple, 0.2);
+    font-family: $font-family-monospace;
+    background: rgba($fever-purple, 0.08);
+    padding: 2px 6px;
+    border-radius: $border-radius-base;
+    font-size: 12px;
+    border: 1px solid rgba($fever-purple, 0.15);
 
     .app--dark & {
-      background-color: rgba(255, 255, 255, 0.06);
+      background: rgba($fever-teal, 0.1);
       border-color: rgba($fever-teal, 0.2);
     }
   }
 
   pre.ai-message__code {
-    background-color: rgba(0, 0, 0, 0.06);
-    padding: 8px;
-    border-radius: 4px;
+    font-family: $font-family-monospace;
+    background: rgba($fever-purple, 0.06);
+    padding: 12px;
+    border-radius: $border-radius-base;
     overflow-x: auto;
-    margin: 8px 0;
-    border: 1px solid rgba($fever-purple, 0.2);
+    margin: 10px 0;
+    border: 1px solid rgba($fever-purple, 0.15);
+    font-size: 12px;
+    line-height: 1.5;
 
     .app--dark & {
-      background-color: rgba(255, 255, 255, 0.06);
+      background: rgba($fever-teal, 0.08);
       border-color: rgba($fever-teal, 0.2);
     }
 
@@ -239,38 +365,62 @@ export default {
       background: none;
       padding: 0;
       border: none;
+      font-size: inherit;
     }
   }
 
   a {
     color: $fever-teal-dark;
-    text-decoration: underline;
-    transition: color 0.3s ease;
+    text-decoration: none;
+    border-bottom: 1px solid rgba($fever-teal, 0.3);
+    transition: all $transition-base;
 
     .app--dark & {
       color: $fever-teal;
+      border-bottom-color: rgba($fever-teal, 0.4);
     }
 
     &:hover {
       color: $fever-purple;
+      border-bottom-color: $fever-purple;
 
       .app--dark & {
-        color: $fever-purple;
+        color: $fever-purple-light;
+        border-bottom-color: $fever-purple-light;
       }
     }
   }
+
+  strong {
+    color: $fever-purple-deep;
+    font-weight: 600;
+
+    .app--dark & {
+      color: $fever-teal;
+    }
+  }
+
+  em {
+    color: inherit;
+    opacity: 0.9;
+  }
 }
+
+// ───────────────────────────────────────────────────────────────
+// FUNCTION DISPLAY - Ted's action indicators
+// ───────────────────────────────────────────────────────────────
 
 .ai-message__function {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .ai-message__function-icon {
-  font-size: 16px;
-  animation: spin-slow 3s linear infinite;
+  font-size: 18px;
+  animation: spin-slow 4s linear infinite;
+  filter: drop-shadow(0 0 4px rgba($fever-lime, 0.5));
 }
 
 @keyframes spin-slow {
@@ -280,21 +430,40 @@ export default {
 }
 
 .ai-message__function-name {
+  font-family: $font-family-main;
   font-weight: 500;
   font-style: italic;
+  color: darken($fever-lime, 10%);
+
+  .app--dark & {
+    color: $fever-lime;
+  }
 }
 
 .ai-message__function-explanation {
   font-size: 12px;
   color: $secondary-text-color;
   font-style: italic;
+  flex-basis: 100%;
+  margin-top: 4px;
 }
 
+// ───────────────────────────────────────────────────────────────
+// TIMESTAMP - Temporal awareness
+// ───────────────────────────────────────────────────────────────
+
 .ai-message__time {
-  font-size: 10px;
+  font-family: $font-family-monospace;
+  font-size: 9px;
   color: $secondary-text-color;
   text-align: right;
-  margin-top: 4px;
-  opacity: 0.6;
+  margin-top: 6px;
+  opacity: 0.5;
+  letter-spacing: 0.5px;
+  transition: opacity $transition-base;
+
+  .ai-message:hover & {
+    opacity: 0.8;
+  }
 }
 </style>

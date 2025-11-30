@@ -1,3 +1,9 @@
+// ═══════════════════════════════════════════════════════════════
+// StackediTED Typography System - "Controlled Drift"
+// A fever dream requires fonts that feel slightly... off.
+// ═══════════════════════════════════════════════════════════════
+
+// Legacy fonts - kept for fallback compatibility
 @font-face {
   font-family: 'Lato';
   font-style: normal;
@@ -39,3 +45,15 @@
   font-weight: 600;
   src: url('../assets/fonts/RobotoMono-Bold.woff') format('woff');
 }
+
+// ═══════════════════════════════════════════════════════════════
+// Google Fonts imports for fever dream typography
+// Syne: Geometric, bold, slightly awkward - perfect for Ted
+// DM Sans: Clean but characterful body text
+// JetBrains Mono: Hacker aesthetic for code
+// ═══════════════════════════════════════════════════════════════
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400;1,9..40,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@300;400;500;600;700;800;900&display=swap');

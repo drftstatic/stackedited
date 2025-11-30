@@ -206,15 +206,41 @@ export default {
 <style lang="scss">
 @import '../styles/variables.scss';
 
+// ═══════════════════════════════════════════════════════════════
+// MODAL - Fever Dream Dialog System
+// ═══════════════════════════════════════════════════════════════
+
 .modal {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: rgba(160, 160, 160, 0.5);
+  background: radial-gradient(
+    ellipse at center,
+    rgba($fever-purple, 0.15) 0%,
+    rgba($fever-ghost-dark, 0.7) 100%
+  );
   overflow: auto;
+  animation: modal-backdrop-appear 0.3s ease-out;
+
+  .app--dark & {
+    background: radial-gradient(
+      ellipse at center,
+      rgba($fever-teal, 0.1) 0%,
+      rgba(0, 0, 0, 0.85) 100%
+    );
+  }
 
   p {
-    line-height: 1.5;
+    line-height: 1.6;
+  }
+}
+
+@keyframes modal-backdrop-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
@@ -222,47 +248,121 @@ export default {
   position: fixed;
   z-index: 1;
   width: 100%;
-  color: darken($error-color, 10%);
-  background-color: transparentize(lighten($error-color, 33%), 0.075);
+  color: $fever-coral;
+  background: linear-gradient(
+    90deg,
+    rgba($fever-coral, 0.1) 0%,
+    rgba($fever-coral, 0.15) 50%,
+    rgba($fever-coral, 0.1) 100%
+  );
   font-size: 0.9em;
-  line-height: 1.33;
+  line-height: 1.4;
   text-align: center;
-  padding: 0.25em 1em;
+  padding: 0.5em 1em;
+  border-bottom: 1px solid rgba($fever-coral, 0.3);
+
+  a {
+    color: $fever-coral-deep;
+    font-weight: 600;
+
+    &:hover {
+      color: $fever-purple;
+    }
+  }
 }
 
 .modal__inner-1 {
   margin: 0 auto;
   width: 100%;
   min-width: 320px;
-  max-width: 480px;
+  max-width: 500px;
 }
 
 .modal__inner-2 {
-  margin: 40px 10px 100px;
-  background-color: #f8f8f8;
-  padding: 50px 50px 40px;
-  border-radius: $border-radius-base;
+  margin: 50px 10px 100px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba($fever-ghost-lavender, 0.95) 100%
+  );
+  padding: 40px 40px 35px;
+  border-radius: $border-radius-xl;
   position: relative;
   overflow: hidden;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 60px rgba($fever-purple, 0.15);
+  animation: modal-content-appear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
+  .app--dark & {
+    background: linear-gradient(
+      180deg,
+      rgba($fever-ghost-dark, 0.98) 0%,
+      rgba($fever-ghost-abyss, 0.95) 100%
+    );
+    box-shadow:
+      0 25px 50px -12px rgba(0, 0, 0, 0.5),
+      0 0 60px rgba($fever-teal, 0.1);
+  }
+
+  // Top accent bar - fever gradient
   &::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
-    height: $border-radius-base;
+    height: 3px;
     width: 100%;
-    background-image: linear-gradient(to left, #ffd700, #ffd700 23%, #a5c700 27%, #a5c700 48%, #ff8a00 52%, #ff8a00 73%, #66aefd 77%);
+    background: linear-gradient(
+      90deg,
+      $fever-purple 0%,
+      $fever-teal 25%,
+      $fever-purple-light 50%,
+      $fever-teal-light 75%,
+      $fever-purple 100%
+    );
+    background-size: 200% 100%;
+    animation: gradient-shift 4s linear infinite;
   }
 
+  // Bottom accent bar
   &::after {
     content: '';
     position: absolute;
     bottom: 0;
     left: 0;
-    height: $border-radius-base;
+    height: 3px;
     width: 100%;
-    background-image: linear-gradient(to right, #ffd700, #ffd700 23%, #a5c700 27%, #a5c700 48%, #ff8a00 52%, #ff8a00 73%, #66aefd 77%);
+    background: linear-gradient(
+      90deg,
+      $fever-teal 0%,
+      $fever-purple 25%,
+      $fever-teal-light 50%,
+      $fever-purple-light 75%,
+      $fever-teal 100%
+    );
+    background-size: 200% 100%;
+    animation: gradient-shift 4s linear infinite reverse;
+  }
+}
+
+@keyframes modal-content-appear {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 0%;
   }
 }
 
@@ -273,9 +373,11 @@ export default {
 
 .modal__image {
   float: left;
-  width: 60px;
-  height: 60px;
-  margin: 1.5em 1.2em 0.5em 0;
+  width: 64px;
+  height: 64px;
+  margin: 1.5em 1.5em 0.5em 0;
+  border-radius: $border-radius-lg;
+  box-shadow: 0 4px 12px rgba($fever-purple, 0.2);
 
   & + *::after {
     content: '';
@@ -285,38 +387,67 @@ export default {
 }
 
 .modal__title {
-  font-weight: bold;
-  font-size: 1.5rem;
-  line-height: 1.4;
-  margin-top: 2.5rem;
+  font-family: $font-family-display;
+  font-weight: 700;
+  font-size: 1.6rem;
+  line-height: 1.3;
+  margin-top: 2rem;
+  background: linear-gradient(135deg, $fever-purple-deep 0%, $fever-teal-dark 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+
+  .app--dark & {
+    background: linear-gradient(135deg, $fever-teal 0%, $fever-purple-light 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }
 
 .modal__sub-title {
-  opacity: 0.6;
-  font-size: 0.75rem;
+  opacity: 0.65;
+  font-size: 0.8rem;
   margin-bottom: 1.5rem;
+  font-style: italic;
 }
 
 .modal__error {
-  color: #de2c00;
+  color: $fever-coral;
+  font-weight: 500;
 }
 
 .modal__info {
-  background-color: $info-bg;
-  border-radius: $border-radius-base;
+  background: linear-gradient(
+    135deg,
+    rgba($fever-teal, 0.08) 0%,
+    rgba($fever-purple, 0.05) 100%
+  );
+  border: 1px solid rgba($fever-teal, 0.15);
+  border-radius: $border-radius-lg;
   margin: 1.2em 0;
-  padding: 0.75em 1.25em;
+  padding: 1em 1.25em;
   font-size: 0.95em;
   line-height: 1.6;
 
+  .app--dark & {
+    background: linear-gradient(
+      135deg,
+      rgba($fever-purple, 0.1) 0%,
+      rgba($fever-teal, 0.08) 100%
+    );
+    border-color: rgba($fever-purple, 0.2);
+  }
+
   pre {
+    font-family: $font-family-monospace;
     line-height: 1.5;
   }
 }
 
 .modal__info--multiline {
-  padding-top: 0.1em;
-  padding-bottom: 0.1em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
 }
 
 .modal__button-bar {
@@ -324,44 +455,74 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  gap: 10px;
 }
 
+// ───────────────────────────────────────────────────────────────
+// FORM ENTRIES - Fever dream form fields
+// ───────────────────────────────────────────────────────────────
+
 .form-entry {
-  margin: 1em 0;
+  margin: 1.2em 0;
 }
 
 .form-entry__label {
   display: block;
-  font-size: 0.9rem;
-  color: #808080;
+  font-family: $font-family-ui;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: $fever-purple-deep;
+  margin-bottom: 0.4em;
+  letter-spacing: 0.3px;
+  transition: color $transition-base;
+
+  .app--dark & {
+    color: $fever-teal;
+  }
 
   .form-entry--focused & {
-    color: darken($link-color, 10%);
+    color: $fever-teal-dark;
+
+    .app--dark & {
+      color: $fever-purple-light;
+    }
   }
 
   .form-entry--error & {
-    color: darken($error-color, 10%);
+    color: $fever-coral;
   }
 }
 
 .form-entry__label-info {
   font-size: 0.75rem;
+  font-weight: 400;
+  opacity: 0.7;
 }
 
 .form-entry__field {
-  border: 1px solid #b0b0b0;
+  border: 1px solid rgba($fever-purple, 0.2);
   border-radius: $border-radius-base;
   position: relative;
   overflow: hidden;
+  transition: all $transition-base;
+
+  .app--dark & {
+    border-color: rgba($fever-teal, 0.25);
+  }
 
   .form-entry--focused & {
-    border-color: $link-color;
-    box-shadow: 0 0 0 2.5px transparentize($link-color, 0.67);
+    border-color: $fever-teal;
+    box-shadow: 0 0 0 3px rgba($fever-teal, 0.15);
+
+    .app--dark & {
+      border-color: $fever-purple;
+      box-shadow: 0 0 0 3px rgba($fever-purple, 0.2);
+    }
   }
 
   .form-entry--error & {
-    border-color: $error-color;
-    box-shadow: 0 0 0 2.5px transparentize($error-color, 0.67);
+    border-color: $fever-coral;
+    box-shadow: 0 0 0 3px rgba($fever-coral, 0.15);
   }
 }
 
@@ -376,35 +537,55 @@ export default {
   padding: 6px;
   display: inline-block;
   background-color: transparent;
-  opacity: 0.75;
+  opacity: 0.7;
+  border-radius: $border-radius-base;
+  transition: all $transition-base;
 
   &:active,
   &:focus,
   &:hover {
     opacity: 1;
-    background-color: rgba(0, 0, 0, 0.1);
+    background: rgba($fever-purple, 0.1);
+
+    .app--dark & {
+      background: rgba($fever-teal, 0.15);
+    }
   }
 }
 
 .form-entry__radio,
 .form-entry__checkbox {
-  margin: 0.25em 1em;
+  margin: 0.4em 1em;
 
   input {
-    margin-right: 0.25em;
+    margin-right: 0.5em;
+    accent-color: $fever-teal;
+
+    .app--dark & {
+      accent-color: $fever-purple;
+    }
   }
 }
 
 .form-entry__info {
   font-size: 0.75em;
-  opacity: 0.67;
-  line-height: 1.4;
-  margin: 0.25em 0;
+  opacity: 0.65;
+  line-height: 1.5;
+  margin: 0.4em 0;
+  font-style: italic;
 }
 
+// ───────────────────────────────────────────────────────────────
+// TABS - Navigation with fever styling
+// ───────────────────────────────────────────────────────────────
+
 .tabs {
-  border-bottom: 1px solid $hr-color;
+  border-bottom: 1px solid rgba($fever-purple, 0.15);
   margin: 1em 0 2em;
+
+  .app--dark & {
+    border-bottom-color: rgba($fever-teal, 0.2);
+  }
 
   &::after {
     content: '';
@@ -418,28 +599,42 @@ export default {
   float: left;
   text-align: center;
   line-height: 1.4;
-  font-weight: 400;
-  font-size: 1.1em;
+  font-weight: 500;
+  font-size: 1em;
 }
 
 .tabs__tab > a {
   width: 100%;
   text-decoration: none;
-  padding: 0.67em 0.33em;
+  padding: 0.75em 0.5em;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   border-top-left-radius: $border-radius-base;
   border-top-right-radius: $border-radius-base;
-  color: $link-color;
+  color: $fever-purple;
+  transition: all $transition-base;
+
+  .app--dark & {
+    color: $fever-teal;
+  }
 
   &:hover,
   &:focus {
-    background-color: rgba(0, 0, 0, 0.05);
+    background: rgba($fever-purple, 0.06);
+
+    .app--dark & {
+      background: rgba($fever-teal, 0.08);
+    }
   }
 }
 
 .tabs__tab--active > a {
-  border-bottom: 2px solid $link-color;
-  color: inherit;
+  border-bottom: 2px solid $fever-teal;
+  color: $fever-purple-deep;
+
+  .app--dark & {
+    border-bottom-color: $fever-purple;
+    color: $fever-teal;
+  }
 }
 </style>

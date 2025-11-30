@@ -76,18 +76,116 @@ export default {
 </script>
 
 <style lang="scss">
-.explorer,
-.explorer__tree {
+@import '../styles/variables.scss';
+
+// ═══════════════════════════════════════════════════════════════
+// EXPLORER - File Tree with Controlled Drift
+// ═══════════════════════════════════════════════════════════════
+
+.explorer {
   height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba($fever-purple, 0.015) 0%,
+    transparent 50%,
+    rgba($fever-teal, 0.02) 100%
+  );
+  position: relative;
+
+  .app--dark & {
+    background: linear-gradient(
+      180deg,
+      rgba($fever-teal, 0.02) 0%,
+      transparent 50%,
+      rgba($fever-purple, 0.02) 100%
+    );
+  }
+
+  // Right edge accent line
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(
+      180deg,
+      rgba($fever-purple, 0.2) 0%,
+      rgba($fever-teal, 0.15) 50%,
+      transparent 100%
+    );
+
+    .app--dark & {
+      background: linear-gradient(
+        180deg,
+        rgba($fever-teal, 0.25) 0%,
+        rgba($fever-purple, 0.2) 50%,
+        transparent 100%
+      );
+    }
+  }
 }
 
 .explorer__tree {
+  height: 100%;
   overflow: auto;
+  padding: 4px 0;
 
-  /* fake element */
+  // Focus state with subtle glow
+  &:focus {
+    outline: none;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      box-shadow: inset 0 0 20px rgba($fever-teal, 0.05);
+
+      .app--dark & {
+        box-shadow: inset 0 0 20px rgba($fever-purple, 0.08);
+      }
+    }
+  }
+
+  /* fake element for scroll padding */
   & > .explorer-node > .explorer-node__children > .explorer-node:last-child > .explorer-node__item {
     height: 20px;
     cursor: auto;
+  }
+}
+
+// New item mode visual feedback
+.explorer__tree--new-item {
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba($fever-teal, 0.03) 0%,
+      transparent 100%
+    );
+    pointer-events: none;
+    animation: new-item-pulse 1.5s ease-in-out infinite;
+
+    .app--dark & {
+      background: linear-gradient(
+        180deg,
+        rgba($fever-purple, 0.05) 0%,
+        transparent 100%
+      );
+    }
+  }
+}
+
+@keyframes new-item-pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
   }
 }
 </style>

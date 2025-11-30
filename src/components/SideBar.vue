@@ -100,14 +100,79 @@ export default {
 <style lang="scss">
 @import '../styles/variables.scss';
 
+// ═══════════════════════════════════════════════════════════════
+// SIDEBAR - Controlled Drift Panel System
+// ═══════════════════════════════════════════════════════════════
+
 .side-bar {
   overflow: hidden;
   height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba($fever-purple, 0.02) 0%,
+    transparent 30%,
+    rgba($fever-teal, 0.02) 100%
+  );
+  position: relative;
+
+  .app--dark & {
+    background: linear-gradient(
+      180deg,
+      rgba($fever-teal, 0.03) 0%,
+      transparent 30%,
+      rgba($fever-purple, 0.03) 100%
+    );
+  }
+
+  // Subtle left border accent
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(
+      180deg,
+      $fever-purple 0%,
+      $fever-teal 50%,
+      transparent 100%
+    );
+    opacity: 0.4;
+
+    .app--dark & {
+      background: linear-gradient(
+        180deg,
+        $fever-teal 0%,
+        $fever-purple 50%,
+        transparent 100%
+      );
+      opacity: 0.5;
+    }
+  }
 
   hr {
     margin: 10px 40px;
     display: none;
-    border-top: 1px solid $hr-color;
+    border: none;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba($fever-purple, 0.3),
+      rgba($fever-teal, 0.3),
+      transparent
+    );
+
+    .app--dark & {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba($fever-teal, 0.3),
+        rgba($fever-purple, 0.3),
+        transparent
+      );
+    }
   }
 
   * + hr {
@@ -154,9 +219,10 @@ export default {
   padding: 0 10px 0 20px;
 
   pre {
-    font-size: 0.9em;
+    font-family: $font-family-monospace;
+    font-size: 0.85em;
     font-variant-ligatures: no-common-ligatures;
-    line-height: 1.25;
+    line-height: 1.4;
     white-space: pre-wrap;
     word-break: break-word;
     word-wrap: break-word;
@@ -166,21 +232,92 @@ export default {
   .img,
   .imgref,
   .cl-toc {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba($fever-purple, 0.08);
+    border-radius: 3px;
+    padding: 1px 4px;
+
+    .app--dark & {
+      background-color: rgba($fever-teal, 0.12);
+    }
   }
 }
 
 .side-bar__info {
-  padding: 10px;
+  padding: 12px;
   margin: -10px -10px 10px;
-  background-color: $info-bg;
+  background: linear-gradient(
+    135deg,
+    rgba($fever-teal, 0.08) 0%,
+    rgba($fever-purple, 0.06) 100%
+  );
+  border-bottom: 1px solid rgba($fever-purple, 0.1);
   font-size: 0.95em;
+  position: relative;
+
+  .app--dark & {
+    background: linear-gradient(
+      135deg,
+      rgba($fever-purple, 0.1) 0%,
+      rgba($fever-teal, 0.08) 100%
+    );
+    border-bottom-color: rgba($fever-teal, 0.1);
+  }
+
+  // Info accent icon area
+  &::before {
+    content: 'ℹ';
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: $fever-teal;
+    background: rgba($fever-teal, 0.15);
+    border-radius: 50%;
+
+    .app--dark & {
+      color: $fever-purple-light;
+      background: rgba($fever-purple, 0.2);
+    }
+  }
 
   p {
-    margin: 10px 15px;
-    font-size: 0.9rem;
-    opacity: 0.67;
-    line-height: 1.3;
+    margin: 10px 15px 10px 35px;
+    font-size: 0.85rem;
+    opacity: 0.75;
+    line-height: 1.4;
+    color: $fever-purple-deep;
+
+    .app--dark & {
+      color: rgba(255, 255, 255, 0.75);
+    }
+  }
+}
+
+// ───────────────────────────────────────────────────────────────
+// TOC Panel - Table of Contents styling
+// ───────────────────────────────────────────────────────────────
+
+.side-bar__panel--toc {
+  .toc__item {
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: $border-radius-base;
+    transition: all $transition-base;
+    margin: 2px 8px;
+
+    &:hover {
+      background: rgba($fever-purple, 0.08);
+      transform: translateX(4px);
+
+      .app--dark & {
+        background: rgba($fever-teal, 0.1);
+      }
+    }
   }
 }
 </style>

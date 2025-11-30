@@ -256,36 +256,81 @@ export default {
 <style lang="scss">
 @import '../styles/variables.scss';
 
+// ═══════════════════════════════════════════════════════════════
+// NAVIGATION BAR - The control interface
+// Asymmetric, characterful, controlled drift aesthetic
+// ═══════════════════════════════════════════════════════════════
+
 .navigation-bar {
   position: absolute;
   width: 100%;
   height: 100%;
   padding-top: 4px;
   overflow: hidden;
+  background: linear-gradient(90deg, rgba($fever-purple, 0.03) 0%, transparent 50%, rgba($fever-teal, 0.02) 100%);
+
+  .app--dark & {
+    background: linear-gradient(90deg, rgba($fever-purple, 0.06) 0%, transparent 50%, rgba($fever-teal, 0.04) 100%);
+  }
 }
 
 .navigation-bar__hidden {
   display: none;
 }
 
+// ───────────────────────────────────────────────────────────────
+// BRANDING - The fever dream identity
+// ───────────────────────────────────────────────────────────────
+
 .navigation-bar__branding {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-right: 16px;
-  line-height: 1.2;
-  animation: pulse-glow 4s ease-in-out infinite;
+  margin-right: 20px;
+  line-height: 1.15;
+  position: relative;
+  padding-left: 12px;
+
+  // Accent bar - the signature mark
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: 3px;
+    background: linear-gradient(180deg, $fever-purple, $fever-teal);
+    border-radius: 2px;
+    opacity: 0.9;
+    transition: all $transition-base;
+
+    .app--dark & {
+      background: linear-gradient(180deg, $fever-teal, $fever-purple);
+    }
+  }
+
+  &:hover::before {
+    width: 4px;
+    box-shadow: 0 0 8px rgba($fever-purple, 0.5);
+
+    .app--dark & {
+      box-shadow: 0 0 8px rgba($fever-teal, 0.5);
+    }
+  }
 }
 
 .navigation-bar__brand-name {
-  font-size: 18px;
+  font-family: $font-family-display;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   background: linear-gradient(135deg, $fever-purple 0%, $fever-teal 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-transform: uppercase;
+  position: relative;
+  transition: all $transition-base;
 
   .app--dark & {
     background: linear-gradient(135deg, $fever-teal 0%, $fever-purple 100%);
@@ -297,33 +342,40 @@ export default {
 
 .navigation-bar__brand-link {
   text-decoration: none;
-  transition: opacity 0.3s ease;
+  transition: all $transition-base;
+  display: block;
 
   &:hover {
-    opacity: 0.7;
+    .navigation-bar__brand-experiment {
+      opacity: 0.9;
+      letter-spacing: 1.5px;
+      color: $fever-teal;
+
+      .app--dark & {
+        color: $fever-purple-light;
+      }
+    }
   }
 }
 
 .navigation-bar__brand-experiment {
+  font-family: $font-family-monospace;
   font-size: 8px;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   text-transform: lowercase;
   color: $fever-purple-deep;
-  opacity: 0.6;
+  opacity: 0.5;
+  transition: all $transition-base;
+  margin-top: 1px;
 
   .app--dark & {
-    color: $fever-teal;
+    color: rgba($fever-teal, 0.7);
   }
 }
 
-@keyframes pulse-glow {
-  0%, 100% {
-    filter: drop-shadow(0 0 2px rgba($fever-purple, 0.3));
-  }
-  50% {
-    filter: drop-shadow(0 0 8px rgba($fever-teal, 0.5));
-  }
-}
+// ───────────────────────────────────────────────────────────────
+// LAYOUT STRUCTURE
+// ───────────────────────────────────────────────────────────────
 
 .navigation-bar__inner--left {
   float: left;
@@ -335,8 +387,6 @@ export default {
 
 .navigation-bar__inner--right {
   float: right;
-
-  /* prevent from seeing wrapped pagedownButtons */
   margin-bottom: 20px;
 }
 
@@ -357,19 +407,43 @@ export default {
   flex: none;
 }
 
+// ───────────────────────────────────────────────────────────────
+// BUTTONS - Interactive elements with personality
+// ───────────────────────────────────────────────────────────────
+
 .navigation-bar__button,
 .navigation-bar__spacer {
   height: 36px;
   padding: 0 4px;
-
-  /* prevent from seeing wrapped pagedownButtons */
   margin-bottom: 20px;
 }
 
 .navigation-bar__button {
   width: 34px;
   padding: 0 7px;
-  transition: opacity 0.25s;
+  transition: all $transition-base;
+  border-radius: $border-radius-base;
+  position: relative;
+
+  // Subtle glow on hover
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: $border-radius-base;
+    opacity: 0;
+    transition: opacity $transition-base;
+    background: radial-gradient(circle, rgba($fever-teal, 0.2) 0%, transparent 70%);
+    pointer-events: none;
+
+    .app--dark & {
+      background: radial-gradient(circle, rgba($fever-purple, 0.2) 0%, transparent 70%);
+    }
+  }
+
+  &:hover::after {
+    opacity: 1;
+  }
 
   .navigation-bar__inner--button & {
     padding: 0 4px;
@@ -401,11 +475,22 @@ export default {
 
 .navigation-bar__button--restore {
   width: auto;
+  font-family: $font-family-ui;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 12px;
 }
+
+// ───────────────────────────────────────────────────────────────
+// TITLE INPUT - Document name with character
+// ───────────────────────────────────────────────────────────────
 
 .navigation-bar__title {
   margin: 0 4px;
-  font-size: 21px;
+  font-family: $font-family-main;
+  font-size: 18px;
+  font-weight: 500;
 
   .layout--revision & {
     position: absolute;
@@ -432,6 +517,7 @@ export default {
   &:focus,
   &:hover {
     color: $navbar-color;
+    opacity: 0.4;
   }
 }
 
@@ -446,24 +532,45 @@ export default {
 }
 
 .navigation-bar__button--location {
-  width: 20px;
-  height: 20px;
-  border-radius: 10px;
-  padding: 2px;
-  margin-top: 8px;
-  opacity: 0.5;
-  background-color: rgba(255, 255, 255, 0.2);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  padding: 3px;
+  margin-top: 7px;
+  opacity: 0.6;
+  background-color: rgba($fever-purple, 0.2);
+  transition: all $transition-base;
+
+  .app--dark & {
+    background-color: rgba($fever-teal, 0.2);
+  }
 
   &:active,
   &:focus,
   &:hover {
     opacity: 1;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba($fever-purple, 0.3);
+    transform: scale(1.1);
+
+    .app--dark & {
+      background-color: rgba($fever-teal, 0.3);
+    }
   }
 }
 
 .navigation-bar__button--blink {
-  animation: blink 1s linear infinite;
+  animation: fever-blink 1.5s ease-in-out infinite;
+}
+
+@keyframes fever-blink {
+  0%, 100% {
+    opacity: 0.5;
+    box-shadow: none;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 8px rgba($fever-teal, 0.5);
+  }
 }
 
 .navigation-bar__title--fake {
@@ -506,20 +613,24 @@ export default {
 }
 
 .navigation-bar__button--close {
-  color: lighten($link-color, 15%);
+  color: $fever-teal;
 
   &:active,
   &:focus,
   &:hover {
-    color: lighten($link-color, 25%);
+    color: $fever-teal-light;
+    background-color: rgba($fever-teal, 0.15);
   }
 }
 
 .navigation-bar__title--input {
   cursor: pointer;
+  font-family: $font-family-main;
+  transition: all $transition-base;
 
   &.navigation-bar__title--focus {
     cursor: text;
+    box-shadow: 0 0 0 2px rgba($fever-teal, 0.3);
   }
 
   .navigation-bar--light & {
@@ -527,10 +638,14 @@ export default {
   }
 }
 
+// ───────────────────────────────────────────────────────────────
+// SPINNER - Fever dream loading state
+// ───────────────────────────────────────────────────────────────
+
 $r: 10px;
 $d: $r * 2;
-$b: $d/10;
-$t: 3000ms;
+$b: 2px;
+$t: 2500ms;
 
 .navigation-bar__spinner {
   width: 24px;
@@ -539,7 +654,7 @@ $t: 3000ms;
   .icon {
     width: 24px;
     height: 24px;
-    color: transparentize($error-color, 0.5);
+    color: rgba($fever-coral, 0.7);
   }
 }
 
@@ -548,9 +663,13 @@ $t: 3000ms;
   height: $d;
   display: block;
   position: relative;
-  border: $b solid transparentize($navbar-color, 0.5);
+  border: $b solid rgba($fever-purple, 0.3);
   border-radius: 50%;
   margin: 2px;
+
+  .app--dark & {
+    border-color: rgba($fever-teal, 0.3);
+  }
 
   &::before,
   &::after {
@@ -558,9 +677,13 @@ $t: 3000ms;
     position: absolute;
     display: block;
     width: $b;
-    background-color: $navbar-color;
-    border-radius: $b * 0.5;
+    background: linear-gradient(180deg, $fever-purple, $fever-teal);
+    border-radius: $b;
     transform-origin: 50% 0;
+
+    .app--dark & {
+      background: linear-gradient(180deg, $fever-teal, $fever-purple);
+    }
   }
 
   &::before {
@@ -571,22 +694,16 @@ $t: 3000ms;
   }
 
   &::after {
-    height: $r * 0.6;
+    height: $r * 0.55;
     left: $r - $b * 1.5;
     top: 50%;
-    animation: spin $t/4 linear infinite;
+    animation: spin ($t / 4) linear infinite;
   }
 }
 
 @keyframes spin {
   to {
     transform: rotate(360deg);
-  }
-}
-
-@keyframes blink {
-  50% {
-    opacity: 1;
   }
 }
 </style>
