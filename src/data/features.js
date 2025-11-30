@@ -153,7 +153,7 @@ export default [
       new Feature(
         'sponsor',
         'Sponsor',
-        'Sign in with Google and sponsor StackEdit to unlock PDF and Pandoc exports.',
+        'Sign in with Google and sponsor Stackedited to unlock PDF and Pandoc exports.',
       ),
     ],
   ),
@@ -202,42 +202,42 @@ export default [
       new Feature(
         'addBloggerAccount',
         'Blogger user',
-        'Link your Blogger account to StackEdit.',
+        'Link your Blogger account to Stackedited.',
       ),
       new Feature(
         'addDropboxAccount',
         'Dropbox user',
-        'Link your Dropbox account to StackEdit.',
+        'Link your Dropbox account to Stackedited.',
       ),
       new Feature(
         'addGitHubAccount',
         'GitHub user',
-        'Link your GitHub account to StackEdit.',
+        'Link your GitHub account to Stackedited.',
       ),
       new Feature(
         'addGitLabAccount',
         'GitLab user',
-        'Link your GitLab account to StackEdit.',
+        'Link your GitLab account to Stackedited.',
       ),
       new Feature(
         'addGoogleDriveAccount',
         'Google Drive user',
-        'Link your Google Drive account to StackEdit.',
+        'Link your Google Drive account to Stackedited.',
       ),
       new Feature(
         'addGooglePhotosAccount',
         'Google Photos user',
-        'Link your Google Photos account to StackEdit.',
+        'Link your Google Photos account to Stackedited.',
       ),
       new Feature(
         'addWordpressAccount',
         'WordPress user',
-        'Link your WordPress account to StackEdit.',
+        'Link your WordPress account to Stackedited.',
       ),
       new Feature(
         'addZendeskAccount',
         'Zendesk user',
-        'Link your Zendesk account to StackEdit.',
+        'Link your Zendesk account to Stackedited.',
       ),
       new Feature(
         'removeAccount',

@@ -2,7 +2,7 @@
   <modal-inner class="modal__inner-1--about-modal" aria-label="About">
     <div class="modal__content">
       <div class="logo-background" />
-      StackEdit on <a target="_blank" href="https://github.com/benweet/stackedit/">GitHub</a>
+      Stackedited on <a target="_blank" href="https://github.com/benweet/stackedit/">GitHub</a>
       <br>
       <a target="_blank" href="https://github.com/benweet/stackedit/issues">Issue tracker</a> — <a target="_blank" href="https://github.com/benweet/stackedit/releases">Changelog</a>
       <br>
@@ -10,13 +10,13 @@
       <br>
       <a target="_blank" href="https://community.stackedit.io/">Community</a> — <a target="_blank" href="https://community.stackedit.io/c/how-to">Tutos and How To</a>
       <br>
-      StackEdit on <a target="_blank" href="https://twitter.com/stackedit/">Twitter</a>
+      Stackedited on <a target="_blank" href="https://twitter.com/stackedit/">Twitter</a>
       <hr>
-      <small>© 2013-2019 Dock5 Software Ltd.<br>v{{ version }}</small>
+      <small>© 2013-2019 Dock5 Software Ltd.<br>© 2025 Fladry Creative<br>v{{ version }}</small>
       <h3>FAQ</h3>
       <div class="faq" v-html="faq" />
       <div class="modal__info">
-        For commercial support or custom development, please <a href="mailto:stackedit.project@gmail.com">contact us</a>.
+        For commercial support or custom development, please <a href="mailto:robb@fladrycreative.com">contact us</a>.
       </div>
       Licensed under an
       <a target="_blank" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License</a><br>

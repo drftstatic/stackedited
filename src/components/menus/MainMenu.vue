@@ -121,7 +121,7 @@
     </menu-entry>
     <menu-entry @click.native="about">
       <icon-help-circle slot="icon" />
-      About StackEdit
+      About Stackedited
     </menu-entry>
   </div>
 </template>

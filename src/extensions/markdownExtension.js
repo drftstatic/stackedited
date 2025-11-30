@@ -48,7 +48,7 @@ const inlineBaseRules2 = [
   'balance_pairs',
   'strikethrough',
   'emphasis',
-  'text_collapse',
+  'fragments_join', // renamed from 'text_collapse' in markdown-it v14
 ];
 
 extensionSvc.onGetOptions((options, properties) => Object

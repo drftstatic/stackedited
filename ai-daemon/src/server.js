@@ -171,8 +171,11 @@ export class AIDaemonServer {
   }
 
   async handleMessage(session, message) {
+    console.log(`[Session ${session.id.slice(0, 8)}] Received message type: ${message.type}`);
+
     switch (message.type) {
       case 'chat':
+        console.log(`[Session ${session.id.slice(0, 8)}] Chat message: "${message.text?.slice(0, 50)}..."`);
         await this.handleChat(session, message);
         break;
 
@@ -236,7 +239,10 @@ export class AIDaemonServer {
 
   async handleChat(session, message) {
     const text = message.text;
+    console.log(`[Chat] Starting chat handler for: "${text?.slice(0, 50)}"`);
+
     if (!text?.trim()) {
+      console.log('[Chat] Empty message, rejecting');
       return this.send(session.ws, {
         type: 'error',
         message: 'Empty message'
@@ -244,10 +250,12 @@ export class AIDaemonServer {
     }
 
     // Signal thinking
+    console.log('[Chat] Sending thinking signal');
     this.send(session.ws, { type: 'thinking' });
 
     try {
       // Select provider based on mode
+      console.log(`[Chat] Selecting provider (mode: ${session.mode})`);
       let provider, selection;
 
       if (session.mode === 'auto') {
@@ -261,12 +269,14 @@ export class AIDaemonServer {
       }
 
       // Send provider selection info
+      console.log(`[Chat] Provider selected: ${provider?.id}, sending selection info`);
       this.send(session.ws, {
         type: 'providerSelected',
         ...selection
       });
 
       // Build context with vault
+      console.log('[Chat] Building context with vault');
       const context = {
         ...session.context,
         vault: this.vault.getAllDocuments()
@@ -279,6 +289,7 @@ export class AIDaemonServer {
       });
 
       // Send message to AI
+      console.log(`[Chat] Calling provider.sendMessage() with message length: ${text.length}`);
       const response = await provider.sendMessage(
         text,
         context,

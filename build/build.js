@@ -3,7 +3,7 @@ require('./check-versions')()
 process.env.NODE_ENV = 'production'
 
 var ora = require('ora')
-var rm = require('rimraf')
+var fs = require('fs')
 var path = require('path')
 var chalk = require('chalk')
 var webpack = require('webpack')
@@ -13,7 +13,8 @@ var webpackConfig = require('./webpack.prod.conf')
 var spinner = ora('building for production...')
 spinner.start()
 
-rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
+var assetsPath = path.join(config.build.assetsRoot, config.build.assetsSubDirectory)
+fs.rm(assetsPath, { recursive: true, force: true }, err => {
   if (err) throw err
   webpack(webpackConfig, function (err, stats) {
     spinner.stop()

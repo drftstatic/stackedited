@@ -1,8 +1,8 @@
 {
-  "name": "stackedit",
+  "name": "stackedited",
   "version": "6.0.0",
-  "description": "AI-assisted Markdown editor based on StackEdit",
-  "author": "Fladry Creative",
+  "description": "A remix of StackEdit - developed by Fladry Creative.",
+  "author": "Fladry Creative / robb@fladrycreative.com",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/benweet/stackedit/issues"
@@ -111,6 +111,7 @@
     "string-replace-loader": "^3.1.0",
     "stylelint": "^15.11.0",
     "stylelint-config-standard-scss": "^11.1.0",
+    "stylelint-webpack-plugin": "^5.0.1",
     "terser-webpack-plugin": "^5.3.9",
     "url-loader": "^4.1.1",
     "vue-loader": "^15.11.1",

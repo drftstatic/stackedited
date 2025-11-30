@@ -44,23 +44,30 @@ export class ClaudeProvider extends BaseProvider {
    * Send message to Claude CLI
    */
   async sendMessage(message, context, onChunk) {
+    console.log('[Claude] sendMessage called');
     const systemPrompt = this.buildSystemPrompt(context);
+    console.log(`[Claude] System prompt length: ${systemPrompt?.length || 0}`);
 
     return new Promise((resolve, reject) => {
       // Build the full prompt with conversation history
+      // Note: Don't use "Human:" prefix as Claude CLI can misinterpret it as a path
       let fullPrompt = message;
       if (context.history?.length) {
         const historyText = context.history
-          .map(msg => `${msg.role === 'user' ? 'Human' : 'Assistant'}: ${msg.content}`)
+          .map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`)
           .join('\n\n');
-        fullPrompt = `${historyText}\n\nHuman: ${message}`;
+        fullPrompt = `Previous conversation:\n${historyText}\n\nCurrent request: ${message}`;
       }
 
       // Build CLI arguments
       const args = [
-        '--print',  // Output response to stdout
-        '--system-prompt', systemPrompt
+        '-p'  // Print mode - output response to stdout and exit
       ];
+
+      // Add system prompt if provided
+      if (systemPrompt) {
+        args.push('--system-prompt', systemPrompt);
+      }
 
       // Add web search if needed (detected by query intent)
       if (this.shouldUseWebSearch(message)) {
@@ -70,9 +77,26 @@ export class ClaudeProvider extends BaseProvider {
       // Add the message as the final argument
       args.push(fullPrompt);
 
+      console.log(`[Claude] Spawning CLI: ${this.cli} with ${args.length} args`);
+      console.log(`[Claude] Full command: ${this.cli} ${args.slice(0, 3).join(' ')} ... "${fullPrompt.slice(0, 30)}..."`);
+      console.log(`[Claude] Working directory: ${process.cwd()}`);
+
       const claude = spawn(this.cli, args, {
         stdio: ['pipe', 'pipe', 'pipe'],
-        env: { ...process.env }
+        env: {
+          ...process.env,
+          // Ensure we have proper PATH including homebrew
+          PATH: process.env.PATH || '/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin',
+          // Disable TTY detection which can cause hangs
+          TERM: 'dumb',
+          CI: 'true'
+        },
+        // Don't use shell - pass args directly
+        shell: false,
+        // Set working directory to a trusted location
+        cwd: process.cwd(),
+        // Ensure stdio is separate from parent
+        detached: false
       });
 
       let output = '';
@@ -87,18 +111,25 @@ export class ClaudeProvider extends BaseProvider {
       });
 
       claude.stderr.on('data', (data) => {
-        errorOutput += data.toString();
+        const stderr = data.toString();
+        console.log(`[Claude] stderr: ${stderr}`);
+        errorOutput += stderr;
       });
 
       claude.on('close', (code) => {
+        console.log(`[Claude] Process closed with code: ${code}`);
+        console.log(`[Claude] Output length: ${output.length}, Error length: ${errorOutput.length}`);
         if (code !== 0 && errorOutput && !output) {
           reject(new Error(`Claude CLI error (code ${code}): ${errorOutput}`));
         } else {
-          resolve(this.parseOutput(output));
+          const result = this.parseOutput(output);
+          console.log(`[Claude] Parsed result: text length=${result.text?.length}, functionCalls=${result.functionCalls?.length}`);
+          resolve(result);
         }
       });
 
       claude.on('error', (err) => {
+        console.log(`[Claude] Spawn error: ${err.message}`);
         reject(new Error(`Failed to spawn Claude CLI: ${err.message}`));
       });
 

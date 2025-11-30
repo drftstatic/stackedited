@@ -15,7 +15,9 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {
-      '@': resolve('src')
+      '@': resolve('src'),
+      // Use custom Prism wrapper to avoid circular dependency issues in bundled version
+      'prismjs$': resolve('src/libs/prism.js')
     },
     fallback: {
       // For mermaid and other libraries that may need Node.js polyfills

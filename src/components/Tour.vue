@@ -3,7 +3,7 @@
     <div class="tour-step" :class="'tour-step--' + step" :style="stepStyle">
       <div v-if="step === 'welcome'" class="tour-step__inner">
         <h2>Welcome back!</h2>
-        <p>The new <b>StackEdit 5</b> is here!</p>
+        <p>The new <b>Stackedited</b> is here!</p>
         <p>Please click <b>Next</b> to take a quick tour.</p>
         <div class="tour-step__button-bar">
           <button class="button" @click="finish">Skip</button>
@@ -12,7 +12,7 @@
       </div>
       <div v-else-if="step === 'editor'" class="tour-step__inner">
         <h2>Your Markdown editor</h2>
-        <p>StackEdit converts your Markdown to HTML in real-time.</p>
+        <p>Stackedited converts your Markdown to HTML in real-time.</p>
         <p>Click <icon-side-preview /> to toggle the side preview.</p>
         <div class="tour-step__button-bar">
           <button class="button" @click="finish">Skip</button>
@@ -21,7 +21,7 @@
       </div>
       <div v-else-if="step === 'explorer'" class="tour-step__inner">
         <h2>File explorer</h2>
-        <p>StackEdit can manage multiple files and folders in a workspace.</p>
+        <p>Stackedited can manage multiple files and folders in a workspace.</p>
         <p>Click <icon-folder /> to open the file explorer.</p>
         <div class="tour-step__button-bar">
           <button class="button" @click="finish">Skip</button>
@@ -30,7 +30,7 @@
       </div>
       <div v-else-if="step === 'menu'" class="tour-step__inner">
         <h2>Do a lot more!</h2>
-        <p>StackEdit can also synchronize and publish your files, manage collaborative workspaces...</p>
+        <p>Stackedited can also synchronize and publish your files, manage collaborative workspaces...</p>
         <p>Click <icon-provider provider-id="stackedit" /> to explore the menu.</p>
         <div class="tour-step__button-bar">
           <button class="button" @click="finish">Skip</button>
@@ -39,7 +39,7 @@
       </div>
       <div v-else-if="step === 'end'" class="tour-step__inner">
         <h2>Enjoy!</h2>
-        <p>If you like StackEdit, please rate 5 stars on the <a target="_blank" href="https://chrome.google.com/webstore/detail/iiooodelglhkcpgbajoejffhijaclcdg/reviews">Chrome Web Store</a>.</p>
+        <p>If you like Stackedited, please rate 5 stars on the <a target="_blank" href="https://chrome.google.com/webstore/detail/iiooodelglhkcpgbajoejffhijaclcdg/reviews">Chrome Web Store</a>.</p>
         <p>You can also star the project on <a target="_blank" href="https://github.com/benweet/stackedit">GitHub</a> and join the <a target="_blank" href="https://community.stackedit.io/">community</a>.</p>
         <div class="tour-step__button-bar">
           <button class="button button--resolve" @click="finish">Ok</button>
