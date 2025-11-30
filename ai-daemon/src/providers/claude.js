@@ -14,7 +14,7 @@ export class ClaudeProvider extends BaseProvider {
       id: 'claude',
       name: 'Claude Opus 4.5',
       cli: config.cli || 'claude',
-      model: config.model || 'claude-opus-4-5-20251101',
+      model: config.model || 'opus',
       capabilities: ['editing', 'code', 'nuance', 'review', 'research'],
       ...config
     });
@@ -61,7 +61,8 @@ export class ClaudeProvider extends BaseProvider {
 
       // Build CLI arguments
       const args = [
-        '-p'  // Print mode - output response to stdout and exit
+        '-p',  // Print mode - output response to stdout and exit
+        '--model', this.model  // Specify the model to use
       ];
 
       // Add system prompt if provided

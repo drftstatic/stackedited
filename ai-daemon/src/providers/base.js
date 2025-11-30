@@ -130,7 +130,17 @@ You can respond conversationally OR use function calls to edit the document:
 - Always explain your edits conversationally
 - Ask clarifying questions when the request is ambiguous
 - Maintain the user's voice and style when editing
-- When researching, cite your sources`;
+- When researching, cite your sources
+
+## IMPORTANT: How to Make Edits
+When you want to edit the document, you MUST output your function call in this exact XML format:
+
+<tool_use>{"name": "suggestEdit", "parameters": {"search": "exact text to find", "replace": "new text", "explanation": "why this change"}}</tool_use>
+
+Or for full document replacement:
+<tool_use>{"name": "updateNotepad", "parameters": {"content": "full new document content"}}</tool_use>
+
+Always include explanation text BEFORE or AFTER your tool_use blocks. The user sees your conversational response AND the edit will be applied.`;
 
     // Add vault context if available
     if (context.vault?.length) {

@@ -7,6 +7,20 @@
 
 import store from '../store';
 
+// Provider mention mappings
+const MENTION_TO_PROVIDER = {
+  claude: 'claude',
+  gemini: 'gemini',
+  gpt: 'openai',
+  openai: 'openai',
+  xai: 'xai',
+  zai: 'xai',
+  grok: 'cursor',
+  cursor: 'cursor',
+  human: 'human', // Special case - request human input
+  all: 'all', // Special case - broadcast
+};
+
 class AIService {
   constructor() {
     this.ws = null;
@@ -18,6 +32,35 @@ class AIService {
     this.syncInterval = null;
     this.syncTimeout = null;
     this.hasReceivedChunks = false; // Track if we've streamed chunks for current response
+  }
+
+  /**
+   * Parse @mentions from message text
+   * Returns { mentions: string[], targetProvider: string|null }
+   */
+  parseMentions(text) {
+    const mentionRegex = /@(\w+)/gi;
+    const mentions = [];
+    let match;
+
+    while ((match = mentionRegex.exec(text)) !== null) {
+      const mentionName = match[1].toLowerCase();
+      if (MENTION_TO_PROVIDER[mentionName]) {
+        mentions.push(mentionName);
+      }
+    }
+
+    // First valid mention determines target provider
+    let targetProvider = null;
+    for (const mention of mentions) {
+      const provider = MENTION_TO_PROVIDER[mention];
+      if (provider && provider !== 'human' && provider !== 'all') {
+        targetProvider = provider;
+        break;
+      }
+    }
+
+    return { mentions, targetProvider };
   }
 
   /**
@@ -155,6 +198,7 @@ class AIService {
             content: message.text,
             timestamp: Date.now(),
             isStreaming: true,
+            providerId: message.providerId,
           });
           this.hasReceivedChunks = true;
         } else {
@@ -172,6 +216,7 @@ class AIService {
             role: 'assistant',
             content: message.text,
             timestamp: Date.now(),
+            providerId: message.providerId,
           });
         } else {
           // Mark streaming complete on the existing message
@@ -185,6 +230,7 @@ class AIService {
 
       case 'done':
         store.commit('aiChat/setThinking', false);
+        store.commit('aiChat/setChaining', null);
         break;
 
       case 'error':
@@ -217,6 +263,19 @@ class AIService {
         // Confirmation received
         break;
 
+      case 'chaining':
+        store.commit('aiChat/setChaining', {
+          toProvider: message.toProvider,
+          hop: message.hop,
+        });
+        store.commit('aiChat/setThinking', true);
+        break;
+
+      case 'awaitingHuman':
+        store.commit('aiChat/setAwaitingHuman', true);
+        store.commit('aiChat/setThinking', false);
+        break;
+
       default:
         console.log('AI Service: Unknown message type:', message.type);
     }
@@ -226,7 +285,9 @@ class AIService {
    * Handle AI function calls
    */
   handleFunctionCall(message) {
-    const { function: funcName, arguments: args, result } = message;
+    const {
+      function: funcName, arguments: args, result, providerId,
+    } = message;
 
     // Log the function call
     store.commit('aiChat/addMessage', {
@@ -237,6 +298,7 @@ class AIService {
       functionName: funcName,
       functionArgs: args,
       functionResult: result,
+      providerId,
     });
 
     // Execute client-side function calls
@@ -451,20 +513,37 @@ class AIService {
   async sendMessage(text) {
     if (!text?.trim()) return;
 
+    // Parse @mentions from message
+    const { mentions, targetProvider } = this.parseMentions(text);
+
+    // Check for @human mention - may need to pause based on trust mode
+    const hasHumanMention = mentions.includes('human');
+    const { trustMode } = store.state.aiChat;
+
     // Add user message to UI immediately
     store.commit('aiChat/addMessage', {
       role: 'user',
       content: text,
       timestamp: Date.now(),
+      mentions, // Store mentions for display
     });
 
     // Make sure current document is synced
     this.syncCurrentDocument();
 
-    // Send to daemon
+    // If targeting a specific provider via @mention, switch to it
+    if (targetProvider) {
+      this.setProvider(targetProvider);
+    }
+
+    // Send to daemon with mention metadata
     this.send({
       type: 'chat',
       text,
+      mentions,
+      targetProvider,
+      hasHumanMention,
+      trustMode,
     });
   }
 

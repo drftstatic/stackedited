@@ -16,6 +16,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { ClaudeProvider } from './providers/claude.js';
 import { GeminiProvider } from './providers/gemini.js';
 import { OpenAIProvider } from './providers/openai.js';
+import { XAIProvider } from './providers/xai.js';
+import { CursorProvider } from './providers/cursor.js';
 import { VaultService } from './services/vaultService.js';
 import { CapabilityMatcher } from './services/capabilityMatcher.js';
 
@@ -45,7 +47,9 @@ export class AIDaemonServer {
     this.providers = [
       new ClaudeProvider(config.claude || {}),
       new GeminiProvider(config.gemini || {}),
-      new OpenAIProvider(config.openai || {})
+      new OpenAIProvider(config.openai || {}),
+      new XAIProvider(config.xai || {}),
+      new CursorProvider(config.cursor || {})
     ];
 
     // Smart routing
@@ -64,7 +68,7 @@ export class AIDaemonServer {
     this.app.use((req, res, next) => {
       const origin = req.headers.origin;
       if (this.config.allowedOrigins === '*' ||
-          this.config.allowedOrigins.includes(origin)) {
+        this.config.allowedOrigins.includes(origin)) {
         res.header('Access-Control-Allow-Origin', origin || '*');
       }
       res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -242,11 +246,15 @@ export class AIDaemonServer {
     }
   }
 
-  async handleChat(session, message) {
+  async handleChat(session, message, options = {}) {
     const text = message.text;
-    console.log(`[Chat] Starting chat handler for: "${text?.slice(0, 50)}"`);
+    const { mentions, targetProvider, hasHumanMention, trustMode } = message;
+    const { hopCount = 0 } = options;
 
-    if (!text?.trim()) {
+    console.log(`[Chat] Starting chat handler for: "${text?.slice(0, 50)}..." (Hop: ${hopCount})`);
+
+    // Allow empty text if it's a chain (responding to history)
+    if (!text?.trim() && hopCount === 0) {
       console.log('[Chat] Empty message, rejecting');
       return this.send(session.ws, {
         type: 'error',
@@ -259,15 +267,26 @@ export class AIDaemonServer {
     this.send(session.ws, { type: 'thinking' });
 
     try {
-      // Select provider based on mode
-      console.log(`[Chat] Selecting provider (mode: ${session.mode})`);
+      // Select provider based on @mention or mode
       let provider, selection;
 
-      if (session.mode === 'auto') {
-        const result = await this.matcher.selectBest(text);
+      // Priority: options.targetProvider > @mention > manual mode > auto mode
+      const explicitProvider = options.targetProvider || targetProvider;
+
+      if (explicitProvider) {
+        console.log(`[Chat] Using target provider: ${explicitProvider}`);
+        const result = await this.matcher.selectManual(explicitProvider);
+        provider = result.provider;
+        selection = result.selection;
+        // Update session provider to match mention
+        session.providerId = explicitProvider;
+      } else if (session.mode === 'auto') {
+        console.log(`[Chat] Auto-selecting provider`);
+        const result = await this.matcher.selectBest(text || session.context.history[session.context.history.length - 1]?.content || '');
         provider = result.provider;
         selection = result.selection;
       } else {
+        console.log(`[Chat] Using manual provider: ${session.providerId}`);
         const result = await this.matcher.selectManual(session.providerId);
         provider = result.provider;
         selection = result.selection;
@@ -287,22 +306,30 @@ export class AIDaemonServer {
         vault: this.vault.getAllDocuments()
       };
 
-      // Add user message to history
-      session.context.history.push({
-        role: 'user',
-        content: text
-      });
+      // Add user message to history ONLY if it's the first hop (user input)
+      if (text && hopCount === 0) {
+        session.context.history.push({
+          role: 'user',
+          content: text
+        });
+      }
 
       // Send message to AI
-      console.log(`[Chat] Calling provider.sendMessage() with message length: ${text.length}`);
+      // If chaining, we send the last message from history as the "prompt" 
+      // or just an empty string if the provider supports reading history directly.
+      // Most providers need a "prompt". We'll use the last message content.
+      const prompt = text || session.context.history[session.context.history.length - 1]?.content || 'Continue';
+
+      console.log(`[Chat] Calling provider.sendMessage() with message length: ${prompt.length}`);
       const response = await provider.sendMessage(
-        text,
+        prompt,
         context,
         // Streaming callback
         (chunk) => {
           this.send(session.ws, {
             type: 'chunk',
-            text: chunk
+            text: chunk,
+            providerId: provider.id
           });
         }
       );
@@ -315,7 +342,8 @@ export class AIDaemonServer {
             type: 'functionCall',
             function: call.name,
             arguments: call.arguments,
-            result
+            result,
+            providerId: provider.id
           });
         }
       }
@@ -329,8 +357,59 @@ export class AIDaemonServer {
 
         this.send(session.ws, {
           type: 'response',
-          text: response.text
+          text: response.text,
+          providerId: provider.id
         });
+
+        // Check for @human mention to pause
+        if (response.text.includes('@human')) {
+          if (!trustMode) {
+            console.log('[Chat] @human mentioned and Trust Mode is OFF. Pausing.');
+            this.send(session.ws, { type: 'awaitingHuman' });
+            return; // Stop chaining
+          }
+        }
+
+        // CHAINING LOGIC
+        // Check for other provider mentions
+        if (hopCount < 3) {
+          const mentionMap = {
+            'claude': 'claude',
+            'gemini': 'gemini',
+            'gpt': 'openai',
+            'openai': 'openai',
+            'xai': 'xai',
+            'grok': 'cursor',
+            'cursor': 'cursor'
+          };
+
+          const mentionRegex = /@(\w+)/i;
+          const match = response.text.match(mentionRegex);
+
+          if (match) {
+            const mentionedName = match[1].toLowerCase();
+            const nextProviderId = mentionMap[mentionedName];
+
+            if (nextProviderId && nextProviderId !== 'human') {
+              console.log(`[Chat] Chaining to ${nextProviderId} (Hop ${hopCount + 1})`);
+
+              // Notify client
+              this.send(session.ws, {
+                type: 'chaining',
+                toProvider: nextProviderId,
+                hop: hopCount + 1
+              });
+
+              // Recursive call
+              await this.handleChat(
+                session,
+                { ...message, text: null }, // No new user text
+                { hopCount: hopCount + 1, targetProvider: nextProviderId }
+              );
+              return; // Done with this handler
+            }
+          }
+        }
       }
 
       this.send(session.ws, { type: 'done' });

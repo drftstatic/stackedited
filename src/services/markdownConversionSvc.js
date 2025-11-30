@@ -1,6 +1,6 @@
 import DiffMatchPatch from 'diff-match-patch';
-import Prism from '../libs/prism';
 import MarkdownIt from 'markdown-it';
+import Prism from '../libs/prism';
 import markdownGrammarSvc from './markdownGrammarSvc';
 import extensionSvc from './extensionSvc';
 import utils from './utils';

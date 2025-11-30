@@ -33,8 +33,8 @@ module.exports = (app) => {
     extended: false,
   }), user.paypalIpn);
 
-  // Serve landing.html
-  app.get('/', (req, res) => res.sendFile(resolvePath('static/landing/index.html')));
+  // Redirect to app (skip landing page)
+  app.get('/', (req, res) => res.redirect('/app'));
   // Serve sitemap.xml
   app.get('/sitemap.xml', (req, res) => res.sendFile(resolvePath('static/sitemap.xml')));
   // Serve callback.html

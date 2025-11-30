@@ -35,6 +35,10 @@ const defaultConstants = {
   sideBarMaxWidth: 600,
   explorerMinWidth: 180,
   explorerMaxWidth: 500,
+  // AI Chat panel constraints for collaborative mode
+  aiChatMinWidth: 300,
+  aiChatMaxWidth: 0.7, // Max 70% of available width
+  defaultAiChatSplitRatio: 0.5, // 50/50 split
 };
 
 // Dynamic constants getter that uses user preferences or defaults
@@ -42,6 +46,7 @@ const getConstants = (layoutSettings) => ({
   ...defaultConstants,
   sideBarWidth: layoutSettings?.sideBarWidth || defaultConstants.defaultSideBarWidth,
   explorerWidth: layoutSettings?.explorerWidth || defaultConstants.defaultExplorerWidth,
+  aiChatSplitRatio: layoutSettings?.aiChatSplitRatio || defaultConstants.defaultAiChatSplitRatio,
 });
 
 // Legacy static reference (used in some places)
@@ -60,8 +65,10 @@ function computeStyles(state, getters, layoutSettings = getters['data/layoutSett
   showEditor: layoutSettings.showEditor,
   showSidePreview: layoutSettings.showSidePreview && layoutSettings.showEditor,
   showPreview: layoutSettings.showSidePreview || !layoutSettings.showEditor,
-  showSideBar: layoutSettings.showSideBar && !state.light,
+  showSideBar: layoutSettings.showSideBar && !state.light && !layoutSettings.collaborativeMode,
   showExplorer: layoutSettings.showExplorer && !state.light,
+  showAiChat: layoutSettings.collaborativeMode && !state.light, // AI chat panel in collaborative mode
+  collaborativeMode: layoutSettings.collaborativeMode,
   layoutOverflow: false,
   hideLocations: state.light,
 }) {
@@ -76,17 +83,35 @@ function computeStyles(state, getters, layoutSettings = getters['data/layoutSett
     styles.innerHeight -= dynConstants.statusBarHeight;
   }
 
-  styles.innerWidth = state.layout.bodyWidth;
+  // Calculate available width
+  let totalAvailableWidth = state.layout.bodyWidth;
+  if (styles.showExplorer) {
+    totalAvailableWidth -= dynConstants.explorerWidth;
+  }
+
+  // In collaborative mode, split between editor and AI chat
+  if (styles.showAiChat) {
+    const splitRatio = dynConstants.aiChatSplitRatio;
+    styles.aiChatWidth = Math.floor(totalAvailableWidth * splitRatio);
+    // Enforce min width
+    styles.aiChatWidth = Math.max(styles.aiChatWidth, dynConstants.aiChatMinWidth);
+    // Enforce max width (70% of available)
+    const maxWidth = Math.floor(totalAvailableWidth * dynConstants.aiChatMaxWidth);
+    styles.aiChatWidth = Math.min(styles.aiChatWidth, maxWidth);
+    // Editor gets the rest
+    styles.innerWidth = totalAvailableWidth - styles.aiChatWidth;
+  } else {
+    styles.innerWidth = totalAvailableWidth;
+    styles.aiChatWidth = 0;
+    if (styles.showSideBar) {
+      styles.innerWidth -= dynConstants.sideBarWidth;
+    }
+  }
+
   if (styles.innerWidth < dynConstants.editorMinWidth
     + dynConstants.gutterWidth + dynConstants.buttonBarWidth
   ) {
     styles.layoutOverflow = true;
-  }
-  if (styles.showSideBar) {
-    styles.innerWidth -= dynConstants.sideBarWidth;
-  }
-  if (styles.showExplorer) {
-    styles.innerWidth -= dynConstants.explorerWidth;
   }
 
   let doublePanelWidth = styles.innerWidth - dynConstants.buttonBarWidth;

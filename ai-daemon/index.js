@@ -26,7 +26,7 @@ const config = {
   // Provider-specific config
   claude: {
     cli: process.env.CLAUDE_CLI_PATH || 'claude',
-    model: process.env.CLAUDE_MODEL || 'claude-opus-4-5-20251101'
+    model: process.env.CLAUDE_MODEL || 'opus'
   },
   openai: {
     cli: process.env.CODEX_CLI_PATH || 'codex',
@@ -35,6 +35,10 @@ const config = {
   gemini: {
     cli: process.env.GEMINI_CLI_PATH || 'gemini',
     model: process.env.GEMINI_MODEL || 'gemini-3-pro-preview'
+  },
+  xai: {
+    apiKey: process.env.XAI_API_KEY,
+    model: process.env.XAI_MODEL || 'grok-beta'
   }
 };
 

@@ -3,7 +3,7 @@
     <!-- Role indicator -->
     <div class="ai-message__role">
       <span v-if="message.role === 'user'">You</span>
-      <span v-else-if="message.role === 'assistant'">Ted</span>
+      <span v-else-if="message.role === 'assistant'">{{ getProviderName(message.providerId) }}</span>
       <span v-else>System</span>
     </div>
 
@@ -41,13 +41,20 @@ export default {
   },
   computed: {
     messageClass() {
-      return {
+      const classes = {
         'ai-message--user': this.message.role === 'user',
         'ai-message--assistant': this.message.role === 'assistant',
         'ai-message--system': this.message.role === 'system',
         'ai-message--error': this.message.isError,
         'ai-message--function': this.message.isFunctionCall,
       };
+
+      // Add provider-specific class for assistant messages
+      if (this.message.role === 'assistant' && this.message.providerId) {
+        classes[`ai-message--${this.message.providerId}`] = true;
+      }
+
+      return classes;
     },
     formattedContent() {
       // Simple markdown rendering for chat messages
@@ -83,15 +90,26 @@ export default {
       const date = new Date(timestamp);
       return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     },
-    formatFunctionName(name) {
+    getProviderName(providerId) {
       const names = {
-        updateNotepad: 'Ted is updating the document',
-        suggestEdit: 'Ted has a suggestion',
-        searchVault: 'Ted is searching',
-        readDocument: 'Ted is reading',
-        webSearch: 'Ted is exploring the web',
+        claude: 'CLAUDE',
+        gemini: 'GEMINI',
+        openai: 'GPT',
+        xai: 'X.AI',
+        cursor: 'GROK',
       };
-      return names[name] || name;
+      return names[providerId] || 'AI';
+    },
+    formatFunctionName(name) {
+      const provider = this.getProviderName(this.message.providerId);
+      const actions = {
+        updateNotepad: `${provider} is updating the document`,
+        suggestEdit: `${provider} has a suggestion`,
+        searchVault: `${provider} is searching`,
+        readDocument: `${provider} is reading`,
+        webSearch: `${provider} is exploring the web`,
+      };
+      return actions[name] || name;
     },
   },
 };
@@ -165,7 +183,7 @@ export default {
 }
 
 // ───────────────────────────────────────────────────────────────
-// TED'S MESSAGES - His fever dream responses
+// ASSISTANT MESSAGES - Base style for all AI providers
 // ───────────────────────────────────────────────────────────────
 
 .ai-message--assistant {
@@ -197,22 +215,66 @@ export default {
       color: $fever-purple-light;
     }
   }
+}
 
-  // Subtle shimmer on Ted's messages
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba($fever-purple, 0.03) 50%,
-      transparent 100%
-    );
-    border-radius: inherit;
-    animation: message-shimmer 6s ease-in-out infinite;
-    pointer-events: none;
-  }
+// ───────────────────────────────────────────────────────────────
+// CLAUDE MESSAGES - Purple
+// ───────────────────────────────────────────────────────────────
+
+.ai-message--claude {
+  border-left-color: $fever-purple;
+  background: linear-gradient(135deg, rgba($fever-purple, 0.1) 0%, transparent 100%);
+
+  .ai-message__role { color: $fever-purple; }
+  .app--dark & .ai-message__role { color: $fever-purple-light; }
+}
+
+// ───────────────────────────────────────────────────────────────
+// GEMINI MESSAGES - Teal
+// ───────────────────────────────────────────────────────────────
+
+.ai-message--gemini {
+  border-left-color: $fever-teal;
+  background: linear-gradient(135deg, rgba($fever-teal, 0.1) 0%, transparent 100%);
+
+  .ai-message__role { color: $fever-teal-dark; }
+  .app--dark & .ai-message__role { color: $fever-teal; }
+}
+
+// ───────────────────────────────────────────────────────────────
+// GPT/OPENAI MESSAGES - Coral
+// ───────────────────────────────────────────────────────────────
+
+.ai-message--openai {
+  border-left-color: $fever-coral;
+  background: linear-gradient(135deg, rgba($fever-coral, 0.1) 0%, transparent 100%);
+
+  .ai-message__role { color: $fever-coral-deep; }
+  .app--dark & .ai-message__role { color: $fever-coral; }
+}
+
+// ───────────────────────────────────────────────────────────────
+// X.AI MESSAGES - Amber
+// ───────────────────────────────────────────────────────────────
+
+.ai-message--xai {
+  border-left-color: $fever-amber;
+  background: linear-gradient(135deg, rgba($fever-amber, 0.1) 0%, transparent 100%);
+
+  .ai-message__role { color: darken($fever-amber, 10%); }
+  .app--dark & .ai-message__role { color: $fever-amber; }
+}
+
+// ───────────────────────────────────────────────────────────────
+// CURSOR/GROK MESSAGES - Lime
+// ───────────────────────────────────────────────────────────────
+
+.ai-message--cursor {
+  border-left-color: $fever-lime;
+  background: linear-gradient(135deg, rgba($fever-lime, 0.1) 0%, transparent 100%);
+
+  .ai-message__role { color: darken($fever-lime, 15%); }
+  .app--dark & .ai-message__role { color: $fever-lime; }
 }
 
 @keyframes message-shimmer {

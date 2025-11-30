@@ -1,24 +1,16 @@
 <template>
-  <div class="ai-chat side-bar__panel">
-    <!-- Ted's Header -->
+  <div class="ai-chat">
+    <!-- Header -->
     <div class="ai-chat__header">
-      <div class="ai-chat__ted-avatar">
-        <div class="ai-chat__ted-face">
-          <div class="ai-chat__ted-eye ai-chat__ted-eye--left" />
-          <div class="ai-chat__ted-eye ai-chat__ted-eye--right" />
-        </div>
+      <div class="ai-chat__title">
+        <span class="ai-chat__title-text">AI Chat</span>
+        <span class="ai-chat__title-subtitle">multi-provider workspace</span>
       </div>
-      <div class="ai-chat__ted-intro">
-        <span class="ai-chat__ted-name">Ted</span>
-        <span class="ai-chat__ted-subtitle">your slightly unhinged assistant</span>
+      <!-- Connection Status -->
+      <div class="ai-chat__status" :class="statusClass">
+        <span class="ai-chat__status-dot" />
+        <span class="ai-chat__status-text">{{ statusText }}</span>
       </div>
-    </div>
-
-    <!-- Connection Status -->
-    <div class="ai-chat__status" :class="statusClass">
-      <span class="ai-chat__status-dot" />
-      <span class="ai-chat__status-text">{{ statusText }}</span>
-      <button v-if="!connected" class="button" @click="reconnect">Reconnect</button>
     </div>
 
     <!-- Provider Selector -->
@@ -27,8 +19,8 @@
     <!-- Messages -->
     <div ref="messages" class="ai-chat__messages">
       <div v-if="messages.length === 0" class="ai-chat__empty">
-        <p>Hey there. I'm Ted. I exist somewhere between the pixels.</p>
-        <p class="ai-chat__hint">I can help edit your document, research topics, or just... contemplate existence together.</p>
+        <p>Select a provider and start chatting.</p>
+        <p class="ai-chat__hint">Your AI assistants can edit documents, research topics, and collaborate on ideas.</p>
       </div>
       <ai-chat-message
         v-for="message in messages"
@@ -36,10 +28,15 @@
         :message="message"
       />
       <div v-if="thinking" class="ai-chat__thinking">
-        <span class="ai-chat__thinking-text">Ted is contemplating...</span>
+        <span class="ai-chat__thinking-text">{{ thinkingText }}</span>
         <span class="ai-chat__thinking-dot" />
         <span class="ai-chat__thinking-dot" />
         <span class="ai-chat__thinking-dot" />
+      </div>
+      <div v-if="awaitingHuman" class="ai-chat__awaiting">
+        <span class="ai-chat__awaiting-icon">👤</span>
+        <span class="ai-chat__awaiting-text">Waiting for human input...</span>
+        <button class="ai-chat__awaiting-btn" @click="resumeChat">Resume</button>
       </div>
     </div>
 
@@ -73,19 +70,49 @@ export default {
       'messages',
       'showDiffModal',
       'error',
+      'error',
+      'providerId',
+      'providerId',
+      'awaitingHuman',
+      'chaining',
     ]),
     ...mapGetters('aiChat', [
       'connectionStatus',
+      'currentProvider',
     ]),
     statusClass() {
       return `ai-chat__status--${this.connectionStatus}`;
     },
     statusText() {
       switch (this.connectionStatus) {
-        case 'connected': return 'Ted is here';
-        case 'error': return this.error || 'Ted wandered off';
-        default: return 'Ted is elsewhere';
+        case 'connected': return 'Connected';
+        case 'error': return this.error || 'Connection error';
+        default: return 'Connecting...';
       }
+    },
+    currentProviderName() {
+      const names = {
+        claude: 'Claude',
+        gemini: 'Gemini',
+        openai: 'GPT',
+        xai: 'X.AI',
+        cursor: 'Grok',
+      };
+      return names[this.providerId] || 'AI';
+    },
+    thinkingText() {
+      if (this.chaining) {
+        const names = {
+          claude: 'Claude',
+          gemini: 'Gemini',
+          openai: 'GPT',
+          xai: 'X.AI',
+          cursor: 'Grok',
+        };
+        const target = names[this.chaining.toProvider] || this.chaining.toProvider;
+        return `Chaining to ${target} (Hop ${this.chaining.hop})...`;
+      }
+      return `${this.currentProviderName} is thinking...`;
     },
   },
   watch: {
@@ -106,6 +133,11 @@ export default {
     reconnect() {
       aiService.connect().catch(() => {});
     },
+    resumeChat() {
+      this.$store.commit('aiChat/setAwaitingHuman', false);
+      // Optionally send a signal to server that human is back/approved
+      // For now, just clearing the state allows user to type
+    },
   },
 };
 </script>
@@ -114,7 +146,7 @@ export default {
 @import '../styles/variables.scss';
 
 // ═══════════════════════════════════════════════════════════════
-// TED'S DOMAIN - AI Chat with Fever Dream Personality
+// AI Chat - Multi-Provider Workspace
 // ═══════════════════════════════════════════════════════════════
 
 .ai-chat {
@@ -152,7 +184,7 @@ export default {
 }
 
 // ───────────────────────────────────────────────────────────────
-// TED'S HEADER - The consciousness interface
+// HEADER - Title and status
 // ───────────────────────────────────────────────────────────────
 
 .ai-chat__header {
@@ -235,152 +267,25 @@ export default {
 }
 
 // ───────────────────────────────────────────────────────────────
-// TED'S AVATAR - The face of controlled chaos
+// TITLE - Header title and subtitle
 // ───────────────────────────────────────────────────────────────
 
-.ai-chat__ted-avatar {
-  width: 56px;
-  height: 56px;
-  margin-right: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  position: relative;
-
-  // Glowing ring around avatar
-  &::before {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border-radius: 50%;
-    background: conic-gradient(
-      from 0deg,
-      $fever-purple,
-      $fever-teal,
-      $fever-purple-light,
-      $fever-teal-light,
-      $fever-purple
-    );
-    opacity: 0.4;
-    animation: avatar-ring-spin 12s linear infinite;
-    filter: blur(4px);
-
-    .app--dark & {
-      opacity: 0.5;
-    }
-  }
-}
-
-@keyframes avatar-ring-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.ai-chat__ted-face {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, $fever-purple 0%, $fever-teal 100%);
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: face-pulse 4s ease-in-out infinite;
-  box-shadow:
-    0 0 20px rgba($fever-purple, 0.4),
-    inset 0 0 15px rgba(255, 255, 255, 0.1);
-  z-index: 1;
-
-  .app--dark & {
-    background: linear-gradient(135deg, $fever-teal 0%, $fever-purple 100%);
-    box-shadow:
-      0 0 20px rgba($fever-teal, 0.4),
-      inset 0 0 15px rgba(255, 255, 255, 0.1);
-  }
-
-  // Inner face detail
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 4px;
-    border-radius: 50%;
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.15) 0%,
-      transparent 50%
-    );
-  }
-}
-
-@keyframes face-pulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow:
-      0 0 20px rgba($fever-purple, 0.4),
-      inset 0 0 15px rgba(255, 255, 255, 0.1);
-  }
-  50% {
-    transform: scale(1.08);
-    box-shadow:
-      0 0 30px rgba($fever-purple, 0.5),
-      0 0 60px rgba($fever-teal, 0.2),
-      inset 0 0 15px rgba(255, 255, 255, 0.15);
-  }
-}
-
-.ai-chat__ted-eye {
-  width: 7px;
-  height: 7px;
-  background: #fff;
-  border-radius: 50%;
-  position: absolute;
-  top: 16px;
-  animation: blink 5s infinite;
-  box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
-
-  &--left {
-    left: 12px;
-  }
-
-  &--right {
-    right: 12px;
-  }
-}
-
-@keyframes blink {
-  0%, 45%, 55%, 100% {
-    opacity: 1;
-    transform: scaleY(1);
-  }
-  50% {
-    opacity: 0.3;
-    transform: scaleY(0.1);
-  }
-}
-
-// ───────────────────────────────────────────────────────────────
-// TED'S INTRO - Name and subtitle
-// ───────────────────────────────────────────────────────────────
-
-.ai-chat__ted-intro {
+.ai-chat__title {
   display: flex;
   flex-direction: column;
+  flex: 1;
   line-height: 1.3;
 }
 
-.ai-chat__ted-name {
+.ai-chat__title-text {
   font-family: $font-family-display;
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: 3px;
-  text-transform: uppercase;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
   background: linear-gradient(135deg, $fever-purple-deep 0%, $fever-teal-dark 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  position: relative;
 
   .app--dark & {
     background: linear-gradient(135deg, $fever-teal 0%, $fever-purple-light 100%);
@@ -388,49 +293,16 @@ export default {
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-
-  // Subtle glitch effect on name
-  &::after {
-    content: 'Ted';
-    position: absolute;
-    left: 1px;
-    top: 0;
-    background: linear-gradient(135deg, $fever-coral 0%, transparent 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    opacity: 0;
-    animation: ted-name-glitch 8s ease-in-out infinite;
-  }
 }
 
-@keyframes ted-name-glitch {
-  0%, 94%, 100% {
-    opacity: 0;
-    transform: translateX(0);
-  }
-  95% {
-    opacity: 0.5;
-    transform: translateX(-2px);
-  }
-  96% {
-    opacity: 0;
-    transform: translateX(2px);
-  }
-  97% {
-    opacity: 0.3;
-    transform: translateX(-1px);
-  }
-}
-
-.ai-chat__ted-subtitle {
+.ai-chat__title-subtitle {
   font-family: $font-family-main;
-  font-size: 11px;
-  letter-spacing: 1px;
+  font-size: 10px;
+  letter-spacing: 0.5px;
   color: $fever-purple;
-  font-style: italic;
-  opacity: 0.7;
+  opacity: 0.6;
   margin-top: 2px;
+  text-transform: lowercase;
 
   .app--dark & {
     color: $fever-teal-light;
@@ -438,40 +310,29 @@ export default {
 }
 
 // ───────────────────────────────────────────────────────────────
-// CONNECTION STATUS - Ted's presence indicator
+// CONNECTION STATUS - Provider connection indicator
 // ───────────────────────────────────────────────────────────────
 
 .ai-chat__status {
   display: flex;
   align-items: center;
-  padding: 10px 16px;
-  font-size: 12px;
+  font-size: 11px;
   font-family: $font-family-main;
-  border-bottom: 1px solid rgba($fever-purple, 0.1);
-  background: linear-gradient(
-    90deg,
-    rgba($fever-teal, 0.05) 0%,
-    transparent 50%,
-    rgba($fever-purple, 0.05) 100%
-  );
+  padding: 4px 8px;
+  border-radius: $border-radius-base;
+  background: rgba($fever-teal, 0.1);
   transition: all $transition-base;
 
   .app--dark & {
-    background: linear-gradient(
-      90deg,
-      rgba($fever-purple, 0.08) 0%,
-      transparent 50%,
-      rgba($fever-teal, 0.08) 100%
-    );
-    border-bottom-color: rgba($fever-teal, 0.1);
+    background: rgba($fever-teal, 0.15);
   }
 }
 
 .ai-chat__status-dot {
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  margin-right: 10px;
+  margin-right: 6px;
   transition: all $transition-base;
   position: relative;
 }
@@ -549,7 +410,7 @@ export default {
 .ai-chat__messages {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
+  padding: 16px 24px 16px 16px; // Extra right padding for breathing room
   scroll-behavior: smooth;
 }
 
@@ -585,7 +446,7 @@ export default {
 }
 
 // ───────────────────────────────────────────────────────────────
-// THINKING STATE - Ted's contemplation animation
+// THINKING STATE - Provider processing animation
 // ───────────────────────────────────────────────────────────────
 
 .ai-chat__thinking {
@@ -694,5 +555,58 @@ export default {
     transform: scale(1.2);
     opacity: 1;
   }
+}
+  }
+}
+
+// ───────────────────────────────────────────────────────────────
+// AWAITING HUMAN STATE
+// ───────────────────────────────────────────────────────────────
+
+.ai-chat__awaiting {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  margin: 8px 0;
+  background: rgba($fever-amber, 0.1);
+  border: 1px solid rgba($fever-amber, 0.3);
+  border-radius: $border-radius-lg;
+  animation: pulse-amber 2s infinite;
+}
+
+.ai-chat__awaiting-icon {
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.ai-chat__awaiting-text {
+  flex: 1;
+  font-family: $font-family-main;
+  font-size: 13px;
+  color: $fever-amber;
+  font-weight: 500;
+}
+
+.ai-chat__awaiting-btn {
+  padding: 4px 12px;
+  background: rgba($fever-amber, 0.2);
+  border: 1px solid $fever-amber;
+  border-radius: 4px;
+  color: $fever-amber;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: $fever-amber;
+    color: $fever-ghost-dark;
+  }
+}
+
+@keyframes pulse-amber {
+  0%, 100% { box-shadow: 0 0 0 rgba($fever-amber, 0); }
+  50% { box-shadow: 0 0 10px rgba($fever-amber, 0.2); }
 }
 </style>

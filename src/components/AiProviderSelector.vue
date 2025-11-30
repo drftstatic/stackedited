@@ -1,109 +1,86 @@
 <template>
   <div class="ai-provider">
-    <!-- Mode selector -->
-    <div class="ai-provider__mode">
-      <button
-        v-title="'Auto-select best AI for the task'"
-        class="ai-provider__mode-btn"
-        :class="{ 'ai-provider__mode-btn--active': mode === 'auto' }"
-        @click="setMode('auto')"
-      >
-        Auto
-      </button>
-      <button
-        v-title="'Manually select AI provider'"
-        class="ai-provider__mode-btn"
-        :class="{ 'ai-provider__mode-btn--active': mode === 'manual' }"
-        @click="setMode('manual')"
-      >
-        Manual
-      </button>
+    <div class="ai-provider__row">
+      <!-- Provider buttons -->
+      <div class="ai-provider__buttons">
+        <button
+          v-for="provider in allProviders"
+          :key="provider.id"
+          v-title="provider.available ? provider.name : `${provider.name} (unavailable)`"
+          class="ai-provider__btn"
+          :class="[
+            `ai-provider__btn--${provider.id}`,
+            {
+              'ai-provider__btn--active': providerId === provider.id,
+              'ai-provider__btn--disabled': !provider.available
+            }
+          ]"
+          :disabled="!provider.available"
+          @click="selectProvider(provider.id)"
+        >
+          {{ getProviderShortName(provider.id) }}
+        </button>
+      </div>
+
+      <!-- Trust Mode Toggle -->
+      <div class="ai-provider__trust">
+        <button
+          class="ai-provider__trust-btn"
+          :class="{ 'ai-provider__trust-btn--active': trustMode }"
+          @click="toggleTrustMode"
+          v-title="trustMode ? 'Trust Mode ON: AI continues autonomously' : 'Trust Mode OFF: AI pauses for human approval'"
+        >
+          <span class="ai-provider__trust-icon">{{ trustMode ? '🔓' : '🔒' }}</span>
+          <span class="ai-provider__trust-label">TRUST</span>
+        </button>
+      </div>
     </div>
 
-    <!-- Provider buttons (manual mode) -->
-    <div v-if="mode === 'manual'" class="ai-provider__list">
-      <button
-        v-for="provider in availableProviders"
-        :key="provider.id"
-        v-title="provider.name"
-        class="ai-provider__btn"
-        :class="{ 'ai-provider__btn--active': providerId === provider.id }"
-        @click="selectProvider(provider.id)"
-      >
-        {{ getProviderShortName(provider.id) }}
-      </button>
-    </div>
-
-    <!-- Current selection info -->
-    <div v-if="selection" class="ai-provider__selection">
-      <span class="ai-provider__using">
-        Using: <strong>{{ getCurrentProviderName() }}</strong>
-        <span v-if="selection.score" class="ai-provider__score">
-          ({{ Math.round(selection.score * 100) }}%)
-        </span>
-      </span>
-      <span v-if="selection.reason" class="ai-provider__reason">
-        {{ selection.reason }}
-      </span>
-    </div>
-
-    <!-- Suggestions (auto mode) -->
-    <div v-if="mode === 'auto' && suggestions.length > 1" class="ai-provider__suggestions">
-      <span class="ai-provider__suggestions-label">Alternatives:</span>
-      <span
-        v-for="alt in topAlternatives"
-        :key="alt.id"
-        v-title="`Switch to ${alt.name}: ${alt.reason}`"
-        class="ai-provider__alt"
-        @click="selectProvider(alt.id); setMode('manual')"
-      >
-        {{ getProviderShortName(alt.id) }} ({{ Math.round(alt.score * 100) }}%)
-      </span>
+    <!-- Connection status -->
+    <div v-if="!connected" class="ai-provider__status ai-provider__status--disconnected">
+      Connecting...
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import { mapState } from 'vuex';
 import aiService from '../services/aiService';
 
 export default {
   computed: {
     ...mapState('aiChat', [
-      'mode',
       'providerId',
       'providers',
-      'suggestions',
-      'selection',
+      'providers',
+      'connected',
+      'trustMode',
     ]),
-    ...mapGetters('aiChat', [
-      'availableProviders',
-    ]),
-    topAlternatives() {
-      // Show top 2 alternatives that aren't the current selection
-      return this.suggestions
-        .filter((s) => s.id !== this.providerId && s.available)
-        .slice(0, 2);
+    allProviders() {
+      // Return all providers, available ones first
+      return [...this.providers].sort((a, b) => {
+        if (a.available && !b.available) return -1;
+        if (!a.available && b.available) return 1;
+        return 0;
+      });
     },
   },
   methods: {
-    setMode(mode) {
-      aiService.setMode(mode);
-    },
     selectProvider(providerId) {
       aiService.setProvider(providerId);
+    },
+    toggleTrustMode() {
+      this.$store.dispatch('aiChat/toggleTrustMode');
     },
     getProviderShortName(id) {
       const names = {
         claude: 'Claude',
         gemini: 'Gemini',
         openai: 'GPT',
+        xai: 'X.AI',
+        cursor: 'Grok',
       };
       return names[id] || id;
-    },
-    getCurrentProviderName() {
-      const provider = this.providers.find((p) => p.id === this.providerId);
-      return provider?.name || this.providerId;
     },
   },
 };
@@ -115,112 +92,195 @@ export default {
 .ai-provider {
   padding: 8px 12px;
   border-bottom: 1px solid $border-color;
-  font-size: 12px;
 }
 
-.ai-provider__mode {
+.ai-provider__row {
   display: flex;
-  gap: 4px;
-  margin-bottom: 8px;
+  align-items: stretch;
 }
 
-.ai-provider__mode-btn {
+.ai-provider__buttons {
+  display: flex;
+  gap: 6px;
+  gap: 6px;
+  flex-wrap: wrap;
   flex: 1;
-  padding: 6px 12px;
-  border: 1px solid $border-color;
-  background: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  color: $secondary-text-color;
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
 }
 
-.ai-provider__mode-btn--active {
-  background-color: $link-color;
-  border-color: $link-color;
-  color: white;
-
-  &:hover {
-    background-color: darken($link-color, 10%);
-  }
+.ai-provider__trust {
+  margin-left: 8px;
+  padding-left: 8px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.ai-provider__list {
+.ai-provider__trust-btn {
   display: flex;
-  gap: 4px;
-  margin-bottom: 8px;
+  align-items: center;
+  padding: 6px 10px;
+  border: 1px solid rgba($fever-purple, 0.3);
+  background: rgba($fever-purple, 0.05);
+  border-radius: $border-radius-lg;
+  cursor: pointer;
+  transition: all $transition-base;
+  height: 100%;
+
+  &:hover {
+    background: rgba($fever-purple, 0.1);
+  }
+
+  &.ai-provider__trust-btn--active {
+    background: rgba($fever-teal, 0.15);
+    border-color: $fever-teal;
+
+    .ai-provider__trust-label {
+      color: $fever-teal;
+    }
+  }
+}
+
+.ai-provider__trust-icon {
+  font-size: 12px;
+  margin-right: 6px;
+}
+
+.ai-provider__trust-label {
+  font-family: $font-family-ui;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: $fever-purple;
+  text-transform: uppercase;
 }
 
 .ai-provider__btn {
   flex: 1;
-  padding: 6px 8px;
-  border: 1px solid $border-color;
-  background: none;
-  border-radius: 4px;
+  min-width: 60px;
+  padding: 8px 12px;
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: $border-radius-lg;
   cursor: pointer;
-  font-size: 11px;
+  font-family: $font-family-ui;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   color: $secondary-text-color;
+  transition: all $transition-base;
 
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 }
 
-.ai-provider__btn--active {
-  background-color: rgba($link-color, 0.15);
-  border-color: $link-color;
-  color: $link-color;
-}
+// Claude - Purple
+.ai-provider__btn--claude {
+  border-color: rgba($fever-purple, 0.3);
+  color: $fever-purple;
 
-.ai-provider__selection {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
+  &:hover:not(:disabled) {
+    background: rgba($fever-purple, 0.1);
+    border-color: $fever-purple;
+  }
 
-.ai-provider__using {
-  color: $secondary-text-color;
-
-  strong {
-    color: $font-color;
+  &.ai-provider__btn--active {
+    background: $fever-purple;
+    border-color: $fever-purple;
+    color: white;
+    box-shadow: 0 0 20px rgba($fever-purple, 0.4);
   }
 }
 
-.ai-provider__score {
-  color: $link-color;
-  font-size: 11px;
-}
+// Gemini - Teal
+.ai-provider__btn--gemini {
+  border-color: rgba($fever-teal, 0.3);
+  color: $fever-teal;
 
-.ai-provider__reason {
-  font-size: 11px;
-  color: $secondary-text-color;
-  font-style: italic;
-}
-
-.ai-provider__suggestions {
-  margin-top: 6px;
-  font-size: 11px;
-  color: $secondary-text-color;
-}
-
-.ai-provider__suggestions-label {
-  margin-right: 4px;
-}
-
-.ai-provider__alt {
-  display: inline-block;
-  padding: 2px 6px;
-  margin: 2px;
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 3px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+  &:hover:not(:disabled) {
+    background: rgba($fever-teal, 0.1);
+    border-color: $fever-teal;
   }
+
+  &.ai-provider__btn--active {
+    background: $fever-teal;
+    border-color: $fever-teal;
+    color: white;
+    box-shadow: 0 0 20px rgba($fever-teal, 0.4);
+  }
+}
+
+// OpenAI/GPT - Coral
+.ai-provider__btn--openai {
+  border-color: rgba($fever-coral, 0.3);
+  color: $fever-coral;
+
+  &:hover:not(:disabled) {
+    background: rgba($fever-coral, 0.1);
+    border-color: $fever-coral;
+  }
+
+  &.ai-provider__btn--active {
+    background: $fever-coral;
+    border-color: $fever-coral;
+    color: white;
+    box-shadow: 0 0 20px rgba($fever-coral, 0.4);
+  }
+}
+
+// X.AI - Amber
+.ai-provider__btn--xai {
+  border-color: rgba($fever-amber, 0.3);
+  color: $fever-amber;
+
+  &:hover:not(:disabled) {
+    background: rgba($fever-amber, 0.1);
+    border-color: $fever-amber;
+  }
+
+  &.ai-provider__btn--active {
+    background: $fever-amber;
+    border-color: $fever-amber;
+    color: white;
+    box-shadow: 0 0 20px rgba($fever-amber, 0.4);
+  }
+}
+
+// Cursor/Grok - Lime
+.ai-provider__btn--cursor {
+  border-color: rgba($fever-lime, 0.3);
+  color: $fever-lime;
+
+  &:hover:not(:disabled) {
+    background: rgba($fever-lime, 0.1);
+    border-color: $fever-lime;
+  }
+
+  &.ai-provider__btn--active {
+    background: $fever-lime;
+    border-color: $fever-lime;
+    color: $fever-ghost-dark;
+    box-shadow: 0 0 20px rgba($fever-lime, 0.4);
+  }
+}
+
+.ai-provider__status {
+  margin-top: 8px;
+  font-size: 11px;
+  text-align: center;
+}
+
+.ai-provider__status--disconnected {
+  color: $fever-amber;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 </style>

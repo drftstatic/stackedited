@@ -36,6 +36,8 @@ export default {
 
     // UI state
     showPanel: false,
+    awaitingHuman: false,
+    chaining: null,
   }),
 
   mutations: {
@@ -141,6 +143,14 @@ export default {
 
     togglePanel(state) {
       state.showPanel = !state.showPanel;
+    },
+
+    setAwaitingHuman(state, value) {
+      state.awaitingHuman = value;
+    },
+
+    setChaining(state, value) {
+      state.chaining = value;
     },
   },
 

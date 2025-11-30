@@ -1,6 +1,6 @@
 <template>
-  <div class="layout" :class="{'layout--revision': revisionContent, 'layout--resizing': isResizing}">
-    <div class="layout__panel flex flex--row" :class="{'flex--end': styles.showSideBar}">
+  <div class="layout" :class="{'layout--revision': revisionContent, 'layout--resizing': isResizing, 'layout--collaborative': styles.collaborativeMode}">
+    <div class="layout__panel flex flex--row" :class="{'flex--end': styles.showSideBar || styles.showAiChat}">
       <div v-show="styles.showExplorer" class="layout__panel layout__panel--explorer" :aria-hidden="!styles.showExplorer" :style="{width: styles.layoutOverflow ? '100%' : constants.explorerWidth + 'px'}">
         <explorer />
         <div
@@ -44,6 +44,15 @@
           <status-bar />
         </div>
       </div>
+      <!-- AI Chat Panel (Collaborative Mode) -->
+      <div v-show="styles.showAiChat" class="layout__panel layout__panel--ai-chat" :style="{width: styles.layoutOverflow ? '100%' : styles.aiChatWidth + 'px'}">
+        <div
+          class="resize-handle resize-handle--ai-chat"
+          @mousedown="startResize('aiChat', $event)"
+        />
+        <ai-chat />
+      </div>
+      <!-- Sidebar (non-collaborative mode) -->
       <div v-show="styles.showSideBar" class="layout__panel layout__panel--side-bar" :style="{width: styles.layoutOverflow ? '100%' : constants.sideBarWidth + 'px'}">
         <div
           class="resize-handle resize-handle--sidebar"
@@ -69,6 +78,7 @@ import Tour from './Tour';
 import StickyComment from './gutters/StickyComment';
 import CurrentDiscussion from './gutters/CurrentDiscussion';
 import FindReplace from './FindReplace';
+import AiChat from './AiChat';
 import editorSvc from '../services/editorSvc';
 import markdownConversionSvc from '../services/markdownConversionSvc';
 import store from '../store';
@@ -86,6 +96,7 @@ export default {
     StickyComment,
     CurrentDiscussion,
     FindReplace,
+    AiChat,
   },
   data: () => ({
     isResizing: false,
@@ -127,9 +138,15 @@ export default {
       this.isResizing = true;
       this.resizeTarget = target;
       this.resizeStartX = event.clientX;
-      this.resizeStartWidth = target === 'sidebar'
-        ? this.constants.sideBarWidth
-        : this.constants.explorerWidth;
+
+      if (target === 'sidebar') {
+        this.resizeStartWidth = this.constants.sideBarWidth;
+      } else if (target === 'explorer') {
+        this.resizeStartWidth = this.constants.explorerWidth;
+      } else if (target === 'aiChat') {
+        this.resizeStartWidth = this.styles.aiChatWidth;
+        this.totalWidth = document.body.clientWidth - (this.styles.showExplorer ? this.constants.explorerWidth : 0);
+      }
 
       document.addEventListener('mousemove', this.handleResize);
       document.addEventListener('mouseup', this.stopResize);
@@ -150,6 +167,16 @@ export default {
         newWidth = this.resizeStartWidth + deltaX;
         newWidth = Math.max(this.constants.explorerMinWidth, Math.min(this.constants.explorerMaxWidth, newWidth));
         this.patchLayoutSettings({ explorerWidth: newWidth });
+      } else if (this.resizeTarget === 'aiChat') {
+        // AI Chat is on the right, dragging left increases width
+        newWidth = this.resizeStartWidth - deltaX;
+        // Enforce constraints
+        newWidth = Math.max(this.constants.aiChatMinWidth, newWidth);
+        const maxWidth = Math.floor(this.totalWidth * this.constants.aiChatMaxWidth);
+        newWidth = Math.min(maxWidth, newWidth);
+        // Convert to split ratio
+        const newRatio = newWidth / this.totalWidth;
+        this.patchLayoutSettings({ aiChatSplitRatio: newRatio });
       }
     },
     stopResize() {
@@ -263,6 +290,17 @@ $preview-background-dark: #252525;
   background-color: #ddd;
 }
 
+// AI Chat Panel (Collaborative Mode)
+.layout__panel--ai-chat {
+  background-color: $editor-background-light;
+  border-left: 1px solid rgba($fever-purple, 0.15);
+
+  .app--dark & {
+    background-color: $editor-background-dark;
+    border-left-color: rgba($fever-teal, 0.15);
+  }
+}
+
 .layout__panel--find-replace {
   background-color: #e6e6e6;
   position: absolute;
@@ -355,6 +393,14 @@ $preview-background-dark: #252525;
 }
 
 .resize-handle--sidebar {
+  left: -3px;
+
+  &::before {
+    left: 2px;
+  }
+}
+
+.resize-handle--ai-chat {
   left: -3px;
 
   &::before {
