@@ -6,8 +6,7 @@ import userSvc from '../userSvc';
 import gitWorkspaceSvc from '../gitWorkspaceSvc';
 import badgeSvc from '../badgeSvc';
 
-const getAbsolutePath = ({ id }) =>
-  `${store.getters['workspace/currentWorkspace'].path || ''}${id}`;
+const getAbsolutePath = ({ id }) => `${store.getters['workspace/currentWorkspace'].path || ''}${id}`;
 
 export default new Provider({
   id: 'gitlabWorkspace',
@@ -109,7 +108,7 @@ export default new Provider({
     });
   },
   prepareChanges(tree) {
-    return gitWorkspaceSvc.makeChanges(tree.map(entry => ({
+    return gitWorkspaceSvc.makeChanges(tree.map((entry) => ({
       ...entry,
       sha: entry.id,
     })));

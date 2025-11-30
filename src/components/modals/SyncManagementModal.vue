@@ -2,41 +2,41 @@
   <modal-inner class="modal__inner-1--sync-management" aria-label="Manage synchronized locations">
     <div class="modal__content">
       <div class="modal__image">
-        <icon-sync></icon-sync>
+        <icon-sync />
       </div>
-      <p v-if="syncLocations.length"><b>{{currentFileName}}</b> is synchronized with the following location(s):</p>
-      <p v-else><b>{{currentFileName}}</b> is not synchronized yet.</p>
+      <p v-if="syncLocations.length"><b>{{ currentFileName }}</b> is synchronized with the following location(s):</p>
+      <p v-else><b>{{ currentFileName }}</b> is not synchronized yet.</p>
       <div>
-        <div class="sync-entry flex flex--column" v-for="location in syncLocations" :key="location.id">
+        <div v-for="location in syncLocations" :key="location.id" class="sync-entry flex flex--column">
           <div class="sync-entry__header flex flex--row flex--align-center">
             <div class="sync-entry__icon flex flex--column flex--center">
-              <icon-provider :provider-id="location.providerId"></icon-provider>
+              <icon-provider :provider-id="location.providerId" />
             </div>
             <div class="sync-entry__description">
-              {{location.description}}
+              {{ location.description }}
             </div>
             <div class="sync-entry__buttons flex flex--row flex--center">
-              <button class="sync-entry__button button" @click="remove(location)" v-title="'Remove location'">
-                <icon-delete></icon-delete>
+              <button v-title="'Remove location'" class="sync-entry__button button" @click="remove(location)">
+                <icon-delete />
               </button>
             </div>
           </div>
           <div class="sync-entry__row flex flex--row flex--align-center">
             <div class="sync-entry__url">
-              {{location.url || 'Google Drive app data'}}
+              {{ location.url || 'Google Drive app data' }}
             </div>
-            <div class="sync-entry__buttons flex flex--row flex--center" v-if="location.url">
-              <button class="sync-entry__button button" v-clipboard="location.url" @click="info('Location URL copied to clipboard!')" v-title="'Copy URL'">
-                <icon-content-copy></icon-content-copy>
+            <div v-if="location.url" class="sync-entry__buttons flex flex--row flex--center">
+              <button v-clipboard="location.url" v-title="'Copy URL'" class="sync-entry__button button" @click="info('Location URL copied to clipboard!')">
+                <icon-content-copy />
               </button>
-              <a class="sync-entry__button button" v-if="location.url" :href="location.url" target="_blank" v-title="'Open location'">
-                <icon-open-in-new></icon-open-in-new>
+              <a v-if="location.url" v-title="'Open location'" class="sync-entry__button button" :href="location.url" target="_blank">
+                <icon-open-in-new />
               </a>
             </div>
           </div>
         </div>
       </div>
-      <div class="modal__info" v-if="syncLocations.length">
+      <div v-if="syncLocations.length" class="modal__info">
         <b>Tip:</b> Removing a location won't delete any file.
       </div>
     </div>

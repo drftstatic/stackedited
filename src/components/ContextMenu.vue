@@ -1,10 +1,10 @@
 <template>
-  <div class="context-menu" v-if="items.length" @click="close()" @contextmenu.prevent="close()">
+  <div v-if="items.length" class="context-menu" @click="close()" @contextmenu.prevent="close()">
     <div class="context-menu__inner flex flex--column" :style="{ left: coordinates.left + 'px', top: coordinates.top + 'px' }" @click.stop>
       <div v-for="(item, idx) in items" :key="idx">
-        <div class="context-menu__separator" v-if="item.type === 'separator'"></div>
-        <div class="context-menu__item context-menu__item--disabled" v-else-if="item.disabled">{{item.name}}</div>
-        <a class="context-menu__item" href="javascript:void(0)" v-else @click="close(item)">{{item.name}}</a>
+        <div v-if="item.type === 'separator'" class="context-menu__separator" />
+        <div v-else-if="item.disabled" class="context-menu__item context-menu__item--disabled">{{ item.name }}</div>
+        <a v-else class="context-menu__item" href="javascript:void(0)" @click="close(item)">{{ item.name }}</a>
       </div>
     </div>
   </div>

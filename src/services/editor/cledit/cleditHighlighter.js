@@ -13,7 +13,7 @@ function createStyleSheet(document) {
 function Highlighter(editor) {
   cledit.Utils.createEventHooks(this);
 
-  if (!styleElts.cl_some(styleElt => document.head.contains(styleElt))) {
+  if (!styleElts.cl_some((styleElt) => document.head.contains(styleElt))) {
     createStyleSheet(document);
   }
 
@@ -34,9 +34,9 @@ function Highlighter(editor) {
       if (!noContentFix) {
         if (useBr) {
           section.elt.getElementsByClassName('hd-lf')
-            .cl_each(lfElt => lfElt.parentNode.removeChild(lfElt));
+            .cl_each((lfElt) => lfElt.parentNode.removeChild(lfElt));
           section.elt.getElementsByTagName('br')
-            .cl_each(brElt => brElt.parentNode.replaceChild(document.createTextNode('\n'), brElt));
+            .cl_each((brElt) => brElt.parentNode.replaceChild(document.createTextNode('\n'), brElt));
         }
         if (section.elt.textContent.slice(-1) !== '\n') {
           section.elt.appendChild(document.createTextNode('\n'));
@@ -55,6 +55,7 @@ function Highlighter(editor) {
       this.text = text.text === undefined ? text : text.text;
       this.data = text.data;
     }
+
     setElement(elt) {
       this.elt = elt;
       elt.section = this;
@@ -70,7 +71,7 @@ function Highlighter(editor) {
     const newSectionList = (editor.options.sectionParser
       ? editor.options.sectionParser(content)
       : [content])
-      .cl_map(sectionText => new Section(sectionText));
+      .cl_map((sectionText) => new Section(sectionText));
 
     let modifiedSections = [];
     let sectionsToRemove = [];
@@ -86,14 +87,14 @@ function Highlighter(editor) {
       let leftIndex = sectionList.length;
       sectionList.cl_some((section, index) => {
         const newSection = newSectionList[index];
-        if (index >= newSectionList.length ||
-          section.forceHighlighting ||
+        if (index >= newSectionList.length
+          || section.forceHighlighting
           // Check text modification
-          section.text !== newSection.text ||
+          || section.text !== newSection.text
           // Check that section has not been detached or moved
-          section.elt.parentNode !== contentElt ||
+          || section.elt.parentNode !== contentElt
           // Check also the content since nodes can be injected in sections via copy/paste
-          section.elt.textContent !== newSection.text
+          || section.elt.textContent !== newSection.text
         ) {
           leftIndex = index;
           return true;
@@ -105,14 +106,14 @@ function Highlighter(editor) {
       let rightIndex = -sectionList.length;
       sectionList.slice().reverse().cl_some((section, index) => {
         const newSection = newSectionList[newSectionList.length - index - 1];
-        if (index >= newSectionList.length ||
-          section.forceHighlighting ||
+        if (index >= newSectionList.length
+          || section.forceHighlighting
           // Check modified
-          section.text !== newSection.text ||
+          || section.text !== newSection.text
           // Check that section has not been detached or moved
-          section.elt.parentNode !== contentElt ||
+          || section.elt.parentNode !== contentElt
           // Check also the content since nodes can be injected in sections via copy/paste
-          section.elt.textContent !== newSection.text
+          || section.elt.textContent !== newSection.text
         ) {
           rightIndex = -index;
           return true;
@@ -196,4 +197,3 @@ function Highlighter(editor) {
 }
 
 cledit.Highlighter = Highlighter;
-

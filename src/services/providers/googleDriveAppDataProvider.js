@@ -169,7 +169,7 @@ export default new Provider({
   },
   async listFileRevisions({ token, contentSyncDataId }) {
     const revisions = await googleHelper.getAppDataFileRevisions(token, contentSyncDataId);
-    return revisions.map(revision => ({
+    return revisions.map((revision) => ({
       id: revision.id,
       sub: `${googleHelper.subPrefix}:${revision.lastModifyingUser.permissionId}`,
       created: new Date(revision.modifiedTime).getTime(),

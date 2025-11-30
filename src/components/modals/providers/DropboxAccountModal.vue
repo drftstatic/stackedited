@@ -2,13 +2,13 @@
   <modal-inner aria-label="Link Dropbox account">
     <div class="modal__content">
       <div class="modal__image">
-        <icon-provider provider-id="dropbox"></icon-provider>
+        <icon-provider provider-id="dropbox" />
       </div>
       <p>Link your <b>Dropbox</b> account to <b>StackEdit</b>.</p>
       <div class="form-entry">
         <div class="form-entry__checkbox">
           <label>
-            <input type="checkbox" v-model="restrictedAccess"> Restrict access
+            <input v-model="restrictedAccess" type="checkbox"> Restrict access
           </label>
           <div class="form-entry__info">
             If checked, access will be restricted to the <b>/Applications/StackEdit (restricted)</b> folder.

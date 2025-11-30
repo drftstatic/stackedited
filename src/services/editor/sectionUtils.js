@@ -6,9 +6,9 @@ class SectionDimension {
   }
 }
 
-const dimensionNormalizer = dimensionName => (editorSvc) => {
+const dimensionNormalizer = (dimensionName) => (editorSvc) => {
   const dimensionList = editorSvc.previewCtx.sectionDescList
-    .map(sectionDesc => sectionDesc[dimensionName]);
+    .map((sectionDesc) => sectionDesc[dimensionName]);
   let dimension;
   let i;
   let j;

@@ -144,7 +144,7 @@ export default {
     if (content) {
       removeDiscussionMarkers(); // Markers will be recreated on contentChanged
       const contentState = store.getters['contentState/current'];
-      const options = Object.assign({
+      const options = {
         selectionStart: contentState.selectionStart,
         selectionEnd: contentState.selectionEnd,
         patchHandler: {
@@ -152,7 +152,8 @@ export default {
           applyPatches,
           reversePatches,
         },
-      }, opts);
+        ...opts,
+      };
 
       if (contentId !== content.id) {
         contentId = content.id;
@@ -205,7 +206,7 @@ export default {
           }
           return classes;
         };
-        const offsetGetter = discussionId => () => {
+        const offsetGetter = (discussionId) => () => {
           const startMarker = discussionMarkers[`${discussionId}:start`];
           const endMarker = discussionMarkers[`${discussionId}:end`];
           return startMarker && endMarker && {
@@ -253,4 +254,3 @@ export default {
     );
   },
 };
-

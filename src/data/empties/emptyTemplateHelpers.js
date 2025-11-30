@@ -13,4 +13,3 @@ Then use the helper in your template:
 
 {{#transform}}{{{files.0.content.html}}}{{/transform}}
 */
-

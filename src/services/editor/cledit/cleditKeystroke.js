@@ -69,8 +69,7 @@ cledit.defaultKeystrokes = [
       return false;
     }
 
-    const strSplice = (str, i, remove, add = '') =>
-      str.slice(0, i) + add + str.slice(i + (+remove || 0));
+    const strSplice = (str, i, remove, add = '') => str.slice(0, i) + add + str.slice(i + (+remove || 0));
 
     evt.preventDefault();
     const isInverse = evt.shiftKey;
@@ -135,12 +134,12 @@ cledit.defaultKeystrokes = [
         }
         evt.preventDefault();
         return true;
-      } else if (evt.which === 8 && state.before.slice(-1) === '\n') {
+      } if (evt.which === 8 && state.before.slice(-1) === '\n') {
         // Special treatment for end of lines
         state.before = state.before.slice(0, -1);
         evt.preventDefault();
         return true;
-      } else if (evt.which === 46 && state.after.slice(0, 1) === '\n') {
+      } if (evt.which === 46 && state.after.slice(0, 1) === '\n') {
         state.after = state.after.slice(1);
         evt.preventDefault();
         return true;

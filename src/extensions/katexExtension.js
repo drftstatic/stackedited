@@ -9,15 +9,13 @@ extensionSvc.onGetOptions((options, properties) => {
 extensionSvc.onInitConverter(2, (markdown, options) => {
   if (options.math) {
     markdown.use(markdownItMath);
-    markdown.renderer.rules.inline_math = (tokens, idx) =>
-      `<span class="katex--inline">${markdown.utils.escapeHtml(tokens[idx].content)}</span>`;
-    markdown.renderer.rules.display_math = (tokens, idx) =>
-      `<span class="katex--display">${markdown.utils.escapeHtml(tokens[idx].content)}</span>`;
+    markdown.renderer.rules.inline_math = (tokens, idx) => `<span class="katex--inline">${markdown.utils.escapeHtml(tokens[idx].content)}</span>`;
+    markdown.renderer.rules.display_math = (tokens, idx) => `<span class="katex--display">${markdown.utils.escapeHtml(tokens[idx].content)}</span>`;
   }
 });
 
 extensionSvc.onSectionPreview((elt) => {
-  const highlighter = displayMode => (katexElt) => {
+  const highlighter = (displayMode) => (katexElt) => {
     if (!katexElt.highlighted) {
       try {
         katex.render(katexElt.textContent, katexElt, { displayMode });

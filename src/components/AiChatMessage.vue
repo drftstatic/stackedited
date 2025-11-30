@@ -19,7 +19,7 @@
       </div>
 
       <!-- Regular content -->
-      <div v-else class="ai-message__text" v-html="formattedContent"></div>
+      <div v-else class="ai-message__text" v-html="formattedContent" />
     </div>
 
     <!-- Timestamp -->

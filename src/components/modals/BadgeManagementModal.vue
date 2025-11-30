@@ -2,25 +2,25 @@
   <modal-inner class="modal__inner-1--badge-management" aria-label="Manage badges">
     <div class="modal__content">
       <div class="modal__image">
-        <icon-seal></icon-seal>
+        <icon-seal />
       </div>
-      <p v-if="badgeCount > 1">{{badgeCount}} badges earned</p>
-      <p v-else>{{badgeCount}} badge earned</p>
-      <div class="badge-entry" v-for="badge in badgeTree" :key="badge.featureId">
+      <p v-if="badgeCount > 1">{{ badgeCount }} badges earned</p>
+      <p v-else>{{ badgeCount }} badge earned</p>
+      <div v-for="badge in badgeTree" :key="badge.featureId" class="badge-entry">
         <div class="flex flex--row">
-          <icon-seal class="badge-entry__icon" :class="{'badge-entry__icon--earned': badge.isEarned, 'badge-entry__icon--some-earned': badge.hasSomeEarned}"></icon-seal>
+          <icon-seal class="badge-entry__icon" :class="{'badge-entry__icon--earned': badge.isEarned, 'badge-entry__icon--some-earned': badge.hasSomeEarned}" />
           <div>
-            <span class="badge-entry__name" :class="{'badge-entry__name--earned': badge.isEarned, 'badge-entry__name--some-earned': badge.hasSomeEarned}">{{badge.name}}</span>
-            <span class="badge-entry__description">&mdash; {{badge.description}}</span>
-            <a href="javascript:void(0)" v-if="!shown[badge.featureId]" @click="show(badge.featureId)">Show</a>
-            <div class="badge-entry" v-else v-for="child in badge.children" :key="child.featureId">
+            <span class="badge-entry__name" :class="{'badge-entry__name--earned': badge.isEarned, 'badge-entry__name--some-earned': badge.hasSomeEarned}">{{ badge.name }}</span>
+            <span class="badge-entry__description">&mdash; {{ badge.description }}</span>
+            <a v-if="!shown[badge.featureId]" href="javascript:void(0)" @click="show(badge.featureId)">Show</a>
+            <div v-for="child in badge.children" v-else :key="child.featureId" class="badge-entry">
               <div class="flex flex--row">
-                <icon-seal class="badge-entry__icon" :class="{'badge-entry__icon--earned': child.isEarned}"></icon-seal>
+                <icon-seal class="badge-entry__icon" :class="{'badge-entry__icon--earned': child.isEarned}" />
                 <div>
-                  <span class="badge-entry__name" :class="{'badge-entry__name--earned': child.isEarned}">{{child.name}}</span>
-                  <span class="badge-entry__description">&mdash; {{child.description}}</span>
+                  <span class="badge-entry__name" :class="{'badge-entry__name--earned': child.isEarned}">{{ child.name }}</span>
+                  <span class="badge-entry__description">&mdash; {{ child.description }}</span>
                 </div>
-            </div>
+              </div>
             </div>
           </div>
         </div>
@@ -53,7 +53,7 @@ export default {
       'badgeTree',
     ]),
     badgeCount() {
-      return store.getters['data/allBadges'].filter(badge => badge.isEarned).length;
+      return store.getters['data/allBadges'].filter((badge) => badge.isEarned).length;
     },
     featureCount() {
       return store.getters['data/allBadges'].length;

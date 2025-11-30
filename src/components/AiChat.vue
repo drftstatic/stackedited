@@ -2,16 +2,16 @@
   <div class="ai-chat side-bar__panel">
     <!-- Connection Status -->
     <div class="ai-chat__status" :class="statusClass">
-      <span class="ai-chat__status-dot"></span>
+      <span class="ai-chat__status-dot" />
       <span class="ai-chat__status-text">{{ statusText }}</span>
       <button v-if="!connected" class="button" @click="reconnect">Reconnect</button>
     </div>
 
     <!-- Provider Selector -->
-    <ai-provider-selector></ai-provider-selector>
+    <ai-provider-selector />
 
     <!-- Messages -->
-    <div class="ai-chat__messages" ref="messages">
+    <div ref="messages" class="ai-chat__messages">
       <div v-if="messages.length === 0" class="ai-chat__empty">
         <p>Ask me to help edit your document, research topics, or answer questions.</p>
         <p class="ai-chat__hint">Try: "Help me improve this introduction" or "Research the latest on..."</p>
@@ -20,19 +20,19 @@
         v-for="message in messages"
         :key="message.id"
         :message="message"
-      ></ai-chat-message>
+      />
       <div v-if="thinking" class="ai-chat__thinking">
-        <span class="ai-chat__thinking-dot"></span>
-        <span class="ai-chat__thinking-dot"></span>
-        <span class="ai-chat__thinking-dot"></span>
+        <span class="ai-chat__thinking-dot" />
+        <span class="ai-chat__thinking-dot" />
+        <span class="ai-chat__thinking-dot" />
       </div>
     </div>
 
     <!-- Input -->
-    <ai-chat-input @send="sendMessage"></ai-chat-input>
+    <ai-chat-input @send="sendMessage" />
 
     <!-- Diff Modal -->
-    <ai-diff-modal v-if="showDiffModal"></ai-diff-modal>
+    <ai-diff-modal v-if="showDiffModal" />
   </div>
 </template>
 

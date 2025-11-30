@@ -66,7 +66,7 @@ export default {
     });
 
     // Make TOC
-    const headings = containerElt.querySelectorAll('h1,h2,h3,h4,h5,h6').cl_map(headingElt => ({
+    const headings = containerElt.querySelectorAll('h1,h2,h3,h4,h5,h6').cl_map((headingElt) => ({
       title: headingElt.textContent,
       anchor: headingElt.id,
       level: parseInt(headingElt.tagName.slice(1), 10),

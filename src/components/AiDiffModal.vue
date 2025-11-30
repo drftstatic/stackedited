@@ -1,6 +1,6 @@
 <template>
   <div class="ai-diff-modal">
-    <div class="ai-diff-modal__backdrop" @click="reject"></div>
+    <div class="ai-diff-modal__backdrop" @click="reject" />
     <div class="ai-diff-modal__content">
       <div class="ai-diff-modal__header">
         <h3>Review AI Edit</h3>
@@ -77,17 +77,23 @@ export default {
     truncatedOld() {
       const text = this.pendingEdit?.previousContent || '';
       if (text.length > 2000) {
-        return text.slice(0, 1000) + '\n\n... (truncated) ...\n\n' + text.slice(-1000);
+        return `${text.slice(0, 1000)}\n\n... (truncated) ...\n\n${text.slice(-1000)}`;
       }
       return text;
     },
     truncatedNew() {
       const text = this.pendingEdit?.newContent || '';
       if (text.length > 2000) {
-        return text.slice(0, 1000) + '\n\n... (truncated) ...\n\n' + text.slice(-1000);
+        return `${text.slice(0, 1000)}\n\n... (truncated) ...\n\n${text.slice(-1000)}`;
       }
       return text;
     },
+  },
+  mounted() {
+    document.addEventListener('keydown', this.handleKeydown);
+  },
+  beforeDestroy() {
+    document.removeEventListener('keydown', this.handleKeydown);
   },
   methods: {
     accept() {
@@ -103,12 +109,6 @@ export default {
         this.accept();
       }
     },
-  },
-  mounted() {
-    document.addEventListener('keydown', this.handleKeydown);
-  },
-  beforeDestroy() {
-    document.removeEventListener('keydown', this.handleKeydown);
   },
 };
 </script>

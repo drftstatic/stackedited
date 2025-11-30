@@ -45,5 +45,4 @@ class Marker {
   }
 }
 
-
 cledit.Marker = Marker;

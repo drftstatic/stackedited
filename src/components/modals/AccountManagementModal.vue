@@ -2,71 +2,71 @@
   <modal-inner class="modal__inner-1--account-management" aria-label="Manage external accounts">
     <div class="modal__content">
       <div class="modal__image">
-        <icon-key></icon-key>
+        <icon-key />
       </div>
       <p v-if="entries.length">StackEdit has access to the following external accounts:</p>
       <p v-else>StackEdit has no access to any external account yet.</p>
       <div>
-        <div class="account-entry flex flex--column" v-for="entry in entries" :key="entry.token.sub">
+        <div v-for="entry in entries" :key="entry.token.sub" class="account-entry flex flex--column">
           <div class="account-entry__header flex flex--row flex--align-center">
             <div class="account-entry__icon flex flex--column flex--center">
-              <icon-provider :provider-id="entry.providerId"></icon-provider>
+              <icon-provider :provider-id="entry.providerId" />
             </div>
             <div class="account-entry__description">
-              {{entry.name}}
+              {{ entry.name }}
             </div>
             <div class="account-entry__buttons flex flex--row flex--center">
-              <button class="account-entry__button button" @click="remove(entry)" v-title="'Remove access'">
-                <icon-delete></icon-delete>
+              <button v-title="'Remove access'" class="account-entry__button button" @click="remove(entry)">
+                <icon-delete />
               </button>
             </div>
           </div>
           <div class="account-entry__row">
-            <span class="account-entry__field" v-if="entry.userId">
+            <span v-if="entry.userId" class="account-entry__field">
               <b>User ID:</b>
-              {{entry.userId}}
+              {{ entry.userId }}
             </span>
-            <span class="account-entry__field" v-if="entry.url">
+            <span v-if="entry.url" class="account-entry__field">
               <b>URL:</b>
-              {{entry.url}}
+              {{ entry.url }}
             </span>
-            <span class="account-entry__field" v-if="entry.scopes">
+            <span v-if="entry.scopes" class="account-entry__field">
               <b>Scopes:</b>
-              {{entry.scopes.join(', ')}}
+              {{ entry.scopes.join(', ') }}
             </span>
           </div>
         </div>
       </div>
       <menu-entry @click.native="addBloggerAccount">
-        <icon-provider slot="icon" provider-id="blogger"></icon-provider>
+        <icon-provider slot="icon" provider-id="blogger" />
         <span>Add Blogger account</span>
       </menu-entry>
       <menu-entry @click.native="addDropboxAccount">
-        <icon-provider slot="icon" provider-id="dropbox"></icon-provider>
+        <icon-provider slot="icon" provider-id="dropbox" />
         <span>Add Dropbox account</span>
       </menu-entry>
       <menu-entry @click.native="addGithubAccount">
-        <icon-provider slot="icon" provider-id="github"></icon-provider>
+        <icon-provider slot="icon" provider-id="github" />
         <span>Add GitHub account</span>
       </menu-entry>
       <menu-entry @click.native="addGitlabAccount">
-        <icon-provider slot="icon" provider-id="gitlab"></icon-provider>
+        <icon-provider slot="icon" provider-id="gitlab" />
         <span>Add GitLab account</span>
       </menu-entry>
       <menu-entry @click.native="addGoogleDriveAccount">
-        <icon-provider slot="icon" provider-id="googleDrive"></icon-provider>
+        <icon-provider slot="icon" provider-id="googleDrive" />
         <span>Add Google Drive account</span>
       </menu-entry>
       <menu-entry @click.native="addGooglePhotosAccount">
-        <icon-provider slot="icon" provider-id="googlePhotos"></icon-provider>
+        <icon-provider slot="icon" provider-id="googlePhotos" />
         <span>Add Google Photos account</span>
       </menu-entry>
       <menu-entry @click.native="addWordpressAccount">
-        <icon-provider slot="icon" provider-id="wordpress"></icon-provider>
+        <icon-provider slot="icon" provider-id="wordpress" />
         <span>Add WordPress account</span>
       </menu-entry>
       <menu-entry @click.native="addZendeskAccount">
-        <icon-provider slot="icon" provider-id="zendesk"></icon-provider>
+        <icon-provider slot="icon" provider-id="zendesk" />
         <span>Add Zendesk account</span>
       </menu-entry>
     </div>
@@ -101,34 +101,34 @@ export default {
     ]),
     entries() {
       return [
-        ...Object.values(store.getters['data/googleTokensBySub']).map(token => ({
+        ...Object.values(store.getters['data/googleTokensBySub']).map((token) => ({
           token,
           providerId: 'google',
           userId: token.sub,
           name: token.name,
           scopes: ['openid', 'profile', ...token.scopes
-            .map(scope => scope.replace(/^https:\/\/www.googleapis.com\/auth\//, ''))],
+            .map((scope) => scope.replace(/^https:\/\/www.googleapis.com\/auth\//, ''))],
         })),
-        ...Object.values(store.getters['data/couchdbTokensBySub']).map(token => ({
+        ...Object.values(store.getters['data/couchdbTokensBySub']).map((token) => ({
           token,
           providerId: 'couchdb',
           url: token.dbUrl,
           name: token.name,
         })),
-        ...Object.values(store.getters['data/dropboxTokensBySub']).map(token => ({
+        ...Object.values(store.getters['data/dropboxTokensBySub']).map((token) => ({
           token,
           providerId: 'dropbox',
           userId: token.sub,
           name: token.name,
         })),
-        ...Object.values(store.getters['data/githubTokensBySub']).map(token => ({
+        ...Object.values(store.getters['data/githubTokensBySub']).map((token) => ({
           token,
           providerId: 'github',
           userId: token.sub,
           name: token.name,
           scopes: token.scopes,
         })),
-        ...Object.values(store.getters['data/gitlabTokensBySub']).map(token => ({
+        ...Object.values(store.getters['data/gitlabTokensBySub']).map((token) => ({
           token,
           providerId: 'gitlab',
           url: token.serverUrl,
@@ -136,14 +136,14 @@ export default {
           name: token.name,
           scopes: ['api'],
         })),
-        ...Object.values(store.getters['data/wordpressTokensBySub']).map(token => ({
+        ...Object.values(store.getters['data/wordpressTokensBySub']).map((token) => ({
           token,
           providerId: 'wordpress',
           userId: token.sub,
           name: token.name,
           scopes: ['global'],
         })),
-        ...Object.values(store.getters['data/zendeskTokensBySub']).map(token => ({
+        ...Object.values(store.getters['data/zendeskTokensBySub']).map((token) => ({
           token,
           providerId: 'zendesk',
           url: `https://${token.subdomain}.zendesk.com/`,

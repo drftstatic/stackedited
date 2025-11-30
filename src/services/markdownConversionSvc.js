@@ -221,7 +221,7 @@ export default {
     // so prevent from converting it again.
     if (!parsingCtx.markdownState.isConverted) {
       // Skip 2 first rules previously passed in parseSections
-      parsingCtx.markdownCoreRules.slice(2).forEach(rule => rule(parsingCtx.markdownState));
+      parsingCtx.markdownCoreRules.slice(2).forEach((rule) => rule(parsingCtx.markdownState));
       parsingCtx.markdownState.isConverted = true;
     }
     const { tokens } = parsingCtx.markdownState;
@@ -268,6 +268,6 @@ export default {
   highlight(markdown, converter = this.defaultConverter, grammars = this.defaultPrismGrammars) {
     const parsingCtx = this.parseSections(converter, markdown);
     return parsingCtx.sections
-      .map(section => Prism.highlight(section.text, grammars[section.data])).join('');
+      .map((section) => Prism.highlight(section.text, grammars[section.data])).join('');
   },
 };

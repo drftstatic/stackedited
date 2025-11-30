@@ -1,112 +1,112 @@
 <template>
   <div class="side-bar__panel side-bar__panel--menu">
-    <div class="side-bar__info" v-if="isCurrentTemp">
-      <p>{{currentFileName}} can't be published as it's a temporary file.</p>
+    <div v-if="isCurrentTemp" class="side-bar__info">
+      <p>{{ currentFileName }} can't be published as it's a temporary file.</p>
     </div>
     <div v-else>
-      <div class="side-bar__info" v-if="publishLocations.length">
-        <p>{{currentFileName}} is already published.</p>
+      <div v-if="publishLocations.length" class="side-bar__info">
+        <p>{{ currentFileName }} is already published.</p>
         <menu-entry @click.native="requestPublish">
-          <icon-upload slot="icon"></icon-upload>
+          <icon-upload slot="icon" />
           <div>Publish now</div>
-          <span>Update publications for {{currentFileName}}.</span>
+          <span>Update publications for {{ currentFileName }}.</span>
         </menu-entry>
         <menu-entry @click.native="managePublish">
-          <icon-view-list slot="icon"></icon-view-list>
-          <div><div class="menu-entry__label menu-entry__label--count">{{locationCount}}</div> File publication</div>
-          <span>Manage publication locations for {{currentFileName}}.</span>
+          <icon-view-list slot="icon" />
+          <div><div class="menu-entry__label menu-entry__label--count">{{ locationCount }}</div> File publication</div>
+          <span>Manage publication locations for {{ currentFileName }}.</span>
         </menu-entry>
       </div>
-      <div class="side-bar__info" v-else-if="noToken">
+      <div v-else-if="noToken" class="side-bar__info">
         <p>You have to link an account to start publishing files.</p>
       </div>
       <hr>
       <div v-for="token in bloggerTokens" :key="'blogger-' + token.sub">
         <menu-entry @click.native="publishBlogger(token)">
-          <icon-provider slot="icon" provider-id="blogger"></icon-provider>
+          <icon-provider slot="icon" provider-id="blogger" />
           <div>Publish to Blogger</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
         <menu-entry @click.native="publishBloggerPage(token)">
-          <icon-provider slot="icon" provider-id="bloggerPage"></icon-provider>
+          <icon-provider slot="icon" provider-id="bloggerPage" />
           <div>Publish to Blogger Page</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
       </div>
       <div v-for="token in dropboxTokens" :key="token.sub">
         <menu-entry @click.native="publishDropbox(token)">
-          <icon-provider slot="icon" provider-id="dropbox"></icon-provider>
+          <icon-provider slot="icon" provider-id="dropbox" />
           <div>Publish to Dropbox</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
       </div>
       <div v-for="token in githubTokens" :key="token.sub">
         <menu-entry @click.native="publishGist(token)">
-          <icon-provider slot="icon" provider-id="gist"></icon-provider>
+          <icon-provider slot="icon" provider-id="gist" />
           <div>Publish to Gist</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
         <menu-entry @click.native="publishGithub(token)">
-          <icon-provider slot="icon" provider-id="github"></icon-provider>
+          <icon-provider slot="icon" provider-id="github" />
           <div>Publish to GitHub</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
       </div>
       <div v-for="token in gitlabTokens" :key="token.sub">
         <menu-entry @click.native="publishGitlab(token)">
-          <icon-provider slot="icon" provider-id="gitlab"></icon-provider>
+          <icon-provider slot="icon" provider-id="gitlab" />
           <div>Publish to GitLab</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
       </div>
       <div v-for="token in googleDriveTokens" :key="token.sub">
         <menu-entry @click.native="publishGoogleDrive(token)">
-          <icon-provider slot="icon" provider-id="googleDrive"></icon-provider>
+          <icon-provider slot="icon" provider-id="googleDrive" />
           <div>Publish to Google Drive</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
       </div>
       <div v-for="token in wordpressTokens" :key="token.sub">
         <menu-entry @click.native="publishWordpress(token)">
-          <icon-provider slot="icon" provider-id="wordpress"></icon-provider>
+          <icon-provider slot="icon" provider-id="wordpress" />
           <div>Publish to WordPress</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
       </div>
       <div v-for="token in zendeskTokens" :key="token.sub">
         <menu-entry @click.native="publishZendesk(token)">
-          <icon-provider slot="icon" provider-id="zendesk"></icon-provider>
+          <icon-provider slot="icon" provider-id="zendesk" />
           <div>Publish to Zendesk Help Center</div>
-          <span>{{token.name}} — {{token.subdomain}}</span>
+          <span>{{ token.name }} — {{ token.subdomain }}</span>
         </menu-entry>
       </div>
       <hr>
       <menu-entry @click.native="addBloggerAccount">
-        <icon-provider slot="icon" provider-id="blogger"></icon-provider>
+        <icon-provider slot="icon" provider-id="blogger" />
         <span>Add Blogger account</span>
       </menu-entry>
       <menu-entry @click.native="addDropboxAccount">
-        <icon-provider slot="icon" provider-id="dropbox"></icon-provider>
+        <icon-provider slot="icon" provider-id="dropbox" />
         <span>Add Dropbox account</span>
       </menu-entry>
       <menu-entry @click.native="addGithubAccount">
-        <icon-provider slot="icon" provider-id="github"></icon-provider>
+        <icon-provider slot="icon" provider-id="github" />
         <span>Add GitHub account</span>
       </menu-entry>
       <menu-entry @click.native="addGitlabAccount">
-        <icon-provider slot="icon" provider-id="gitlab"></icon-provider>
+        <icon-provider slot="icon" provider-id="gitlab" />
         <span>Add GitLab account</span>
       </menu-entry>
       <menu-entry @click.native="addGoogleDriveAccount">
-        <icon-provider slot="icon" provider-id="googleDrive"></icon-provider>
+        <icon-provider slot="icon" provider-id="googleDrive" />
         <span>Add Google Drive account</span>
       </menu-entry>
       <menu-entry @click.native="addWordpressAccount">
-        <icon-provider slot="icon" provider-id="wordpress"></icon-provider>
+        <icon-provider slot="icon" provider-id="wordpress" />
         <span>Add WordPress account</span>
       </menu-entry>
       <menu-entry @click.native="addZendeskAccount">
-        <icon-provider slot="icon" provider-id="zendesk"></icon-provider>
+        <icon-provider slot="icon" provider-id="zendesk" />
         <span>Add Zendesk account</span>
       </menu-entry>
     </div>
@@ -126,7 +126,7 @@ import publishSvc from '../../services/publishSvc';
 import store from '../../store';
 
 const tokensToArray = (tokens, filter = () => true) => Object.values(tokens)
-  .filter(token => filter(token))
+  .filter((token) => filter(token))
   .sort((token1, token2) => token1.name.localeCompare(token2.name));
 
 const publishModalOpener = (type, featureId) => async (token) => {
@@ -160,7 +160,7 @@ export default {
       return `"${store.getters['file/current'].name}"`;
     },
     bloggerTokens() {
-      return tokensToArray(store.getters['data/googleTokensBySub'], token => token.isBlogger);
+      return tokensToArray(store.getters['data/googleTokensBySub'], (token) => token.isBlogger);
     },
     dropboxTokens() {
       return tokensToArray(store.getters['data/dropboxTokensBySub']);
@@ -172,7 +172,7 @@ export default {
       return tokensToArray(store.getters['data/gitlabTokensBySub']);
     },
     googleDriveTokens() {
-      return tokensToArray(store.getters['data/googleTokensBySub'], token => token.isDrive);
+      return tokensToArray(store.getters['data/googleTokensBySub'], (token) => token.isDrive);
     },
     wordpressTokens() {
       return tokensToArray(store.getters['data/wordpressTokensBySub']);

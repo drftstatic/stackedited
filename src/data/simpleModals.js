@@ -22,12 +22,12 @@ export default {
     'Yes, revert',
   ),
   folderDeletion: simpleModal(
-    config => `<p>You are about to delete the folder <b>${config.item.name}</b>. Its files will be moved to Trash. Are you sure?</p>`,
+    (config) => `<p>You are about to delete the folder <b>${config.item.name}</b>. Its files will be moved to Trash. Are you sure?</p>`,
     'No',
     'Yes, delete',
   ),
   pathConflict: simpleModal(
-    config => `<p><b>${config.item.name}</b> already exists. Do you want to add a suffix?</p>`,
+    (config) => `<p><b>${config.item.name}</b> already exists. Do you want to add a suffix?</p>`,
     'No',
     'Yes, add suffix',
   ),
@@ -36,7 +36,7 @@ export default {
     'Ok',
   ),
   providerRedirection: simpleModal(
-    config => `<p>You are about to navigate to the <b>${config.name}</b> authorization page.</p>`,
+    (config) => `<p>You are about to navigate to the <b>${config.name}</b> authorization page.</p>`,
     'Cancel',
     'Ok, go on',
   ),
@@ -67,12 +67,12 @@ export default {
     'Ok, I understand',
   ),
   stripName: simpleModal(
-    config => `<p><b>${config.item.name}</b> contains illegal characters. Do you want to strip them?</p>`,
+    (config) => `<p><b>${config.item.name}</b> contains illegal characters. Do you want to strip them?</p>`,
     'No',
     'Yes, strip',
   ),
   tempFileDeletion: simpleModal(
-    config => `<p>You are about to permanently delete the temporary file <b>${config.item.name}</b>. Are you sure?</p>`,
+    (config) => `<p>You are about to permanently delete the temporary file <b>${config.item.name}</b>. Are you sure?</p>`,
     'No',
     'Yes, delete',
   ),
@@ -86,7 +86,7 @@ export default {
     'Ok',
   ),
   unauthorizedName: simpleModal(
-    config => `<p><b>${config.item.name}</b> is an unauthorized name.</p>`,
+    (config) => `<p><b>${config.item.name}</b> is an unauthorized name.</p>`,
     'Ok',
   ),
   workspaceGoogleRedirection: simpleModal(

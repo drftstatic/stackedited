@@ -12,7 +12,7 @@ const request = ({ accessToken, serverUrl }, options) => networkSvc.request({
     Authorization: `Bearer ${accessToken}`,
   },
 })
-  .then(res => res.body);
+  .then((res) => res.body);
 
 const getCommitMessage = (name, path) => {
   const message = store.getters['data/computedSettings'].git[name];

@@ -1,7 +1,7 @@
 <template>
   <div class="toc">
-    <div class="toc__mask" :style="{top: (maskY - 5) + 'px'}"></div>
-    <div class="toc__inner"></div>
+    <div class="toc__mask" :style="{top: (maskY - 5) + 'px'}" />
+    <div class="toc__inner" />
   </div>
 </template>
 
@@ -65,8 +65,8 @@ export default {
       const scrollPosition = editorSvc.getScrollPosition();
       if (scrollPosition) {
         const sectionDesc = editorSvc.previewCtxMeasured.sectionDescList[scrollPosition.sectionIdx];
-        this.maskY = sectionDesc.tocDimension.startOffset +
-          (scrollPosition.posInSection * sectionDesc.tocDimension.height);
+        this.maskY = sectionDesc.tocDimension.startOffset
+          + (scrollPosition.posInSection * sectionDesc.tocDimension.height);
       }
     };
 

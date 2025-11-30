@@ -50,9 +50,9 @@ function SelectionMgr(editor) {
       this.selectionEndContainer,
       this.selectionEndOffset,
     );
-    if (this.cursorCoordinates.top !== coordinates.top ||
-      this.cursorCoordinates.height !== coordinates.height ||
-      this.cursorCoordinates.left !== coordinates.left
+    if (this.cursorCoordinates.top !== coordinates.top
+      || this.cursorCoordinates.height !== coordinates.height
+      || this.cursorCoordinates.left !== coordinates.left
     ) {
       this.cursorCoordinates = coordinates;
       this.$trigger('cursorCoordinatesChanged', coordinates);
@@ -86,11 +86,11 @@ function SelectionMgr(editor) {
   let oldSelectionRange;
 
   const checkSelection = (selectionRange) => {
-    if (!oldSelectionRange ||
-      oldSelectionRange.startContainer !== selectionRange.startContainer ||
-      oldSelectionRange.startOffset !== selectionRange.startOffset ||
-      oldSelectionRange.endContainer !== selectionRange.endContainer ||
-      oldSelectionRange.endOffset !== selectionRange.endOffset
+    if (!oldSelectionRange
+      || oldSelectionRange.startContainer !== selectionRange.startContainer
+      || oldSelectionRange.startOffset !== selectionRange.startOffset
+      || oldSelectionRange.endContainer !== selectionRange.endContainer
+      || oldSelectionRange.endOffset !== selectionRange.endOffset
     ) {
       oldSelectionRange = selectionRange;
       this.$trigger('selectionChanged', this.selectionStart, this.selectionEnd, selectionRange);
@@ -231,7 +231,7 @@ function SelectionMgr(editor) {
       while (n) {
         if (n === childA) {
           return -1;
-        } else if (n === childB) {
+        } if (n === childB) {
           return 1;
         }
         n = n.nextSibling;

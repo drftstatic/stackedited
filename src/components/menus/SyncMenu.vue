@@ -1,94 +1,94 @@
 <template>
   <div class="side-bar__panel side-bar__panel--menu">
-    <div class="side-bar__info" v-if="isCurrentTemp">
-      <p>{{currentFileName}} can't be synced as it's a temporary file.</p>
+    <div v-if="isCurrentTemp" class="side-bar__info">
+      <p>{{ currentFileName }} can't be synced as it's a temporary file.</p>
     </div>
     <div v-else>
-      <div class="side-bar__info" v-if="syncLocations.length">
-        <p>{{currentFileName}} is already synchronized.</p>
+      <div v-if="syncLocations.length" class="side-bar__info">
+        <p>{{ currentFileName }} is already synchronized.</p>
         <menu-entry @click.native="requestSync">
-          <icon-sync slot="icon"></icon-sync>
+          <icon-sync slot="icon" />
           <div>Synchronize now</div>
           <span>Download / upload file changes.</span>
         </menu-entry>
         <menu-entry @click.native="manageSync">
-          <icon-view-list slot="icon"></icon-view-list>
-          <div><div class="menu-entry__label menu-entry__label--count">{{locationCount}}</div> File synchronization</div>
-          <span>Manage synchronized locations for {{currentFileName}}.</span>
+          <icon-view-list slot="icon" />
+          <div><div class="menu-entry__label menu-entry__label--count">{{ locationCount }}</div> File synchronization</div>
+          <span>Manage synchronized locations for {{ currentFileName }}.</span>
         </menu-entry>
       </div>
-      <div class="side-bar__info" v-else-if="noToken">
+      <div v-else-if="noToken" class="side-bar__info">
         <p>You have to link an account to start syncing files.</p>
       </div>
       <hr>
       <div v-for="token in dropboxTokens" :key="token.sub">
         <menu-entry @click.native="openDropbox(token)">
-          <icon-provider slot="icon" provider-id="dropbox"></icon-provider>
+          <icon-provider slot="icon" provider-id="dropbox" />
           <div>Open from Dropbox</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
         <menu-entry @click.native="saveDropbox(token)">
-          <icon-provider slot="icon" provider-id="dropbox"></icon-provider>
+          <icon-provider slot="icon" provider-id="dropbox" />
           <div>Save on Dropbox</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
       </div>
       <div v-for="token in githubTokens" :key="token.sub">
         <menu-entry @click.native="openGithub(token)">
-          <icon-provider slot="icon" provider-id="github"></icon-provider>
+          <icon-provider slot="icon" provider-id="github" />
           <div>Open from GitHub</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
         <menu-entry @click.native="saveGithub(token)">
-          <icon-provider slot="icon" provider-id="github"></icon-provider>
+          <icon-provider slot="icon" provider-id="github" />
           <div>Save on GitHub</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
         <menu-entry @click.native="saveGist(token)">
-          <icon-provider slot="icon" provider-id="gist"></icon-provider>
+          <icon-provider slot="icon" provider-id="gist" />
           <div>Save on Gist</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
       </div>
       <div v-for="token in gitlabTokens" :key="token.sub">
         <menu-entry @click.native="openGitlab(token)">
-          <icon-provider slot="icon" provider-id="gitlab"></icon-provider>
+          <icon-provider slot="icon" provider-id="gitlab" />
           <div>Open from GitLab</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
         <menu-entry @click.native="saveGitlab(token)">
-          <icon-provider slot="icon" provider-id="gitlab"></icon-provider>
+          <icon-provider slot="icon" provider-id="gitlab" />
           <div>Save on GitLab</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
       </div>
       <div v-for="token in googleDriveTokens" :key="token.sub">
         <menu-entry @click.native="openGoogleDrive(token)">
-          <icon-provider slot="icon" provider-id="googleDrive"></icon-provider>
+          <icon-provider slot="icon" provider-id="googleDrive" />
           <div>Open from Google Drive</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
         <menu-entry @click.native="saveGoogleDrive(token)">
-          <icon-provider slot="icon" provider-id="googleDrive"></icon-provider>
+          <icon-provider slot="icon" provider-id="googleDrive" />
           <div>Save on Google Drive</div>
-          <span>{{token.name}}</span>
+          <span>{{ token.name }}</span>
         </menu-entry>
       </div>
       <hr>
       <menu-entry @click.native="addDropboxAccount">
-        <icon-provider slot="icon" provider-id="dropbox"></icon-provider>
+        <icon-provider slot="icon" provider-id="dropbox" />
         <span>Add Dropbox account</span>
       </menu-entry>
       <menu-entry @click.native="addGithubAccount">
-        <icon-provider slot="icon" provider-id="github"></icon-provider>
+        <icon-provider slot="icon" provider-id="github" />
         <span>Add GitHub account</span>
       </menu-entry>
       <menu-entry @click.native="addGitlabAccount">
-        <icon-provider slot="icon" provider-id="gitlab"></icon-provider>
+        <icon-provider slot="icon" provider-id="gitlab" />
         <span>Add GitLab account</span>
       </menu-entry>
       <menu-entry @click.native="addGoogleDriveAccount">
-        <icon-provider slot="icon" provider-id="googleDrive"></icon-provider>
+        <icon-provider slot="icon" provider-id="googleDrive" />
         <span>Add Google Drive account</span>
       </menu-entry>
     </div>
@@ -111,13 +111,13 @@ import store from '../../store';
 import badgeSvc from '../../services/badgeSvc';
 
 const tokensToArray = (tokens, filter = () => true) => Object.values(tokens)
-  .filter(token => filter(token))
+  .filter((token) => filter(token))
   .sort((token1, token2) => token1.name.localeCompare(token2.name));
 
 const openSyncModal = (token, type) => store.dispatch('modal/open', {
   type,
   token,
-}).then(syncLocation => syncSvc.createSyncLocation(syncLocation));
+}).then((syncLocation) => syncSvc.createSyncLocation(syncLocation));
 
 export default {
   components: {
@@ -152,7 +152,7 @@ export default {
       return tokensToArray(store.getters['data/gitlabTokensBySub']);
     },
     googleDriveTokens() {
-      return tokensToArray(store.getters['data/googleTokensBySub'], token => token.isDrive);
+      return tokensToArray(store.getters['data/googleTokensBySub'], (token) => token.isDrive);
     },
     noToken() {
       return !this.googleDriveTokens.length

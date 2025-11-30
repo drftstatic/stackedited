@@ -1,10 +1,10 @@
 <template>
   <div class="app" :class="classes" @keydown.esc="close">
-    <splash-screen v-if="!ready"></splash-screen>
-    <layout v-else></layout>
-    <modal></modal>
-    <notification></notification>
-    <context-menu></context-menu>
+    <splash-screen v-if="!ready" />
+    <layout v-else />
+    <modal />
+    <notification />
+    <context-menu />
   </div>
 </template>
 
@@ -45,11 +45,6 @@ export default {
       return Array.isArray(result) ? result : themeClasses.light;
     },
   },
-  methods: {
-    close() {
-      tempFileSvc.close();
-    },
-  },
   async created() {
     try {
       await syncSvc.init();
@@ -64,6 +59,11 @@ export default {
         store.dispatch('notification/error', err);
       }
     }
+  },
+  methods: {
+    close() {
+      tempFileSvc.close();
+    },
   },
 };
 </script>

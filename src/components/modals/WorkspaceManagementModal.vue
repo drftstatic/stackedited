@@ -2,54 +2,54 @@
   <modal-inner class="modal__inner-1--workspace-management" aria-label="Manage workspaces">
     <div class="modal__content">
       <div class="modal__image">
-        <icon-database></icon-database>
+        <icon-database />
       </div>
       <p>The following workspaces are accessible:</p>
-      <div class="workspace-entry flex flex--column" v-for="(workspace, id) in workspacesById" :key="id">
+      <div v-for="(workspace, id) in workspacesById" :key="id" class="workspace-entry flex flex--column">
         <div class="flex flex--column">
           <div class="workspace-entry__header flex flex--row flex--align-center">
             <div class="workspace-entry__icon">
-              <icon-provider :provider-id="workspace.providerId"></icon-provider>
+              <icon-provider :provider-id="workspace.providerId" />
             </div>
-            <input class="text-input" type="text" v-if="editedId === id" v-focus @blur="submitEdit()" @keydown.enter="submitEdit()" @keydown.esc.stop="submitEdit(true)" v-model="editingName">
-            <div class="workspace-entry__name" v-else>{{workspace.name}}</div>
+            <input v-if="editedId === id" v-model="editingName" v-focus class="text-input" type="text" @blur="submitEdit()" @keydown.enter="submitEdit()" @keydown.esc.stop="submitEdit(true)">
+            <div v-else class="workspace-entry__name">{{ workspace.name }}</div>
             <div class="workspace-entry__buttons flex flex--row">
-              <button class="workspace-entry__button button" @click="edit(id)" v-title="'Edit name'">
-                <icon-pen></icon-pen>
+              <button v-title="'Edit name'" class="workspace-entry__button button" @click="edit(id)">
+                <icon-pen />
               </button>
-              <button class="workspace-entry__button button" @click="remove(id)" v-title="'Remove'">
-                <icon-delete></icon-delete>
+              <button v-title="'Remove'" class="workspace-entry__button button" @click="remove(id)">
+                <icon-delete />
               </button>
             </div>
           </div>
           <div class="workspace-entry__row flex flex--row flex--align-center">
             <div class="workspace-entry__url">
-              {{workspace.url}}
+              {{ workspace.url }}
             </div>
             <div class="workspace-entry__buttons flex flex--row">
-              <button class="workspace-entry__button button" v-clipboard="workspace.url" @click="info('Workspace URL copied to clipboard!')" v-title="'Copy URL'">
-                <icon-content-copy></icon-content-copy>
+              <button v-clipboard="workspace.url" v-title="'Copy URL'" class="workspace-entry__button button" @click="info('Workspace URL copied to clipboard!')">
+                <icon-content-copy />
               </button>
-              <a class="workspace-entry__button button" :href="workspace.url" target="_blank" v-title="'Open workspace'">
-                <icon-open-in-new></icon-open-in-new>
+              <a v-title="'Open workspace'" class="workspace-entry__button button" :href="workspace.url" target="_blank">
+                <icon-open-in-new />
               </a>
             </div>
           </div>
-          <div class="workspace-entry__row flex flex--row flex--align-center" v-if="workspace.locationUrl">
+          <div v-if="workspace.locationUrl" class="workspace-entry__row flex flex--row flex--align-center">
             <div class="workspace-entry__url">
-              {{workspace.locationUrl}}
+              {{ workspace.locationUrl }}
             </div>
             <div class="workspace-entry__buttons flex flex--row">
-              <button class="workspace-entry__button button" v-clipboard="workspace.locationUrl" @click="info('Workspace URL copied to clipboard!')" v-title="'Copy URL'">
-                <icon-content-copy></icon-content-copy>
+              <button v-clipboard="workspace.locationUrl" v-title="'Copy URL'" class="workspace-entry__button button" @click="info('Workspace URL copied to clipboard!')">
+                <icon-content-copy />
               </button>
-              <a class="workspace-entry__button button" :href="workspace.locationUrl" target="_blank" v-title="'Open workspace location'">
-                <icon-open-in-new></icon-open-in-new>
+              <a v-title="'Open workspace location'" class="workspace-entry__button button" :href="workspace.locationUrl" target="_blank">
+                <icon-open-in-new />
               </a>
             </div>
           </div>
           <div>
-            <span class="workspace-entry__offline" v-if="availableOffline[id]">
+            <span v-if="availableOffline[id]" class="workspace-entry__offline">
               available offline
             </span>
           </div>

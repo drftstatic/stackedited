@@ -35,7 +35,7 @@ export default {
     showDiffModal: false,
 
     // UI state
-    showPanel: false
+    showPanel: false,
   }),
 
   mutations: {
@@ -82,7 +82,7 @@ export default {
     addMessage(state, message) {
       state.messages.push({
         id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        ...message
+        ...message,
       });
     },
 
@@ -96,7 +96,7 @@ export default {
           id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           role: 'assistant',
           content: text,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       }
     },
@@ -108,7 +108,7 @@ export default {
     addPendingEdit(state, edit) {
       state.pendingEdit = {
         id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        ...edit
+        ...edit,
       };
     },
 
@@ -142,31 +142,27 @@ export default {
 
     togglePanel(state) {
       state.showPanel = !state.showPanel;
-    }
+    },
   },
 
   getters: {
-    isAvailable: state => state.connected && !state.error,
+    isAvailable: (state) => state.connected && !state.error,
 
-    lastEdit: state => state.editHistory[state.editHistory.length - 1],
+    lastEdit: (state) => state.editHistory[state.editHistory.length - 1],
 
-    recentEdits: state => state.editHistory.slice(-10).reverse(),
+    recentEdits: (state) => state.editHistory.slice(-10).reverse(),
 
-    messageCount: state => state.messages.length,
+    messageCount: (state) => state.messages.length,
 
-    currentProvider: state => {
-      return state.providers.find(p => p.id === state.providerId) || null;
-    },
+    currentProvider: (state) => state.providers.find((p) => p.id === state.providerId) || null,
 
-    availableProviders: state => {
-      return state.providers.filter(p => p.available && p.enabled);
-    },
+    availableProviders: (state) => state.providers.filter((p) => p.available && p.enabled),
 
-    connectionStatus: state => {
+    connectionStatus: (state) => {
       if (state.error) return 'error';
       if (state.connected) return 'connected';
       return 'disconnected';
-    }
+    },
   },
 
   actions: {
@@ -178,7 +174,7 @@ export default {
       const lastEdit = state.editHistory[state.editHistory.length - 1];
       if (lastEdit?.previousContent) {
         await dispatch('content/patchCurrent', {
-          text: lastEdit.previousContent
+          text: lastEdit.previousContent,
         }, { root: true });
         commit('removeLastEdit');
         dispatch('notification/info', 'AI edit undone', { root: true });
@@ -188,10 +184,11 @@ export default {
     toggleTrustMode({ commit, state, dispatch }) {
       const newMode = !state.trustMode;
       commit('setTrustMode', newMode);
-      dispatch('notification/info',
+      dispatch(
+        'notification/info',
         newMode ? 'Trust mode enabled - edits will auto-apply' : 'Trust mode disabled - edits require approval',
-        { root: true }
+        { root: true },
       );
-    }
-  }
+    },
+  },
 };

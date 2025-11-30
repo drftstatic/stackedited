@@ -1,12 +1,12 @@
 <template>
   <modal-inner class="modal__inner-1--google-photo" aria-label="Import Google Photo">
     <div class="modal__content">
-      <div class="google-photo__tumbnail" :style="{backgroundImage: thumbnailUrl}"></div>
+      <div class="google-photo__tumbnail" :style="{backgroundImage: thumbnailUrl}" />
       <form-entry label="Title" info="optional">
-        <input slot="field" class="textfield" type="text" v-model.trim="title" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="title" class="textfield" type="text" @keydown.enter="resolve()">
       </form-entry>
       <form-entry label="Size limit" info="optional">
-        <input slot="field" class="textfield" type="text" v-model.trim="size" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="size" class="textfield" type="text" @keydown.enter="resolve()">
       </form-entry>
     </div>
     <div class="modal__button-bar">

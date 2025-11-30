@@ -80,8 +80,7 @@ export default {
   queryParams: parseQueryParams(window.location.hash.slice(1)),
   setQueryParams(params = {}) {
     this.queryParams = filterParams(params);
-    const serializedParams = Object.entries(this.queryParams).map(([key, value]) =>
-      `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+    const serializedParams = Object.entries(this.queryParams).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
     const hash = `#${serializedParams}`;
     if (window.location.hash !== hash) {
       window.location.replace(hash);
@@ -129,7 +128,7 @@ export default {
   },
   uid() {
     crypto.getRandomValues(array);
-    return array.cl_map(value => alphabet[value % radix]).join('');
+    return array.cl_map((value) => alphabet[value % radix]).join('');
   },
   hash(str) {
     // https://stackoverflow.com/a/7616484/1333165
@@ -188,7 +187,7 @@ export default {
     const utf8Str = atob(sanitizedStr);
     const uriEncodedStr = utf8Str
       .split('')
-      .map(c => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+      .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
       .join('');
     return decodeURIComponent(uriEncodedStr);
   },
@@ -240,13 +239,12 @@ export default {
   },
   parseQueryParams,
   addQueryParams(url = '', params = {}, hash = false) {
-    const keys = Object.keys(params).filter(key => params[key] != null);
+    const keys = Object.keys(params).filter((key) => params[key] != null);
     urlParser.href = url;
     if (!keys.length) {
       return urlParser.href;
     }
-    const serializedParams = keys.map(key =>
-      `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`).join('&');
+    const serializedParams = keys.map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`).join('&');
     if (hash) {
       if (urlParser.hash) {
         urlParser.hash += '&';
@@ -315,8 +313,8 @@ export default {
     if (treeWalker.currentNode.nodeType === Node.TEXT_NODE || treeWalker.nextNode()) {
       do {
         if (treeWalker.currentNode.nodeValue !== '\n') {
-          if (treeWalker.currentNode === range.endContainer &&
-            range.endOffset < treeWalker.currentNode.nodeValue.length
+          if (treeWalker.currentNode === range.endContainer
+            && range.endOffset < treeWalker.currentNode.nodeValue.length
           ) {
             treeWalker.currentNode.splitText(range.endOffset);
           }

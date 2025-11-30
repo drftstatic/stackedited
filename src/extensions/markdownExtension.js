@@ -110,10 +110,8 @@ extensionSvc.onInitConverter(0, (markdown, options) => {
   markdown.use(markdownitAnchor);
 
   // Wrap tables into a div for scrolling
-  markdown.renderer.rules.table_open = (tokens, idx, opts) =>
-    `<div class="table-wrapper">${markdown.renderer.renderToken(tokens, idx, opts)}`;
-  markdown.renderer.rules.table_close = (tokens, idx, opts) =>
-    `${markdown.renderer.renderToken(tokens, idx, opts)}</div>`;
+  markdown.renderer.rules.table_open = (tokens, idx, opts) => `<div class="table-wrapper">${markdown.renderer.renderToken(tokens, idx, opts)}`;
+  markdown.renderer.rules.table_close = (tokens, idx, opts) => `${markdown.renderer.renderToken(tokens, idx, opts)}</div>`;
 
   // Transform style into align attribute to pass the HTML sanitizer
   const textAlignLength = 'text-align:'.length;

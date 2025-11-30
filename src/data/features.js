@@ -8,7 +8,7 @@ class Feature {
 
   toBadge(badgeCreations) {
     const children = this.children
-      ? this.children.map(child => child.toBadge(badgeCreations))
+      ? this.children.map((child) => child.toBadge(badgeCreations))
       : null;
     return {
       featureId: this.id,
@@ -16,9 +16,9 @@ class Feature {
       description: this.description,
       children,
       isEarned: children
-        ? children.every(child => child.isEarned)
+        ? children.every((child) => child.isEarned)
         : !!badgeCreations[this.id],
-      hasSomeEarned: children && children.some(child => child.isEarned),
+      hasSomeEarned: children && children.some((child) => child.isEarned),
     };
   }
 }

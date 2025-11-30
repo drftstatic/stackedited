@@ -129,7 +129,7 @@ export default new Provider({
       path: makePathRelative(token, syncLocation.path),
       fileId: syncLocation.dropboxFileId,
     });
-    return entries.map(entry => ({
+    return entries.map((entry) => ({
       id: entry.rev,
       sub: `${dropboxHelper.subPrefix}:${(entry.sharing_info || {}).modified_by || token.sub}`,
       created: new Date(entry.server_modified).getTime(),

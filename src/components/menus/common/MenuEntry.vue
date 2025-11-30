@@ -1,10 +1,10 @@
 <template>
   <a class="menu-entry button flex flex--row flex--align-center" href="javascript:void(0)">
     <div class="menu-entry__icon flex flex--column flex--center">
-      <slot name="icon"></slot>
+      <slot name="icon" />
     </div>
     <div class="menu-entry__text flex flex--column">
-      <slot></slot>
+      <slot />
     </div>
   </a>
 </template>

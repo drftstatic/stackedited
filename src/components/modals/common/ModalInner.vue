@@ -1,10 +1,10 @@
 <template>
   <div class="modal__inner-1" role="dialog">
     <div class="modal__inner-2">
-      <button class="modal__close-button button not-tabbable" @click="config.reject()" v-title="'Close modal'">
-        <icon-close></icon-close>
+      <button v-title="'Close modal'" class="modal__close-button button not-tabbable" @click="config.reject()">
+        <icon-close />
       </button>
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>

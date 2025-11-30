@@ -4,7 +4,7 @@
       <div class="form-entry">
         <label class="form-entry__label" for="template">Template</label>
         <div class="form-entry__field">
-          <input v-if="isEditing" id="template" type="text" class="textfield" v-focus @blur="submitEdit()" @keydown.enter="submitEdit()" @keydown.esc.stop="submitEdit(true)" v-model="editingName">
+          <input v-if="isEditing" id="template" v-model="editingName" v-focus type="text" class="textfield" @blur="submitEdit()" @keydown.enter="submitEdit()" @keydown.esc.stop="submitEdit(true)">
           <select v-else id="template" v-model="selectedId" class="textfield">
             <option v-for="(template, id) in templates" :key="id" :value="id">
               {{ template.name }}
@@ -12,33 +12,33 @@
           </select>
         </div>
         <div class="form-entry__actions flex flex--row flex--end">
-          <button class="form-entry__button button" @click="create" v-title="'New template'">
-            <icon-file-plus></icon-file-plus>
+          <button v-title="'New template'" class="form-entry__button button" @click="create">
+            <icon-file-plus />
           </button>
-          <button class="form-entry__button button" @click="copy" v-title="'Copy template'">
-            <icon-file-multiple></icon-file-multiple>
+          <button v-title="'Copy template'" class="form-entry__button button" @click="copy">
+            <icon-file-multiple />
           </button>
-          <button v-if="!isReadOnly" class="form-entry__button button" @click="isEditing = true" v-title="'Rename template'">
-            <icon-pen></icon-pen>
+          <button v-if="!isReadOnly" v-title="'Rename template'" class="form-entry__button button" @click="isEditing = true">
+            <icon-pen />
           </button>
-          <button v-if="!isReadOnly" class="form-entry__button button" @click="remove" v-title="'Remove template'">
-            <icon-delete></icon-delete>
+          <button v-if="!isReadOnly" v-title="'Remove template'" class="form-entry__button button" @click="remove">
+            <icon-delete />
           </button>
         </div>
       </div>
       <div class="form-entry">
         <label class="form-entry__label">Value</label>
-        <div class="form-entry__field" v-for="(template, id) in templates" :key="id" v-if="id === selectedId">
-          <code-editor lang="handlebars" :value="template.value" :disabled="isReadOnly" @changed="template.value = $event"></code-editor>
+        <div v-for="(template, id) in templates" v-if="id === selectedId" :key="id" class="form-entry__field">
+          <code-editor lang="handlebars" :value="template.value" :disabled="isReadOnly" @changed="template.value = $event" />
         </div>
       </div>
       <div v-if="!isReadOnly">
-        <a href="javascript:void(0)" v-if="!showHelpers" @click="showHelpers = true">Add helpers</a>
-        <div class="form-entry" v-else>
+        <a v-if="!showHelpers" href="javascript:void(0)" @click="showHelpers = true">Add helpers</a>
+        <div v-else class="form-entry">
           <br>
           <label class="form-entry__label">Helpers</label>
-          <div class="form-entry__field" v-for="(template, id) in templates" :key="id" v-if="id === selectedId">
-            <code-editor lang="javascript" :value="template.helpers" @changed="template.helpers = $event"></code-editor>
+          <div v-for="(template, id) in templates" v-if="id === selectedId" :key="id" class="form-entry__field">
+            <code-editor lang="javascript" :value="template.helpers" @changed="template.helpers = $event" />
           </div>
         </div>
       </div>
@@ -159,10 +159,10 @@ export default {
       await store.dispatch('data/setTemplatesById', this.templates);
       const newTemplateIds = Object.keys(store.getters['data/templatesById']);
       const createdCount = newTemplateIds
-        .filter(id => !oldTemplateIds.includes(id))
+        .filter((id) => !oldTemplateIds.includes(id))
         .length;
       const removedCount = oldTemplateIds
-        .filter(id => !newTemplateIds.includes(id))
+        .filter((id) => !newTemplateIds.includes(id))
         .length;
       if (createdCount) {
         badgeSvc.addBadge('addTemplate');

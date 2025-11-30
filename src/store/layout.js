@@ -105,9 +105,9 @@ function computeStyles(state, getters, layoutSettings = getters['data/layoutSett
 
   const bottomPadding = Math.floor(styles.innerHeight / 2);
   const panelWidth = Math.floor(doublePanelWidth / 2);
-  styles.previewWidth = styles.showSidePreview ?
-    panelWidth :
-    doublePanelWidth;
+  styles.previewWidth = styles.showSidePreview
+    ? panelWidth
+    : doublePanelWidth;
   const previewRightPadding = Math
     .max(Math.floor((styles.previewWidth - styles.textWidth) / 2), minPadding);
   if (!styles.showSidePreview) {
@@ -119,9 +119,9 @@ function computeStyles(state, getters, layoutSettings = getters['data/layoutSett
   const previewLeftPadding = previewRightPadding + styles.previewGutterWidth;
   styles.previewGutterLeft = previewLeftPadding - minPadding;
   styles.previewPadding = `${editorTopPadding}px ${previewRightPadding}px ${bottomPadding}px ${previewLeftPadding}px`;
-  styles.editorWidth = styles.showSidePreview ?
-    panelWidth :
-    doublePanelWidth;
+  styles.editorWidth = styles.showSidePreview
+    ? panelWidth
+    : doublePanelWidth;
   const editorRightPadding = Math
     .max(Math.floor((styles.editorWidth - styles.textWidth) / 2), minPadding);
   styles.editorGutterWidth = showGutter && layoutSettings.showEditor
@@ -131,17 +131,17 @@ function computeStyles(state, getters, layoutSettings = getters['data/layoutSett
   styles.editorGutterLeft = editorLeftPadding - minPadding;
   styles.editorPadding = `${editorTopPadding}px ${editorRightPadding}px ${bottomPadding}px ${editorLeftPadding}px`;
 
-  styles.titleMaxWidth = styles.innerWidth -
-    navigationBarLeftButtonWidth -
-    navigationBarRightButtonWidth -
-    navigationBarSpinnerWidth;
+  styles.titleMaxWidth = styles.innerWidth
+    - navigationBarLeftButtonWidth
+    - navigationBarRightButtonWidth
+    - navigationBarSpinnerWidth;
   if (styles.showEditor) {
     const syncLocations = getters['syncLocation/current'];
     const publishLocations = getters['publishLocation/current'];
-    styles.titleMaxWidth -= navigationBarEditButtonsWidth +
-      (navigationBarLocationWidth * (syncLocations.length + publishLocations.length)) +
-      (navigationBarSyncPublishButtonsWidth * 2) +
-      navigationBarTitleMargin;
+    styles.titleMaxWidth -= navigationBarEditButtonsWidth
+      + (navigationBarLocationWidth * (syncLocations.length + publishLocations.length))
+      + (navigationBarSyncPublishButtonsWidth * 2)
+      + navigationBarTitleMargin;
     if (styles.titleMaxWidth + navigationBarEditButtonsWidth < minTitleMaxWidth) {
       styles.hideLocations = true;
     }

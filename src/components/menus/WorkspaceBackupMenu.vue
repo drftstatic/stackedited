@@ -1,16 +1,16 @@
 <template>
   <div class="side-bar__panel side-bar__panel--menu">
-    <input class="hidden-file" id="import-backup-file-input" type="file" @change="onImportBackup">
+    <input id="import-backup-file-input" class="hidden-file" type="file" @change="onImportBackup">
     <label class="menu-entry button flex flex--row flex--align-center" for="import-backup-file-input">
       <div class="menu-entry__icon flex flex--column flex--center">
-        <icon-content-save></icon-content-save>
+        <icon-content-save />
       </div>
       <div class="flex flex--column">
         Import workspace backup
       </div>
     </label>
     <menu-entry @click.native="exportWorkspace">
-      <icon-content-save slot="icon"></icon-content-save>
+      <icon-content-save slot="icon" />
       Export workspace backup
     </menu-entry>
   </div>

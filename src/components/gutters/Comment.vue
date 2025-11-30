@@ -3,19 +3,19 @@
     <div class="comment__header flex flex--row flex--space-between flex--align-center">
       <div class="comment__user flex flex--row flex--align-center">
         <div class="comment__user-image">
-          <user-image :user-id="comment.sub"></user-image>
+          <user-image :user-id="comment.sub" />
         </div>
-        <button class="comment__remove-button button" v-title="'Remove comment'" @click="removeComment">
-          <icon-delete></icon-delete>
+        <button v-title="'Remove comment'" class="comment__remove-button button" @click="removeComment">
+          <icon-delete />
         </button>
-        <user-name :user-id="comment.sub"></user-name>
+        <user-name :user-id="comment.sub" />
       </div>
-      <div class="comment__created">{{comment.created | formatTime}}</div>
+      <div class="comment__created">{{ comment.created | formatTime }}</div>
     </div>
     <div class="comment__text">
-      <div class="comment__text-inner" v-html="text"></div>
+      <div class="comment__text-inner" v-html="text" />
     </div>
-    <div class="comment__buttons flex flex--row flex--end" v-if="showReply">
+    <div v-if="showReply" class="comment__buttons flex flex--row flex--end">
       <button class="comment__button button" @click="setIsCommenting(true)">Reply</button>
     </div>
   </div>
@@ -38,8 +38,8 @@ export default {
   props: ['comment'],
   computed: {
     showReply() {
-      return this.comment === store.getters['discussion/currentDiscussionLastComment'] &&
-        !store.state.discussion.isCommenting;
+      return this.comment === store.getters['discussion/currentDiscussionLastComment']
+        && !store.state.discussion.isCommenting;
     },
     text() {
       return htmlSanitizer.sanitizeHtml(editorSvc.converter.render(this.comment.text));

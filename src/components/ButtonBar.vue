@@ -1,25 +1,25 @@
 <template>
   <div class="button-bar">
     <div class="button-bar__inner button-bar__inner--top">
-      <button class="button-bar__button button-bar__button--navigation-bar-toggler button" :class="{ 'button-bar__button--on': layoutSettings.showNavigationBar }" v-if="!light" @click="toggleNavigationBar()" v-title="'Toggle navigation bar'">
-        <icon-navigation-bar></icon-navigation-bar>
+      <button v-if="!light" v-title="'Toggle navigation bar'" class="button-bar__button button-bar__button--navigation-bar-toggler button" :class="{ 'button-bar__button--on': layoutSettings.showNavigationBar }" @click="toggleNavigationBar()">
+        <icon-navigation-bar />
       </button>
-      <button class="button-bar__button button-bar__button--side-preview-toggler button" :class="{ 'button-bar__button--on': layoutSettings.showSidePreview }" tour-step-anchor="editor" @click="toggleSidePreview()" v-title="'Toggle side preview'">
-        <icon-side-preview></icon-side-preview>
+      <button v-title="'Toggle side preview'" class="button-bar__button button-bar__button--side-preview-toggler button" :class="{ 'button-bar__button--on': layoutSettings.showSidePreview }" tour-step-anchor="editor" @click="toggleSidePreview()">
+        <icon-side-preview />
       </button>
-      <button class="button-bar__button button-bar__button--editor-toggler button" @click="toggleEditor(false)" v-title="'Reader mode'">
-        <icon-eye></icon-eye>
+      <button v-title="'Reader mode'" class="button-bar__button button-bar__button--editor-toggler button" @click="toggleEditor(false)">
+        <icon-eye />
       </button>
     </div>
     <div class="button-bar__inner button-bar__inner--bottom">
-      <button class="button-bar__button button-bar__button--focus-mode-toggler button" :class="{ 'button-bar__button--on': layoutSettings.focusMode }" @click="toggleFocusMode()" v-title="'Toggle focus mode'">
-        <icon-target></icon-target>
+      <button v-title="'Toggle focus mode'" class="button-bar__button button-bar__button--focus-mode-toggler button" :class="{ 'button-bar__button--on': layoutSettings.focusMode }" @click="toggleFocusMode()">
+        <icon-target />
       </button>
-      <button class="button-bar__button button-bar__button--scroll-sync-toggler button" :class="{ 'button-bar__button--on': layoutSettings.scrollSync }" @click="toggleScrollSync()" v-title="'Toggle scroll sync'">
-        <icon-scroll-sync></icon-scroll-sync>
+      <button v-title="'Toggle scroll sync'" class="button-bar__button button-bar__button--scroll-sync-toggler button" :class="{ 'button-bar__button--on': layoutSettings.scrollSync }" @click="toggleScrollSync()">
+        <icon-scroll-sync />
       </button>
-      <button class="button-bar__button button-bar__button--status-bar-toggler button" :class="{ 'button-bar__button--on': layoutSettings.showStatusBar }" @click="toggleStatusBar()" v-title="'Toggle status bar'">
-        <icon-status-bar></icon-status-bar>
+      <button v-title="'Toggle status bar'" class="button-bar__button button-bar__button--status-bar-toggler button" :class="{ 'button-bar__button--on': layoutSettings.showStatusBar }" @click="toggleStatusBar()">
+        <icon-status-bar />
       </button>
     </div>
   </div>

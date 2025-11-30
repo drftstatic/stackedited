@@ -3,7 +3,7 @@
     <div class="modal__content">
       <p>Please choose a template for your <b>HTML export</b>.</p>
       <form-entry label="Template">
-        <select class="textfield" slot="field" v-model="selectedTemplate" @keydown.enter="resolve()">
+        <select slot="field" v-model="selectedTemplate" class="textfield" @keydown.enter="resolve()">
           <option v-for="(template, id) in allTemplatesById" :key="id" :value="id">
             {{ template.name }}
           </option>
@@ -14,7 +14,7 @@
       </form-entry>
     </div>
     <div class="modal__button-bar">
-      <button class="button button--copy" v-clipboard="result" @click="info('HTML copied to clipboard!')">Copy</button>
+      <button v-clipboard="result" class="button button--copy" @click="info('HTML copied to clipboard!')">Copy</button>
       <button class="button" @click="config.reject()">Cancel</button>
       <button class="button button--resolve" @click="resolve()">Ok</button>
     </div>

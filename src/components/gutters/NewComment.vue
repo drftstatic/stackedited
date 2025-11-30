@@ -3,14 +3,14 @@
     <div class="comment__header flex flex--row flex--space-between flex--align-center">
       <div class="comment__user flex flex--row flex--align-center">
         <div class="comment__user-image">
-          <user-image :user-id="userId"></user-image>
+          <user-image :user-id="userId" />
         </div>
-        <span class="user-name">{{loginToken.name}}</span>
+        <span class="user-name">{{ loginToken.name }}</span>
       </div>
     </div>
     <div class="comment__text">
       <div class="comment__text-inner">
-        <pre class="markdown-highlighting"></pre>
+        <pre class="markdown-highlighting" />
       </div>
     </div>
     <div class="comment__buttons flex flex--row flex--end">
@@ -93,11 +93,11 @@ export default {
     const scrollerElt = this.$el.querySelector('.comment__text-inner');
     const clEditor = cledit(preElt, scrollerElt, true);
     clEditor.init({
-      sectionHighlighter: section => Prism.highlight(
+      sectionHighlighter: (section) => Prism.highlight(
         section.text,
         editorSvc.prismGrammars[section.data],
       ),
-      sectionParser: text => markdownConversionSvc
+      sectionParser: (text) => markdownConversionSvc
         .parseSections(editorSvc.converter, text).sections,
       content: store.state.discussion.newCommentText,
       selectionStart: store.state.discussion.newCommentSelection.start,
@@ -107,12 +107,10 @@ export default {
     clEditor.on('focus', () => this.setNewCommentFocus(true));
 
     // Save typed content and selection
-    clEditor.on('contentChanged', value =>
-      store.commit('discussion/setNewCommentText', value));
-    clEditor.selectionMgr.on('selectionChanged', (start, end) =>
-      store.commit('discussion/setNewCommentSelection', {
-        start, end,
-      }));
+    clEditor.on('contentChanged', (value) => store.commit('discussion/setNewCommentText', value));
+    clEditor.selectionMgr.on('selectionChanged', (start, end) => store.commit('discussion/setNewCommentSelection', {
+      start, end,
+    }));
 
     const isSticky = this.$el.parentNode.classList.contains('sticky-comment');
     const isVisible = () => isSticky || store.state.discussion.stickyComment === null;
@@ -160,7 +158,7 @@ export default {
       );
       this.$watch(
         () => store.state.discussion.newCommentText,
-        newCommentText => clEditor.setContent(newCommentText),
+        (newCommentText) => clEditor.setContent(newCommentText),
       );
     }
   },

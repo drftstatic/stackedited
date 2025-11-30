@@ -2,11 +2,11 @@
   <modal-inner aria-label="Add CouchDB workspace">
     <div class="modal__content">
       <div class="modal__image">
-        <icon-provider provider-id="couchdb"></icon-provider>
+        <icon-provider provider-id="couchdb" />
       </div>
       <p>Create a workspace synced with a <b>CouchDB</b> database.</p>
       <form-entry label="Database URL" error="dbUrl">
-        <input slot="field" class="textfield" type="text" v-model.trim="dbUrl" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="dbUrl" class="textfield" type="text" @keydown.enter="resolve()">
         <div class="form-entry__info">
           <b>Example:</b> https://instance.smileupps.com/stackedit-workspace
         </div>

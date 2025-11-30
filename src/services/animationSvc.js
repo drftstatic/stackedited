@@ -9,8 +9,8 @@ const easings = {
 const vendors = ['moz', 'webkit'];
 for (let x = 0; x < vendors.length && !window.requestAnimationFrame; x += 1) {
   window.requestAnimationFrame = window[`${vendors[x]}RequestAnimationFrame`];
-  window.cancelAnimationFrame = window[`${vendors[x]}CancelAnimationFrame`] ||
-    window[`${vendors[x]}CancelRequestAnimationFrame`];
+  window.cancelAnimationFrame = window[`${vendors[x]}CancelAnimationFrame`]
+    || window[`${vendors[x]}CancelRequestAnimationFrame`];
 }
 
 const transformStyles = [
@@ -109,7 +109,7 @@ const attributes = [
   'right',
   'bottom',
   'left',
-].map(name => new StyleAttribute(name, 'px', 0, Math.round)));
+].map((name) => new StyleAttribute(name, 'px', 0, Math.round)));
 
 class Animation {
   constructor(elt) {
@@ -132,7 +132,7 @@ class Animation {
     this.$start = {};
     this.$end = this.$pending;
     this.$pending = {};
-    this.$attributes = attributes.filter(attribute => attribute.setStart(this));
+    this.$attributes = attributes.filter((attribute) => attribute.setStart(this));
     this.$end.duration = this.$end.duration || 0;
     this.$end.delay = this.$end.delay || 0;
     this.$end.easing = easings[this.$end.easing] || easings.materialOut;
@@ -217,7 +217,7 @@ class Animation {
   }
 }
 
-attributes.map(attribute => attribute.name).concat('duration', 'easing', 'delay')
+attributes.map((attribute) => attribute.name).concat('duration', 'easing', 'delay')
   .forEach((name) => {
     Animation.prototype[name] = function setter(val) {
       this.$pending[name] = val;

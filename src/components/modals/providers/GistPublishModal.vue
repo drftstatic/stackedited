@@ -2,27 +2,27 @@
   <modal-inner aria-label="Publish to Gist">
     <div class="modal__content">
       <div class="modal__image">
-        <icon-provider provider-id="gist"></icon-provider>
+        <icon-provider provider-id="gist" />
       </div>
-      <p>Publish <b>{{currentFileName}}</b> to a <b>Gist</b>.</p>
+      <p>Publish <b>{{ currentFileName }}</b> to a <b>Gist</b>.</p>
       <form-entry label="Filename" error="filename">
-        <input slot="field" class="textfield" type="text" v-model.trim="filename" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="filename" class="textfield" type="text" @keydown.enter="resolve()">
       </form-entry>
       <div class="form-entry">
         <div class="form-entry__checkbox">
           <label>
-            <input type="checkbox" v-model="isPublic"> Public
+            <input v-model="isPublic" type="checkbox"> Public
           </label>
         </div>
       </div>
       <form-entry label="Existing Gist ID" info="optional">
-        <input slot="field" class="textfield" type="text" v-model.trim="gistId" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="gistId" class="textfield" type="text" @keydown.enter="resolve()">
         <div class="form-entry__info">
           If the file exists in the Gist, it will be overwritten.
         </div>
       </form-entry>
       <form-entry label="Template">
-        <select slot="field" class="textfield" v-model="selectedTemplate" @keydown.enter="resolve()">
+        <select slot="field" v-model="selectedTemplate" class="textfield" @keydown.enter="resolve()">
           <option v-for="(template, id) in allTemplatesById" :key="id" :value="id">
             {{ template.name }}
           </option>

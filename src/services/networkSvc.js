@@ -241,9 +241,9 @@ export default {
   async request(config, offlineCheck = false) {
     let retryAfter = 500; // 500 ms
     const maxRetryAfter = 10 * 1000; // 10 sec
-    const sanitizedConfig = Object.assign({}, config);
+    const sanitizedConfig = { ...config };
     sanitizedConfig.timeout = sanitizedConfig.timeout || networkTimeout;
-    sanitizedConfig.headers = Object.assign({}, sanitizedConfig.headers);
+    sanitizedConfig.headers = { ...sanitizedConfig.headers };
     if (sanitizedConfig.body && typeof sanitizedConfig.body === 'object') {
       sanitizedConfig.body = JSON.stringify(sanitizedConfig.body);
       sanitizedConfig.headers['Content-Type'] = 'application/json';

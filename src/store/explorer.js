@@ -2,7 +2,7 @@ import Vue from 'vue';
 import emptyFile from '../data/empties/emptyFile';
 import emptyFolder from '../data/empties/emptyFolder';
 
-const setter = propertyName => (state, value) => {
+const setter = (propertyName) => (state, value) => {
   state[propertyName] = value;
 };
 
@@ -32,7 +32,7 @@ class Node {
     if (this.isFolder) {
       this.folders.sort(compare);
       this.files.sort(compare);
-      this.folders.forEach(child => child.sortChildren());
+      this.folders.forEach((child) => child.sortChildren());
     }
   }
 }
@@ -51,9 +51,9 @@ function getParent({ item, isNil }, { nodeMap, rootNode }) {
 }
 
 function getFolder(node, getters) {
-  return node.item.type === 'folder' ?
-    node :
-    getParent(node, getters);
+  return node.item.type === 'folder'
+    ? node
+    : getParent(node, getters);
 }
 
 export default {

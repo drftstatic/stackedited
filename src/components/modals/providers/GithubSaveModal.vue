@@ -2,24 +2,24 @@
   <modal-inner aria-label="Synchronize with GitHub">
     <div class="modal__content">
       <div class="modal__image">
-        <icon-provider provider-id="github"></icon-provider>
+        <icon-provider provider-id="github" />
       </div>
-      <p>Save <b>{{currentFileName}}</b> to your <b>GitHub</b> repository and keep it synced.</p>
+      <p>Save <b>{{ currentFileName }}</b> to your <b>GitHub</b> repository and keep it synced.</p>
       <form-entry label="Repository URL" error="repoUrl">
-        <input slot="field" class="textfield" type="text" v-model.trim="repoUrl" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="repoUrl" class="textfield" type="text" @keydown.enter="resolve()">
         <div class="form-entry__info">
           <b>Example:</b> https://github.com/owner/my-repo
         </div>
       </form-entry>
       <form-entry label="File path" error="path">
-        <input slot="field" class="textfield" type="text" v-model.trim="path" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="path" class="textfield" type="text" @keydown.enter="resolve()">
         <div class="form-entry__info">
           <b>Example:</b> path/to/README.md<br>
           If the file exists, it will be overwritten.
         </div>
       </form-entry>
       <form-entry label="Branch" info="optional">
-        <input slot="field" class="textfield" type="text" v-model.trim="branch" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="branch" class="textfield" type="text" @keydown.enter="resolve()">
         <div class="form-entry__info">
           If not supplied, the <code>master</code> branch will be used.
         </div>

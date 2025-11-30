@@ -2,19 +2,19 @@
   <modal-inner aria-label="Link Zendesk account">
     <div class="modal__content">
       <div class="modal__image">
-        <icon-provider provider-id="zendesk"></icon-provider>
+        <icon-provider provider-id="zendesk" />
       </div>
       <p>Link your <b>Zendesk</b> account to <b>StackEdit</b>.</p>
       <form-entry label="Site URL" error="siteUrl">
-        <input slot="field" class="textfield" type="text" v-model.trim="siteUrl" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="siteUrl" class="textfield" type="text" @keydown.enter="resolve()">
         <div class="form-entry__info">
           <b>Example:</b> https://example.zendesk.com/
         </div>
       </form-entry>
       <form-entry label="Client Unique Identifier" error="clientId">
-        <input slot="field" class="textfield" type="text" v-model.trim="clientId" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="clientId" class="textfield" type="text" @keydown.enter="resolve()">
         <div class="form-entry__info">
-          You have to configure an OAuth Client with redirect URL <b>{{redirectUrl}}</b>
+          You have to configure an OAuth Client with redirect URL <b>{{ redirectUrl }}</b>
         </div>
         <div class="form-entry__actions">
           <a href="https://support.zendesk.com/hc/en-us/articles/203663836" target="_blank">More info</a>

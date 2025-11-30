@@ -1,18 +1,18 @@
 <template>
   <div class="explorer-node" :class="{'explorer-node--selected': isSelected, 'explorer-node--folder': node.isFolder, 'explorer-node--open': isOpen, 'explorer-node--trash': node.isTrash, 'explorer-node--temp': node.isTemp, 'explorer-node--drag-target': isDragTargetFolder}" @dragover.prevent @dragenter.stop="node.noDrop || setDragTarget(node)" @dragleave.stop="isDragTarget && setDragTarget()" @drop.prevent.stop="onDrop" @contextmenu="onContextMenu">
-    <div class="explorer-node__item-editor" v-if="isEditing" :style="{paddingLeft: leftPadding}" draggable="true" @dragstart.stop.prevent>
-      <input type="text" class="text-input" v-focus @blur="submitEdit()" @keydown.stop @keydown.enter="submitEdit()" @keydown.esc.stop="submitEdit(true)" v-model="editingNodeName">
+    <div v-if="isEditing" class="explorer-node__item-editor" :style="{paddingLeft: leftPadding}" draggable="true" @dragstart.stop.prevent>
+      <input v-model="editingNodeName" v-focus type="text" class="text-input" @blur="submitEdit()" @keydown.stop @keydown.enter="submitEdit()" @keydown.esc.stop="submitEdit(true)">
     </div>
-    <div class="explorer-node__item" v-else :style="{paddingLeft: leftPadding}" @click="select()" draggable="true" @dragstart.stop="setDragSourceId" @dragend.stop="setDragTarget()">
-      {{node.item.name}}
-      <icon-provider class="explorer-node__location" v-for="location in node.locations" :key="location.id" :provider-id="location.providerId"></icon-provider>
+    <div v-else class="explorer-node__item" :style="{paddingLeft: leftPadding}" draggable="true" @click="select()" @dragstart.stop="setDragSourceId" @dragend.stop="setDragTarget()">
+      {{ node.item.name }}
+      <icon-provider v-for="location in node.locations" :key="location.id" class="explorer-node__location" :provider-id="location.providerId" />
     </div>
-    <div class="explorer-node__children" v-if="node.isFolder && isOpen">
-      <explorer-node v-for="node in node.folders" :key="node.item.id" :node="node" :depth="depth + 1"></explorer-node>
+    <div v-if="node.isFolder && isOpen" class="explorer-node__children">
+      <explorer-node v-for="node in node.folders" :key="node.item.id" :node="node" :depth="depth + 1" />
       <div v-if="newChild" class="explorer-node__new-child" :class="{'explorer-node__new-child--folder': newChild.isFolder}" :style="{paddingLeft: childLeftPadding}">
-        <input type="text" class="text-input" v-focus @blur="submitNewChild()" @keydown.stop @keydown.enter="submitNewChild()" @keydown.esc.stop="submitNewChild(true)" v-model.trim="newChildName">
+        <input v-model.trim="newChildName" v-focus type="text" class="text-input" @blur="submitNewChild()" @keydown.stop @keydown.enter="submitNewChild()" @keydown.esc.stop="submitNewChild(true)">
       </div>
-      <explorer-node v-for="node in node.files" :key="node.item.id" :node="node" :depth="depth + 1"></explorer-node>
+      <explorer-node v-for="node in node.files" :key="node.item.id" :node="node" :depth="depth + 1" />
     </div>
   </div>
 </template>
@@ -25,7 +25,7 @@ import store from '../store';
 import badgeSvc from '../services/badgeSvc';
 
 export default {
-  name: 'explorer-node', // Required for recursivity
+  name: 'ExplorerNode', // Required for recursivity
   props: ['node', 'depth'],
   data: () => ({
     editingValue: '',

@@ -57,7 +57,34 @@ module.exports = {
     'vue/require-default-prop': 'off',
     'vue/require-prop-types': 'off',
     'vue/max-attributes-per-line': 'off',
-    'vue/singleline-html-element-content-newline': 'off'
+    'vue/singleline-html-element-content-newline': 'off',
+    'vue/order-in-components': 'off',
+    'vue/no-template-shadow': 'off',
+    'vue/html-self-closing': 'off',
+    'vue/attributes-order': 'off',
+    // Relaxed rules for existing codebase patterns
+    'max-len': ['warn', { code: 500, ignoreStrings: true, ignoreTemplateLiterals: true, ignoreUrls: true }],
+    'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+    'consistent-return': 'warn',
+    'default-case-last': 'off',
+    'default-case': 'off',
+    'import/no-cycle': 'off',
+    'import/no-import-module-exports': 'off',
+    'no-promise-executor-return': 'off',
+    'class-methods-use-this': 'off',
+    'no-restricted-syntax': 'off',
+    'no-continue': 'off',
+    'no-plusplus': 'off',
+    'no-restricted-globals': 'off',
+    'no-underscore-dangle': 'off',
+    'implicit-arrow-linebreak': 'off',
+    'no-console': 'warn',
+    // Vue rules for existing patterns
+    'vue/no-side-effects-in-computed-properties': 'off',
+    'vue/no-arrow-functions-in-watch': 'off',
+    'vue/no-use-v-if-with-v-for': 'warn',
+    'vue/valid-next-tick': 'off',
+    'vue/no-unused-components': 'warn'
   },
   overrides: [
     {

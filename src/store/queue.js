@@ -1,4 +1,4 @@
-const setter = propertyName => (state, value) => {
+const setter = (propertyName) => (state, value) => {
   state[propertyName] = value;
 };
 

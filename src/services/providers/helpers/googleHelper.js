@@ -8,7 +8,7 @@ const appsDomain = null;
 const tokenExpirationMargin = 5 * 60 * 1000; // 5 min (tokens expire after 1h)
 
 const driveAppDataScopes = ['https://www.googleapis.com/auth/drive.appdata'];
-const getDriveScopes = token => [token.driveFullAccess
+const getDriveScopes = (token) => [token.driveFullAccess
   ? 'https://www.googleapis.com/auth/drive'
   : 'https://www.googleapis.com/auth/drive.file',
 'https://www.googleapis.com/auth/drive.install'];
@@ -155,11 +155,11 @@ export default {
       idToken,
       sub: body.sub,
       name: (existingToken || {}).name || 'Someone',
-      isLogin: !store.getters['workspace/mainWorkspaceToken'] &&
-        scopes.includes('https://www.googleapis.com/auth/drive.appdata'),
+      isLogin: !store.getters['workspace/mainWorkspaceToken']
+        && scopes.includes('https://www.googleapis.com/auth/drive.appdata'),
       isSponsor: false,
-      isDrive: scopes.includes('https://www.googleapis.com/auth/drive') ||
-        scopes.includes('https://www.googleapis.com/auth/drive.file'),
+      isDrive: scopes.includes('https://www.googleapis.com/auth/drive')
+        || scopes.includes('https://www.googleapis.com/auth/drive.file'),
       isBlogger: scopes.includes('https://www.googleapis.com/auth/blogger'),
       isPhotos: scopes.includes('https://www.googleapis.com/auth/photos'),
       driveFullAccess: scopes.includes('https://www.googleapis.com/auth/drive'),
@@ -225,11 +225,11 @@ export default {
 
     if (
       // If we already have permissions for the requested scopes
-      mergedScopes.length === lastToken.scopes.length &&
+      mergedScopes.length === lastToken.scopes.length
       // And lastToken is not expired
-      lastToken.expiresOn > Date.now() + tokenExpirationMargin &&
+      && lastToken.expiresOn > Date.now() + tokenExpirationMargin
       // And in case of a login token, ID token is still valid
-      (!lastToken.isLogin || checkIdToken(lastToken.idToken))
+      && (!lastToken.isLogin || checkIdToken(lastToken.idToken))
     ) {
       return lastToken;
     }
@@ -283,7 +283,7 @@ export default {
     mediaType = null,
     fileId = null,
     oldParents = null,
-    ifNotTooLate = cb => cb(),
+    ifNotTooLate = (cb) => cb(),
   }) {
     // Refreshing a token can take a while if an oauth window pops up, make sure it's not too late
     return ifNotTooLate(() => {
@@ -300,10 +300,10 @@ export default {
         options.url = `https://www.googleapis.com/drive/v3/files/${fileId}`;
         if (parents && oldParents) {
           params.addParents = parents
-            .filter(parent => !oldParents.includes(parent))
+            .filter((parent) => !oldParents.includes(parent))
             .join(',');
           params.removeParents = oldParents
-            .filter(parent => !parents.includes(parent))
+            .filter((parent) => !parents.includes(parent))
             .join(',');
         }
       } else if (parents) {
@@ -426,7 +426,7 @@ export default {
   /**
    * https://developers.google.com/drive/v3/reference/files/delete
    */
-  async $removeFile(refreshedToken, id, ifNotTooLate = cb => cb()) {
+  async $removeFile(refreshedToken, id, ifNotTooLate = (cb) => cb()) {
     // Refreshing a token can take a while if an oauth window pops up, so check if it's too late
     return ifNotTooLate(() => this.$request(refreshedToken, {
       method: 'DELETE',
@@ -440,7 +440,7 @@ export default {
     const refreshedToken = await this.refreshToken(token, getDriveScopes(token));
     return this.$removeFile(refreshedToken, id, ifNotTooLate);
   },
-  async removeAppDataFile(token, id, ifNotTooLate = cb => cb()) {
+  async removeAppDataFile(token, id, ifNotTooLate = (cb) => cb()) {
     const refreshedToken = await this.refreshToken(token, driveAppDataScopes);
     return this.$removeFile(refreshedToken, id, ifNotTooLate);
   },
@@ -533,7 +533,7 @@ export default {
           teamDriveId,
         },
       });
-      result.changes = [...result.changes, ...changes.filter(item => item.fileId)];
+      result.changes = [...result.changes, ...changes.filter((item) => item.fileId)];
       if (nextPageToken) {
         return getPage(nextPageToken);
       }

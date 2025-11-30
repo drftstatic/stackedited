@@ -208,10 +208,10 @@ const localDbSvc = {
     // Remove deleted store items
     Object.keys(this.hashMap).forEach((type) => {
       // Remove this type only if file is deleted
-      let checker = cb => id => !storeItemMap[id] && cb(id);
+      let checker = (cb) => (id) => !storeItemMap[id] && cb(id);
       if (contentTypes[type]) {
         // For content types, remove item only if file is deleted
-        checker = cb => (id) => {
+        checker = (cb) => (id) => {
           if (!storeItemMap[id]) {
             const [fileId] = id.split('/');
             if (!store.state.file.itemsById[fileId]) {
@@ -330,7 +330,7 @@ const localDbSvc = {
     // Reset the app if the reset flag was passed
     if (resetApp) {
       await Promise.all(Object.keys(store.getters['workspace/workspacesById'])
-        .map(workspaceId => workspaceSvc.removeWorkspace(workspaceId)));
+        .map((workspaceId) => workspaceSvc.removeWorkspace(workspaceId)));
       constants.localStorageDataIds.forEach((id) => {
         // Clean data stored in localStorage
         localStorage.removeItem(`data/${id}`);
@@ -364,13 +364,13 @@ const localDbSvc = {
     }
 
     // If app was last opened 7 days ago and synchronization is off
-    if (!store.getters['workspace/syncToken'] &&
-      (store.state.workspace.lastFocus + constants.cleanTrashAfter < Date.now())
+    if (!store.getters['workspace/syncToken']
+      && (store.state.workspace.lastFocus + constants.cleanTrashAfter < Date.now())
     ) {
       // Clean files
       store.getters['file/items']
-        .filter(file => file.parentId === 'trash') // If file is in the trash
-        .forEach(file => workspaceSvc.deleteFile(file.id));
+        .filter((file) => file.parentId === 'trash') // If file is in the trash
+        .forEach((file) => workspaceSvc.deleteFile(file.id));
     }
 
     // Sync local DB periodically
@@ -451,7 +451,7 @@ const localDbSvc = {
   },
 };
 
-const loader = type => fileId => localDbSvc.loadItem(`${fileId}/${type}`)
+const loader = (type) => (fileId) => localDbSvc.loadItem(`${fileId}/${type}`)
   // Item does not exist, create it
   .catch(() => store.commit(`${type}/setItem`, {
     id: `${fileId}/${type}`,

@@ -1,32 +1,32 @@
 <template>
   <div class="side-bar__panel side-bar__panel--menu">
     <menu-entry @click.native="manageWorkspaces">
-      <icon-database slot="icon"></icon-database>
-      <div><div class="menu-entry__label menu-entry__label--count">{{workspaceCount}}</div> Manage workspaces</div>
+      <icon-database slot="icon" />
+      <div><div class="menu-entry__label menu-entry__label--count">{{ workspaceCount }}</div> Manage workspaces</div>
       <span>List, rename, remove workspaces</span>
     </menu-entry>
     <hr>
-    <div class="workspace" v-for="(workspace, id) in workspacesById" :key="id">
+    <div v-for="(workspace, id) in workspacesById" :key="id" class="workspace">
       <menu-entry :href="workspace.url" target="_blank">
-        <icon-provider slot="icon" :provider-id="workspace.providerId"></icon-provider>
-        <div class="workspace__name"><div class="menu-entry__label" v-if="currentWorkspace === workspace">current</div>{{workspace.name}}</div>
+        <icon-provider slot="icon" :provider-id="workspace.providerId" />
+        <div class="workspace__name"><div v-if="currentWorkspace === workspace" class="menu-entry__label">current</div>{{ workspace.name }}</div>
       </menu-entry>
     </div>
     <hr>
     <menu-entry @click.native="addCouchdbWorkspace">
-      <icon-provider slot="icon" provider-id="couchdbWorkspace"></icon-provider>
+      <icon-provider slot="icon" provider-id="couchdbWorkspace" />
       <span>Add a <b>CouchDB</b> workspace</span>
     </menu-entry>
     <menu-entry @click.native="addGithubWorkspace">
-      <icon-provider slot="icon" provider-id="githubWorkspace"></icon-provider>
+      <icon-provider slot="icon" provider-id="githubWorkspace" />
       <span>Add a <b>GitHub</b> workspace</span>
     </menu-entry>
     <menu-entry @click.native="addGitlabWorkspace">
-      <icon-provider slot="icon" provider-id="gitlabWorkspace"></icon-provider>
+      <icon-provider slot="icon" provider-id="gitlabWorkspace" />
       <span>Add a <b>GitLab</b> workspace</span>
     </menu-entry>
     <menu-entry @click.native="addGoogleDriveWorkspace">
-      <icon-provider slot="icon" provider-id="googleDriveWorkspace"></icon-provider>
+      <icon-provider slot="icon" provider-id="googleDriveWorkspace" />
       <span>Add a <b>Google Drive</b> workspace</span>
     </menu-entry>
   </div>

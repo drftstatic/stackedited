@@ -3,7 +3,7 @@
     <div class="modal__content">
       <p>Please choose a template for your <b>PDF export</b>.</p>
       <form-entry label="Template">
-        <select class="textfield" slot="field" v-model="selectedTemplate" @keydown.enter="resolve()">
+        <select slot="field" v-model="selectedTemplate" class="textfield" @keydown.enter="resolve()">
           <option v-for="(template, id) in allTemplatesById" :key="id" :value="id">
             {{ template.name }}
           </option>

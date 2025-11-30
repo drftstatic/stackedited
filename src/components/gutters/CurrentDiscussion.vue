@@ -1,34 +1,36 @@
 <template>
   <div class="current-discussion" :style="{width: constants.gutterWidth + 'px'}">
-    <sticky-comment v-if="stickyComment === 'bottom'"></sticky-comment>
+    <sticky-comment v-if="stickyComment === 'bottom'" />
     <div class="current-discussion__inner">
       <div class="flex flex--row flex--space-between">
         <div class="current-discussion__buttons flex flex--row flex--end">
-          <button class="current-discussion__button button" v-if="showNext" @click="goToDiscussion(previousDiscussionId)" v-title="'Previous discussion'">
-            <icon-arrow-left></icon-arrow-left>
+          <button v-if="showNext" v-title="'Previous discussion'" class="current-discussion__button button" @click="goToDiscussion(previousDiscussionId)">
+            <icon-arrow-left />
           </button>
-          <button class="current-discussion__button current-discussion__button--rotate button" v-if="showNext" @click="goToDiscussion(nextDiscussionId)" v-title="'Next discussion'">
-            <icon-arrow-left></icon-arrow-left>
+          <button v-if="showNext" v-title="'Next discussion'" class="current-discussion__button current-discussion__button--rotate button" @click="goToDiscussion(nextDiscussionId)">
+            <icon-arrow-left />
           </button>
         </div>
         <div class="current-discussion__buttons flex flex--row flex--end">
-          <button class="current-discussion__button current-discussion__button--remove button" v-if="showRemove" @click="removeDiscussion" v-title="'Remove discussion'">
-            <icon-delete></icon-delete>
+          <button v-if="showRemove" v-title="'Remove discussion'" class="current-discussion__button current-discussion__button--remove button" @click="removeDiscussion">
+            <icon-delete />
           </button>
-          <button class="current-discussion__button button" @click="setCurrentDiscussionId()" v-title="'Close discussion'">
-            <icon-close></icon-close>
+          <button v-title="'Close discussion'" class="current-discussion__button button" @click="setCurrentDiscussionId()">
+            <icon-close />
           </button>
         </div>
       </div>
       <div class="current-discussion__text markdown-highlighting markdown-highlighting--inline">
-        <span @click="goToDiscussion()" v-html="text"></span>
+        <span @click="goToDiscussion()" v-html="text" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
+import {
+  mapState, mapGetters, mapMutations, mapActions,
+} from 'vuex';
 import editorSvc from '../../services/editorSvc';
 import animationSvc from '../../services/animationSvc';
 import markdownConversionSvc from '../../services/markdownConversionSvc';

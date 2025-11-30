@@ -2,14 +2,14 @@
   <modal-inner aria-label="Insert image">
     <div class="modal__content">
       <div class="modal__image">
-        <icon-provider provider-id="couchdb"></icon-provider>
+        <icon-provider provider-id="couchdb" />
       </div>
       <p>Please provide your credentials to login to <b>CouchDB</b>.</p>
       <form-entry label="Name" error="name">
-        <input slot="field" class="textfield" type="text" v-model.trim="name" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="name" class="textfield" type="text" @keydown.enter="resolve()">
       </form-entry>
       <form-entry label="Password" error="password">
-        <input slot="field" class="textfield" type="password" v-model.trim="password" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="password" class="textfield" type="password" @keydown.enter="resolve()">
       </form-entry>
     </div>
     <div class="modal__button-bar">

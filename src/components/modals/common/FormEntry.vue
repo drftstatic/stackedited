@@ -1,10 +1,10 @@
 <template>
   <div class="form-entry" :error="error">
-    <label class="form-entry__label" :for="uid">{{label}}<span class="form-entry__label-info" v-if="info"> &mdash; {{info}}</span></label>
+    <label class="form-entry__label" :for="uid">{{ label }}<span v-if="info" class="form-entry__label-info"> &mdash; {{ info }}</span></label>
     <div class="form-entry__field">
-      <slot name="field"></slot>
+      <slot name="field" />
     </div>
-    <slot></slot>
+    <slot />
   </div>
 </template>
 

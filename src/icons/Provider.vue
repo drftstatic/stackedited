@@ -1,6 +1,6 @@
 <template>
   <div class="icon-provider" :class="'icon-provider--' + classState">
-    <icon-sync-off v-if="!classState"></icon-sync-off>
+    <icon-sync-off v-if="!classState" />
   </div>
 </template>
 

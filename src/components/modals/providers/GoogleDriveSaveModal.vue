@@ -2,11 +2,11 @@
   <modal-inner aria-label="Synchronize with Google Drive">
     <div class="modal__content">
       <div class="modal__image">
-        <icon-provider provider-id="googleDrive"></icon-provider>
+        <icon-provider provider-id="googleDrive" />
       </div>
-      <p>Save <b>{{currentFileName}}</b> to your <b>Google Drive</b> account and keep it synced.</p>
+      <p>Save <b>{{ currentFileName }}</b> to your <b>Google Drive</b> account and keep it synced.</p>
       <form-entry label="Folder ID" info="optional">
-        <input slot="field" class="textfield" type="text" v-model.trim="folderId" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="folderId" class="textfield" type="text" @keydown.enter="resolve()">
         <div class="form-entry__info">
           If not supplied, the file will be created in your Drive root folder.
         </div>
@@ -15,7 +15,7 @@
         </div>
       </form-entry>
       <form-entry label="Existing file ID" info="optional">
-        <input slot="field" class="textfield" type="text" v-model.trim="fileId" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="fileId" class="textfield" type="text" @keydown.enter="resolve()">
         <div class="form-entry__info">
           This will overwrite the file on the server.
         </div>

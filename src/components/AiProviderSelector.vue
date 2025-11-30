@@ -3,18 +3,18 @@
     <!-- Mode selector -->
     <div class="ai-provider__mode">
       <button
+        v-title="'Auto-select best AI for the task'"
         class="ai-provider__mode-btn"
         :class="{ 'ai-provider__mode-btn--active': mode === 'auto' }"
         @click="setMode('auto')"
-        v-title="'Auto-select best AI for the task'"
       >
         Auto
       </button>
       <button
+        v-title="'Manually select AI provider'"
         class="ai-provider__mode-btn"
         :class="{ 'ai-provider__mode-btn--active': mode === 'manual' }"
         @click="setMode('manual')"
-        v-title="'Manually select AI provider'"
       >
         Manual
       </button>
@@ -25,10 +25,10 @@
       <button
         v-for="provider in availableProviders"
         :key="provider.id"
+        v-title="provider.name"
         class="ai-provider__btn"
         :class="{ 'ai-provider__btn--active': providerId === provider.id }"
         @click="selectProvider(provider.id)"
-        v-title="provider.name"
       >
         {{ getProviderShortName(provider.id) }}
       </button>
@@ -53,9 +53,9 @@
       <span
         v-for="alt in topAlternatives"
         :key="alt.id"
+        v-title="`Switch to ${alt.name}: ${alt.reason}`"
         class="ai-provider__alt"
         @click="selectProvider(alt.id); setMode('manual')"
-        v-title="`Switch to ${alt.name}: ${alt.reason}`"
       >
         {{ getProviderShortName(alt.id) }} ({{ Math.round(alt.score * 100) }}%)
       </span>
@@ -82,7 +82,7 @@ export default {
     topAlternatives() {
       // Show top 2 alternatives that aren't the current selection
       return this.suggestions
-        .filter(s => s.id !== this.providerId && s.available)
+        .filter((s) => s.id !== this.providerId && s.available)
         .slice(0, 2);
     },
   },
@@ -102,7 +102,7 @@ export default {
       return names[id] || id;
     },
     getCurrentProviderName() {
-      const provider = this.providers.find(p => p.id === this.providerId);
+      const provider = this.providers.find((p) => p.id === this.providerId);
       return provider?.name || this.providerId;
     },
   },

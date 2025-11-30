@@ -1,17 +1,17 @@
 <template>
   <div class="find-replace" @keydown.esc.stop="onEscape">
-    <button class="find-replace__close-button button not-tabbable" @click="close()" v-title="'Close'">
-      <icon-close></icon-close>
+    <button v-title="'Close'" class="find-replace__close-button button not-tabbable" @click="close()">
+      <icon-close />
     </button>
     <div class="find-replace__row">
-      <input type="text" class="find-replace__text-input find-replace__text-input--find text-input" @keydown.enter="find('forward')" v-model="findText">
+      <input v-model="findText" type="text" class="find-replace__text-input find-replace__text-input--find text-input" @keydown.enter="find('forward')">
       <div class="find-replace__find-stats">
-        {{findPosition}} of {{findCount}}
+        {{ findPosition }} of {{ findCount }}
       </div>
       <div class="flex flex--row flex--space-between">
         <div class="flex flex--row">
-          <button class="find-replace__button find-replace__button--find-option button" :class="{'find-replace__button--on': findCaseSensitive}" @click="findCaseSensitive = !findCaseSensitive" title="Case sensitive">Aa</button>
-          <button class="find-replace__button find-replace__button--find-option button" :class="{'find-replace__button--on': findUseRegexp}" @click="findUseRegexp = !findUseRegexp" title="Regular expression">.<sup>⁕</sup></button>
+          <button class="find-replace__button find-replace__button--find-option button" :class="{'find-replace__button--on': findCaseSensitive}" title="Case sensitive" @click="findCaseSensitive = !findCaseSensitive">Aa</button>
+          <button class="find-replace__button find-replace__button--find-option button" :class="{'find-replace__button--on': findUseRegexp}" title="Regular expression" @click="findUseRegexp = !findUseRegexp">.<sup>⁕</sup></button>
         </div>
         <div class="flex flex--row">
           <button class="find-replace__button button" @click="find('backward')">Previous</button>
@@ -21,7 +21,7 @@
     </div>
     <div v-if="type === 'replace'">
       <div class="find-replace__row">
-        <input type="text" class="find-replace__text-input find-replace__text-input--replace text-input" @keydown.enter="replace" v-model="replaceText">
+        <input v-model="replaceText" type="text" class="find-replace__text-input find-replace__text-input--replace text-input" @keydown.enter="replace">
       </div>
       <div class="find-replace__row flex flex--row flex--end">
         <button class="find-replace__button button" @click="replace">Replace</button>
@@ -47,7 +47,7 @@ const accessor = (fieldName, setterName) => ({
   },
 });
 
-const computedLayoutSetting = key => ({
+const computedLayoutSetting = (key) => ({
   get() {
     return store.getters['data/layoutSettings'][key];
   },
@@ -81,7 +81,7 @@ class DynamicClassApplier {
     if (this.classApplier) {
       this.classApplier.stop();
     }
-  }
+  };
 }
 
 export default {
@@ -98,6 +98,55 @@ export default {
     replaceText: accessor('replaceText', 'setReplaceText'),
     findCaseSensitive: computedLayoutSetting('findCaseSensitive'),
     findUseRegexp: computedLayoutSetting('findUseRegexp'),
+  },
+  mounted() {
+    this.classAppliers = {};
+
+    // Highlight occurences
+    this.debouncedHighlightOccurrences = cledit.Utils.debounce(
+      () => this.highlightOccurrences(),
+      25,
+    );
+    // Refresh highlighting when find text changes or changing options
+    this.$watch(() => this.findText, this.debouncedHighlightOccurrences);
+    this.$watch(() => this.findCaseSensitive, this.debouncedHighlightOccurrences);
+    this.$watch(() => this.findUseRegexp, this.debouncedHighlightOccurrences);
+    // Refresh highlighting when content changes
+    editorSvc.clEditor.on('contentChanged', this.debouncedHighlightOccurrences);
+
+    // Last open changes trigger focus on text input and find occurence in selection
+    this.$watch(() => this.lastOpen, () => {
+      const elt = this.$el.querySelector(`.find-replace__text-input--${this.type}`);
+      elt.focus();
+      elt.setSelectionRange(0, this[`${this.type}Text`].length);
+      // Highlight and find in selection
+      this.state = null;
+      this.debouncedHighlightOccurrences();
+    }, {
+      immediate: true,
+    });
+
+    // Close on escape
+    this.onKeyup = (evt) => {
+      if (evt.which === 27) {
+        // Esc key
+        store.commit('findReplace/setType');
+      }
+    };
+    window.addEventListener('keyup', this.onKeyup);
+
+    // Unselect class applier when focus is out of the panel
+    this.onFocusIn = () => this.$el.contains(document.activeElement)
+      || setTimeout(() => this.unselectClassApplier(), 15);
+    window.addEventListener('focusin', this.onFocusIn);
+  },
+  destroyed() {
+    // Unregister listeners
+    editorSvc.clEditor.off('contentChanged', this.debouncedHighlightOccurrences);
+    window.removeEventListener('keyup', this.onKeyup);
+    window.removeEventListener('focusin', this.onFocusIn);
+    this.state = 'destroyed';
+    this.debouncedHighlightOccurrences();
   },
   methods: {
     highlightOccurrences() {
@@ -166,7 +215,7 @@ export default {
       const startOffset = Math.min(selectionMgr.selectionStart, selectionMgr.selectionEnd);
       const endOffset = Math.max(selectionMgr.selectionStart, selectionMgr.selectionEnd);
       const keys = Object.keys(this.classAppliers);
-      const finder = checker => (key) => {
+      const finder = (checker) => (key) => {
         if (checker(this.classAppliers[key]) && selectedClassApplier !== this.classAppliers[key]) {
           this.selectedClassApplier = this.classAppliers[key];
           return true;
@@ -175,13 +224,13 @@ export default {
       };
       if (mode === 'backward') {
         this.selectedClassApplier = this.classAppliers[keys[keys.length - 1]];
-        keys.reverse().some(finder(classApplier => classApplier.startMarker.offset <= startOffset));
+        keys.reverse().some(finder((classApplier) => classApplier.startMarker.offset <= startOffset));
       } else if (mode === 'selection') {
-        keys.some(finder(classApplier => classApplier.startMarker.offset === startOffset &&
-          classApplier.endMarker.offset === endOffset));
+        keys.some(finder((classApplier) => classApplier.startMarker.offset === startOffset
+          && classApplier.endMarker.offset === endOffset));
       } else if (mode === 'forward') {
         this.selectedClassApplier = this.classAppliers[keys[0]];
-        keys.some(finder(classApplier => classApplier.endMarker.offset >= endOffset));
+        keys.some(finder((classApplier) => classApplier.endMarker.offset >= endOffset));
       }
       if (this.selectedClassApplier) {
         selectionMgr.setSelectionStartEnd(
@@ -228,55 +277,6 @@ export default {
     onEscape() {
       editorSvc.clEditor.focus();
     },
-  },
-  mounted() {
-    this.classAppliers = {};
-
-    // Highlight occurences
-    this.debouncedHighlightOccurrences = cledit.Utils.debounce(
-      () => this.highlightOccurrences(),
-      25,
-    );
-    // Refresh highlighting when find text changes or changing options
-    this.$watch(() => this.findText, this.debouncedHighlightOccurrences);
-    this.$watch(() => this.findCaseSensitive, this.debouncedHighlightOccurrences);
-    this.$watch(() => this.findUseRegexp, this.debouncedHighlightOccurrences);
-    // Refresh highlighting when content changes
-    editorSvc.clEditor.on('contentChanged', this.debouncedHighlightOccurrences);
-
-    // Last open changes trigger focus on text input and find occurence in selection
-    this.$watch(() => this.lastOpen, () => {
-      const elt = this.$el.querySelector(`.find-replace__text-input--${this.type}`);
-      elt.focus();
-      elt.setSelectionRange(0, this[`${this.type}Text`].length);
-      // Highlight and find in selection
-      this.state = null;
-      this.debouncedHighlightOccurrences();
-    }, {
-      immediate: true,
-    });
-
-    // Close on escape
-    this.onKeyup = (evt) => {
-      if (evt.which === 27) {
-        // Esc key
-        store.commit('findReplace/setType');
-      }
-    };
-    window.addEventListener('keyup', this.onKeyup);
-
-    // Unselect class applier when focus is out of the panel
-    this.onFocusIn = () => this.$el.contains(document.activeElement) ||
-      setTimeout(() => this.unselectClassApplier(), 15);
-    window.addEventListener('focusin', this.onFocusIn);
-  },
-  destroyed() {
-    // Unregister listeners
-    editorSvc.clEditor.off('contentChanged', this.debouncedHighlightOccurrences);
-    window.removeEventListener('keyup', this.onKeyup);
-    window.removeEventListener('focusin', this.onFocusIn);
-    this.state = 'destroyed';
-    this.debouncedHighlightOccurrences();
   },
 };
 </script>

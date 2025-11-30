@@ -33,7 +33,7 @@ function fixNumberedList(state, indent) {
     lines.some((line) => {
       const match = line.replace(
         /^[ \t]*/,
-        wholeMatch => wholeMatch.replace(/\t/g, '    '),
+        (wholeMatch) => wholeMatch.replace(/\t/g, '    '),
       ).match(indentRegex);
       if (!match || line.match(/^#+ /)) { // Line not empty, not indented, or title
         flush();
@@ -139,8 +139,7 @@ function tabKeyHandler(evt, state) {
     return false;
   }
 
-  const strSplice = (str, i, remove, add) =>
-    str.slice(0, i) + (add || '') + str.slice(i + (+remove || 0));
+  const strSplice = (str, i, remove, add) => str.slice(0, i) + (add || '') + str.slice(i + (+remove || 0));
 
   evt.preventDefault();
   const isInverse = evt.shiftKey;

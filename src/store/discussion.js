@@ -2,9 +2,9 @@ import utils from '../services/utils';
 import googleHelper from '../services/providers/helpers/googleHelper';
 import syncSvc from '../services/syncSvc';
 
-const idShifter = offset => (state, getters) => {
+const idShifter = (offset) => (state, getters) => {
   const ids = Object.keys(getters.currentFileDiscussions)
-    .filter(id => id !== state.newDiscussionId);
+    .filter((id) => id !== state.newDiscussionId);
   const idx = ids.indexOf(state.currentDiscussionId) + offset + ids.length;
   return ids[idx % ids.length];
 };
@@ -60,8 +60,7 @@ export default {
     },
   },
   getters: {
-    newDiscussion: ({ currentDiscussionId, newDiscussionId, newDiscussion }) =>
-      currentDiscussionId === newDiscussionId && newDiscussion,
+    newDiscussion: ({ currentDiscussionId, newDiscussionId, newDiscussion }) => currentDiscussionId === newDiscussionId && newDiscussion,
     currentFileDiscussionLastComments: (state, getters, rootState, rootGetters) => {
       const { discussions, comments } = rootGetters['content/current'];
       const discussionLastComments = {};
@@ -87,15 +86,13 @@ export default {
       }
       const { discussions } = rootGetters['content/current'];
       Object.entries(currentFileDiscussionLastComments)
-        .sort(([, lastComment1], [, lastComment2]) =>
-          lastComment1.created - lastComment2.created)
+        .sort(([, lastComment1], [, lastComment2]) => lastComment1.created - lastComment2.created)
         .forEach(([discussionId]) => {
           currentFileDiscussions[discussionId] = discussions[discussionId];
         });
       return currentFileDiscussions;
     },
-    currentDiscussion: ({ currentDiscussionId }, { currentFileDiscussions }) =>
-      currentFileDiscussions[currentDiscussionId],
+    currentDiscussion: ({ currentDiscussionId }, { currentFileDiscussions }) => currentFileDiscussions[currentDiscussionId],
     previousDiscussionId: idShifter(-1),
     nextDiscussionId: idShifter(1),
     currentDiscussionComments: (
@@ -108,18 +105,15 @@ export default {
       if (currentDiscussion) {
         const contentComments = rootGetters['content/current'].comments;
         Object.entries(contentComments)
-          .filter(([, comment]) =>
-            comment.discussionId === currentDiscussionId)
-          .sort(([, comment1], [, comment2]) =>
-            comment1.created - comment2.created)
+          .filter(([, comment]) => comment.discussionId === currentDiscussionId)
+          .sort(([, comment1], [, comment2]) => comment1.created - comment2.created)
           .forEach(([commentId, comment]) => {
             comments[commentId] = comment;
           });
       }
       return comments;
     },
-    currentDiscussionLastCommentId: (state, { currentDiscussionComments }) =>
-      Object.keys(currentDiscussionComments).pop(),
+    currentDiscussionLastCommentId: (state, { currentDiscussionComments }) => Object.keys(currentDiscussionComments).pop(),
     currentDiscussionLastComment: (
       state,
       { currentDiscussionComments, currentDiscussionLastCommentId },

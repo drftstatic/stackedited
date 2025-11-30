@@ -11,7 +11,7 @@ const request = (token, options) => networkSvc.request({
     Authorization: `Bearer ${token.accessToken}`,
   },
 })
-  .then(res => res.body);
+  .then((res) => res.body);
 
 export default {
   /**

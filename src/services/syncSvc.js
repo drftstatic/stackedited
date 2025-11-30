@@ -32,8 +32,7 @@ let workspaceProvider;
  * Use a lock in the local storage to prevent multiple windows concurrency.
  */
 let lastSyncActivity;
-const getLastStoredSyncActivity = () =>
-  parseInt(localStorage.getItem(store.getters['workspace/lastSyncActivityKey']), 10) || 0;
+const getLastStoredSyncActivity = () => parseInt(localStorage.getItem(store.getters['workspace/lastSyncActivityKey']), 10) || 0;
 
 /**
  * Return true if workspace sync is possible.
@@ -48,16 +47,16 @@ const hasCurrentFileSyncLocations = () => !!store.getters['syncLocation/current'
 /**
  * Return true if we are online and we have something to sync.
  */
-const isSyncPossible = () => !store.state.offline &&
-  (isWorkspaceSyncPossible() || hasCurrentFileSyncLocations());
+const isSyncPossible = () => !store.state.offline
+  && (isWorkspaceSyncPossible() || hasCurrentFileSyncLocations());
 
 /**
  * Return true if we are the many window, ie we have the lastSyncActivity lock.
  */
 const isSyncWindow = () => {
   const storedLastSyncActivity = getLastStoredSyncActivity();
-  return lastSyncActivity === storedLastSyncActivity ||
-    Date.now() > inactivityThreshold + storedLastSyncActivity;
+  return lastSyncActivity === storedLastSyncActivity
+    || Date.now() > inactivityThreshold + storedLastSyncActivity;
 };
 
 /**
@@ -96,7 +95,7 @@ const upgradeSyncedContent = (syncedContent) => {
     hashUpgrades[hash] = newContent.hash;
   });
   Object.entries(syncedContent.syncHistory).forEach(([id, hashEntries]) => {
-    syncHistory[id] = hashEntries.map(hash => hashUpgrades[hash]);
+    syncHistory[id] = hashEntries.map((hash) => hashUpgrades[hash]);
   });
   return {
     ...syncedContent,
@@ -119,11 +118,11 @@ const cleanSyncedContent = (syncedContent) => {
 
   const allSyncLocationHashSet = new Set([]
     .concat(...Object.keys(syncedContent.syncHistory)
-      .map(id => syncedContent.syncHistory[id])));
+      .map((id) => syncedContent.syncHistory[id])));
 
   // Clean historyData from unused contents
   Object.keys(syncedContent.historyData)
-    .map(hash => parseInt(hash, 10))
+    .map((hash) => parseInt(hash, 10))
     .forEach((hash) => {
       if (!allSyncLocationHashSet.has(hash)) {
         delete syncedContent.historyData[hash];
@@ -142,9 +141,9 @@ const applyChanges = (changes) => {
   let getExistingItem;
   if (store.getters['workspace/currentWorkspaceIsGit']) {
     const itemsByGitPath = { ...store.getters.itemsByGitPath };
-    getExistingItem = existingSyncData => existingSyncData && itemsByGitPath[existingSyncData.id];
+    getExistingItem = (existingSyncData) => existingSyncData && itemsByGitPath[existingSyncData.id];
   } else {
-    getExistingItem = existingSyncData => existingSyncData && allItemsById[existingSyncData.itemId];
+    getExistingItem = (existingSyncData) => existingSyncData && allItemsById[existingSyncData.itemId];
   }
 
   // Process each change
@@ -293,6 +292,7 @@ const updateSyncData = (result) => {
 
 class SyncContext {
   restartSkipContents = false;
+
   attempted = {};
 }
 
@@ -311,7 +311,7 @@ const syncFile = async (fileId, syncContext = new SyncContext()) => {
   }
 
   const getSyncedContent = () => upgradeSyncedContent(store.state.syncedContent.itemsById[`${fileId}/syncedContent`]);
-  const getSyncHistoryItem = syncLocationId => getSyncedContent().syncHistory[syncLocationId];
+  const getSyncHistoryItem = (syncLocationId) => getSyncedContent().syncHistory[syncLocationId];
 
   try {
     if (isTempFile(fileId)) {
@@ -407,7 +407,7 @@ const syncFile = async (fileId, syncContext = new SyncContext()) => {
           // Perform a merge with last merged content if any, or perform a simple fusion otherwise
           let lastMergedContent = utils.someResult(
             serverContent.history,
-            hash => syncedContent.historyData[hash],
+            (hash) => syncedContent.historyData[hash],
           );
           if (!lastMergedContent && syncHistoryItem) {
             lastMergedContent = syncedContent.historyData[syncHistoryItem[LAST_MERGED]];
@@ -454,9 +454,9 @@ const syncFile = async (fileId, syncContext = new SyncContext()) => {
         const newSyncedContent = utils.deepCopy(syncedContent);
         const newSyncHistoryItem = newSyncedContent.syncHistory[syncLocation.id] || [];
         newSyncedContent.syncHistory[syncLocation.id] = newSyncHistoryItem;
-        if (serverContent &&
-          (serverContent.hash === newSyncHistoryItem[LAST_SEEN] ||
-          serverContent.history.includes(newSyncHistoryItem[LAST_SEEN]))
+        if (serverContent
+          && (serverContent.hash === newSyncHistoryItem[LAST_SEEN]
+          || serverContent.history.includes(newSyncHistoryItem[LAST_SEEN]))
         ) {
           // That's the 2nd time we've seen this content, trust it for future merges
           newSyncHistoryItem[LAST_MERGED] = newSyncHistoryItem[LAST_SEEN];
@@ -477,8 +477,8 @@ const syncFile = async (fileId, syncContext = new SyncContext()) => {
         }
 
         // If content is to be created, schedule a restart to create the file as well
-        if (provider === workspaceProvider &&
-          !store.getters['data/syncDataByItemId'][fileId]
+        if (provider === workspaceProvider
+          && !store.getters['data/syncDataByItemId'][fileId]
         ) {
           syncContext.restartSkipContents = true;
         }
@@ -494,8 +494,8 @@ const syncFile = async (fileId, syncContext = new SyncContext()) => {
         );
 
         // Replace sync location if modified
-        if (utils.serializeObject(syncLocation) !==
-          utils.serializeObject(syncLocationToStore)
+        if (utils.serializeObject(syncLocation)
+          !== utils.serializeObject(syncLocationToStore)
         ) {
           store.commit('syncLocation/patchItem', syncLocationToStore);
           workspaceSvc.ensureUniqueLocations();
@@ -583,8 +583,8 @@ const syncDataItem = async (dataId) => {
   if (clientItem && dataId === 'workspaces') {
     // Clean deleted workspaces
     await Promise.all(Object.keys(clientItem.data)
-      .filter(id => !mergedItem.data[id])
-      .map(id => workspaceSvc.removeWorkspace(id)));
+      .filter((id) => !mergedItem.data[id])
+      .map((id) => workspaceSvc.removeWorkspace(id)));
   }
 
   // Update item in store
@@ -688,12 +688,12 @@ const syncWorkspace = async (skipContents = false) => {
       let getFileItem;
       if (store.getters['workspace/currentWorkspaceIsGit']) {
         const { itemsByGitPath } = store.getters;
-        getItem = syncData => itemsByGitPath[syncData.id];
-        getFileItem = syncData => itemsByGitPath[syncData.id.slice(1)]; // Remove leading /
+        getItem = (syncData) => itemsByGitPath[syncData.id];
+        getFileItem = (syncData) => itemsByGitPath[syncData.id.slice(1)]; // Remove leading /
       } else {
         const { allItemsById } = store.getters;
-        getItem = syncData => allItemsById[syncData.itemId];
-        getFileItem = syncData => allItemsById[syncData.itemId.split('/')[0]];
+        getItem = (syncData) => allItemsById[syncData.itemId];
+        getFileItem = (syncData) => allItemsById[syncData.itemId.split('/')[0]];
       }
 
       const syncDataById = store.getters['data/syncDataById'];
@@ -745,18 +745,18 @@ const syncWorkspace = async (skipContents = false) => {
         if (store.getters['workspace/currentWorkspaceIsGit']) {
           const { gitPathsByItemId } = store.getters;
           const syncDataById = store.getters['data/syncDataById'];
-          getSyncData = contentId => syncDataById[gitPathsByItemId[contentId]];
+          getSyncData = (contentId) => syncDataById[gitPathsByItemId[contentId]];
         } else {
           const syncDataByItemId = store.getters['data/syncDataByItemId'];
-          getSyncData = contentId => syncDataByItemId[contentId];
+          getSyncData = (contentId) => syncDataByItemId[contentId];
         }
 
         // Collect all [fileId, contentId]
         const ids = [
           ...Object.keys(localDbSvc.hashMap.content)
-            .map(contentId => [contentId.split('/')[0], contentId]),
+            .map((contentId) => [contentId.split('/')[0], contentId]),
           ...store.getters['file/items']
-            .map(file => [file.id, `${file.id}/content`]),
+            .map((file) => [file.id, `${file.id}/content`]),
         ];
 
         // Find the first content out of sync
@@ -768,9 +768,9 @@ const syncWorkspace = async (skipContents = false) => {
           const syncData = getSyncData(contentId);
           if (
             // Sync if content syncing was not attempted yet
-            !syncContext.attempted[contentId] &&
+            !syncContext.attempted[contentId]
             // And if syncData does not exist or if content hash and syncData hash are inconsistent
-            (!syncData || syncData.hash !== hash)
+            && (!syncData || syncData.hash !== hash)
           ) {
             return fileId;
           }

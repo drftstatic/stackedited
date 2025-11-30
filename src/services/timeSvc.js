@@ -2,7 +2,7 @@
 const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-const pad = num => `0${num}`.slice(-2);
+const pad = (num) => `0${num}`.slice(-2);
 
 function strftime(time, formatString) {
   const day = time.getDay();
@@ -139,19 +139,19 @@ class RelativeTime {
     const day = Math.round(hr / 24);
     if (ms < 0) {
       return 'just now';
-    } else if (sec < 45) {
+    } if (sec < 45) {
       return 'just now';
-    } else if (sec < 90) {
+    } if (sec < 90) {
       return 'a minute ago';
-    } else if (min < 45) {
+    } if (min < 45) {
       return `${min} minutes ago`;
-    } else if (min < 90) {
+    } if (min < 90) {
       return 'an hour ago';
-    } else if (hr < 24) {
+    } if (hr < 24) {
       return `${hr} hours ago`;
-    } else if (hr < 36) {
+    } if (hr < 36) {
       return 'a day ago';
-    } else if (day < 30) {
+    } if (day < 30) {
       return `${day} days ago`;
     }
     return null;

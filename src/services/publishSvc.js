@@ -9,7 +9,7 @@ import badgeSvc from './badgeSvc';
 
 const hasCurrentFilePublishLocations = () => !!store.getters['publishLocation/current'].length;
 
-const loader = type => fileId => localDbSvc.loadItem(`${fileId}/${type}`)
+const loader = (type) => (fileId) => localDbSvc.loadItem(`${fileId}/${type}`)
   // Item does not exist, create it
   .catch(() => store.commit(`${type}/setItem`, {
     id: `${fileId}/${type}`,
@@ -76,8 +76,8 @@ const publishFile = async (fileId) => {
           const publishLocationToStore = await publish(publishLocation);
           try {
             // Replace publish location if modified
-            if (utils.serializeObject(publishLocation) !==
-              utils.serializeObject(publishLocationToStore)
+            if (utils.serializeObject(publishLocation)
+              !== utils.serializeObject(publishLocationToStore)
             ) {
               store.commit('publishLocation/patchItem', publishLocationToStore);
               workspaceSvc.ensureUniqueLocations();

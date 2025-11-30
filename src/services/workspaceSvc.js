@@ -97,7 +97,7 @@ export default {
       const parentPath = store.getters.pathsByItemId[item.parentId] || '';
       const path = parentPath + sanitizedName;
       const items = store.getters.itemsByPath[path] || [];
-      if (items.some(itemWithSamePath => itemWithSamePath.id !== id)) {
+      if (items.some((itemWithSamePath) => itemWithSamePath.id !== id)) {
         await store.dispatch('modal/open', {
           type: 'pathConflict',
           item,
@@ -160,10 +160,10 @@ export default {
     store.commit('contentState/deleteItem', `${fileId}/contentState`);
     // Delete sync locations
     (store.getters['syncLocation/groupedByFileId'][fileId] || [])
-      .forEach(item => store.commit('syncLocation/deleteItem', item.id));
+      .forEach((item) => store.commit('syncLocation/deleteItem', item.id));
     // Delete publish locations
     (store.getters['publishLocation/groupedByFileId'][fileId] || [])
-      .forEach(item => store.commit('publishLocation/deleteItem', item.id));
+      .forEach((item) => store.commit('publishLocation/deleteItem', item.id));
   },
 
   /**
@@ -171,7 +171,7 @@ export default {
    */
   sanitizeWorkspace(idsToKeep) {
     // Detect and remove circular references for all folders.
-    store.getters['folder/items'].forEach(folder => this.removeCircularReference(folder));
+    store.getters['folder/items'].forEach((folder) => this.removeCircularReference(folder));
 
     this.ensureUniquePaths(idsToKeep);
     this.ensureUniqueLocations(idsToKeep);
@@ -203,7 +203,7 @@ export default {
   ensureUniquePaths(idsToKeep = {}) {
     if (store.getters['workspace/currentWorkspaceHasUniquePaths']) {
       if (Object.keys(store.getters.pathsByItemId)
-        .some(id => !idsToKeep[id] && this.makePathUnique(id))
+        .some((id) => !idsToKeep[id] && this.makePathUnique(id))
       ) {
         // Just changed one item path, restart
         this.ensureUniquePaths(idsToKeep);

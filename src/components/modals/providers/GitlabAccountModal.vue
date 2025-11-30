@@ -2,20 +2,20 @@
   <modal-inner aria-label="GitLab account">
     <div class="modal__content">
       <div class="modal__image">
-        <icon-provider provider-id="gitlab"></icon-provider>
+        <icon-provider provider-id="gitlab" />
       </div>
       <p>Link your <b>GitLab</b> account to <b>StackEdit</b>.</p>
       <form-entry label="GitLab URL" error="serverUrl">
-        <input v-if="config.forceServerUrl" slot="field" class="textfield" type="text" disabled="disabled" v-model="config.forceServerUrl">
-        <input v-else slot="field" class="textfield" type="text" v-model.trim="serverUrl" @keydown.enter="resolve()">
+        <input v-if="config.forceServerUrl" slot="field" v-model="config.forceServerUrl" class="textfield" type="text" disabled="disabled">
+        <input v-else slot="field" v-model.trim="serverUrl" class="textfield" type="text" @keydown.enter="resolve()">
         <div class="form-entry__info">
           <b>Example:</b> https://gitlab.example.com/
         </div>
       </form-entry>
       <form-entry label="Application ID" error="applicationId">
-        <input slot="field" class="textfield" type="text" v-model.trim="applicationId" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="applicationId" class="textfield" type="text" @keydown.enter="resolve()">
         <div class="form-entry__info">
-          You have to configure an OAuth2 Application with redirect URL <b>{{redirectUrl}}</b>
+          You have to configure an OAuth2 Application with redirect URL <b>{{ redirectUrl }}</b>
         </div>
         <div class="form-entry__actions">
           <a href="https://docs.gitlab.com/ee/integration/oauth_provider.html" target="_blank">More info</a>

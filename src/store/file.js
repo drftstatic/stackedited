@@ -12,8 +12,7 @@ module.getters = {
   ...module.getters,
   current: ({ itemsById, currentId }) => itemsById[currentId] || empty(),
   isCurrentTemp: (state, { current }) => current.parentId === 'temp',
-  lastOpened: ({ itemsById }, { items }, rootState, rootGetters) =>
-    itemsById[rootGetters['data/lastOpenedIds'][0]] || items[0] || empty(),
+  lastOpened: ({ itemsById }, { items }, rootState, rootGetters) => itemsById[rootGetters['data/lastOpenedIds'][0]] || items[0] || empty(),
 };
 
 module.mutations = {

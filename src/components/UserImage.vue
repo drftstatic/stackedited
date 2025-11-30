@@ -1,6 +1,5 @@
 <template>
-  <div class="user-image" :style="{backgroundImage: url}">
-  </div>
+  <div class="user-image" :style="{backgroundImage: url}" />
 </template>
 
 <script>
@@ -20,7 +19,7 @@ export default {
   },
   watch: {
     sanitizedUserId: {
-      handler: sanitizedUserId => userSvc.addUserId(sanitizedUserId),
+      handler: (sanitizedUserId) => userSvc.addUserId(sanitizedUserId),
       immediate: true,
     },
   },

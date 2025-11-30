@@ -1,5 +1,5 @@
 <template>
-  <pre class="code-editor textfield prism" :disabled="disabled"></pre>
+  <pre class="code-editor textfield prism" :disabled="disabled" />
 </template>
 
 <script>
@@ -16,10 +16,10 @@ export default {
     }
     if (scrollElt) {
       const clEditor = cledit(preElt, scrollElt);
-      clEditor.on('contentChanged', value => this.$emit('changed', value));
+      clEditor.on('contentChanged', (value) => this.$emit('changed', value));
       clEditor.init({
         content: this.value,
-        sectionHighlighter: section => Prism.highlight(section.text, Prism.languages[this.lang]),
+        sectionHighlighter: (section) => Prism.highlight(section.text, Prism.languages[this.lang]),
       });
       clEditor.toggleEditable(!this.disabled);
     }

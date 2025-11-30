@@ -9,37 +9,37 @@
         rows="1"
         @keydown="handleKeydown"
         @input="autoResize"
-      ></textarea>
+      />
       <button
+        v-title="'Send message (Cmd+Enter)'"
         class="ai-input__send button"
         :disabled="!canSend"
         @click="send"
-        v-title="'Send message (Cmd+Enter)'"
       >
-        <icon-send></icon-send>
+        <icon-send />
       </button>
     </div>
     <div class="ai-input__actions">
       <button
+        v-title="trustMode ? 'Disable trust mode' : 'Enable trust mode (auto-apply edits)'"
         class="ai-input__action button"
         :class="{ 'ai-input__action--active': trustMode }"
         @click="toggleTrustMode"
-        v-title="trustMode ? 'Disable trust mode' : 'Enable trust mode (auto-apply edits)'"
       >
         {{ trustMode ? 'Trust: ON' : 'Trust: OFF' }}
       </button>
       <button
+        v-title="'Clear conversation'"
         class="ai-input__action button"
         @click="clearHistory"
-        v-title="'Clear conversation'"
       >
         Clear
       </button>
       <button
         v-if="canUndo"
+        v-title="'Undo last AI edit'"
         class="ai-input__action button"
         @click="undoLastEdit"
-        v-title="'Undo last AI edit'"
       >
         Undo Edit
       </button>
@@ -48,7 +48,9 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions, mapMutations } from 'vuex';
+import {
+  mapState, mapGetters, mapActions, mapMutations,
+} from 'vuex';
 import aiService from '../services/aiService';
 
 export default {
@@ -95,7 +97,7 @@ export default {
     autoResize() {
       const el = this.$refs.input;
       el.style.height = 'auto';
-      el.style.height = Math.min(el.scrollHeight, 150) + 'px';
+      el.style.height = `${Math.min(el.scrollHeight, 150)}px`;
     },
     toggleTrustMode() {
       this.setTrustMode(!this.trustMode);

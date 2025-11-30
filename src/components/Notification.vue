@@ -1,18 +1,18 @@
 <template>
   <div class="notification">
-    <div class="notification__item flex flex--row flex--align-center" v-for="(item, idx) in items" :key="idx">
+    <div v-for="(item, idx) in items" :key="idx" class="notification__item flex flex--row flex--align-center">
       <div class="notification__icon flex flex--column flex--center">
-        <icon-alert v-if="item.type === 'error'"></icon-alert>
-        <icon-check-circle v-else-if="item.type === 'badge'"></icon-check-circle>
-        <icon-information v-else></icon-information>
+        <icon-alert v-if="item.type === 'error'" />
+        <icon-check-circle v-else-if="item.type === 'badge'" />
+        <icon-information v-else />
       </div>
       <div class="notification__content">
-        {{item.content}}
+        {{ item.content }}
       </div>
-      <button class="notification__button button" v-if="item.type === 'confirm'" @click="item.reject">
+      <button v-if="item.type === 'confirm'" class="notification__button button" @click="item.reject">
         No
       </button>
-      <button class="notification__button button" v-if="item.type === 'confirm'" @click="item.resolve">
+      <button v-if="item.type === 'confirm'" class="notification__button button" @click="item.resolve">
         Yes
       </button>
     </div>

@@ -8,7 +8,7 @@ const pdf = require('./pdf');
 const pandoc = require('./pandoc');
 const conf = require('./conf');
 
-const resolvePath = pathToResolve => path.join(__dirname, '..', pathToResolve);
+const resolvePath = (pathToResolve) => path.join(__dirname, '..', pathToResolve);
 
 module.exports = (app) => {
   if (process.env.NODE_ENV === 'production') {
@@ -40,8 +40,7 @@ module.exports = (app) => {
   // Serve callback.html
   app.get('/oauth2/callback', (req, res) => res.sendFile(resolvePath('static/oauth2/callback.html')));
   // Google Drive action receiver
-  app.get('/googleDriveAction', (req, res) =>
-    res.redirect(`./app#providerId=googleDrive&state=${encodeURIComponent(req.query.state)}`));
+  app.get('/googleDriveAction', (req, res) => res.redirect(`./app#providerId=googleDrive&state=${encodeURIComponent(req.query.state)}`));
 
   // Serve static resources
   if (process.env.NODE_ENV === 'production') {

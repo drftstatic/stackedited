@@ -204,10 +204,10 @@ function cledit(contentElt, scrollEltOpt, isMarkdown = false) {
   function keydownHandler(handler) {
     return (evt) => {
       if (
-        evt.which !== 17 && // Ctrl
-        evt.which !== 91 && // Cmd
-        evt.which !== 18 && // Alt
-        evt.which !== 16 // Shift
+        evt.which !== 17 // Ctrl
+        && evt.which !== 91 // Cmd
+        && evt.which !== 18 // Alt
+        && evt.which !== 16 // Shift
       ) {
         handler(evt);
       }
@@ -340,7 +340,7 @@ function cledit(contentElt, scrollEltOpt, isMarkdown = false) {
     });
 
     turndownService = new TurndownService(store.getters['data/computedSettings'].turndown);
-    turndownService.escape = str => str; // Disable escaping
+    turndownService.escape = (str) => str; // Disable escaping
   }
 
   contentElt.addEventListener('paste', (evt) => {

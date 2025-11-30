@@ -1,6 +1,6 @@
 <template>
-  <a class="new-discussion-button" href="javascript:void(0)" v-if="coordinates" :style="{top: coordinates.top + 'px'}" v-title="'Start a discussion'" @mousedown.stop.prevent @click="createNewDiscussion(selection)">
-    <icon-message></icon-message>
+  <a v-if="coordinates" v-title="'Start a discussion'" class="new-discussion-button" href="javascript:void(0)" :style="{top: coordinates.top + 'px'}" @mousedown.stop.prevent @click="createNewDiscussion(selection)">
+    <icon-message />
   </a>
 </template>
 
@@ -24,8 +24,8 @@ export default {
         let offset;
         // Show the button if content is not a revision and preview selection is not empty
         if (
-          !store.state.content.revisionContent &&
-          editorSvc.previewSelectionRange
+          !store.state.content.revisionContent
+          && editorSvc.previewSelectionRange
         ) {
           this.selection = editorSvc.getTrimmedSelection();
           if (this.selection) {

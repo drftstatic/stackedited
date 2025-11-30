@@ -30,11 +30,10 @@ export default new Provider({
     return id;
   },
   async initWorkspace() {
-    const makeWorkspaceId = folderId => folderId
+    const makeWorkspaceId = (folderId) => folderId
       && utils.makeWorkspaceId(this.getWorkspaceParams({ folderId }));
 
-    const getWorkspace = folderId =>
-      store.getters['workspace/workspacesById'][makeWorkspaceId(folderId)];
+    const getWorkspace = (folderId) => store.getters['workspace/workspacesById'][makeWorkspaceId(folderId)];
 
     const initFolder = async (token, folder) => {
       const appProperties = {
@@ -251,7 +250,7 @@ export default new Provider({
           };
 
           // Fill parentId
-          if (change.file.parents.some(parentId => parentId === workspace.trashFolderId)) {
+          if (change.file.parents.some((parentId) => parentId === workspace.trashFolderId)) {
             item.parentId = 'trash';
           } else {
             change.file.parents.some((parentId) => {
@@ -512,7 +511,7 @@ export default new Provider({
   },
   async listFileRevisions({ token, fileSyncDataId }) {
     const revisions = await googleHelper.getFileRevisions(token, fileSyncDataId);
-    return revisions.map(revision => ({
+    return revisions.map((revision) => ({
       id: revision.id,
       sub: `${googleHelper.subPrefix}:${revision.lastModifyingUser.permissionId}`,
       created: new Date(revision.modifiedTime).getTime(),

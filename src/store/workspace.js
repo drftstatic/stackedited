@@ -40,23 +40,19 @@ export default {
       return workspacesById;
     },
     mainWorkspace: (state, { workspacesById }) => workspacesById.main,
-    currentWorkspace: ({ currentWorkspaceId }, { workspacesById, mainWorkspace }) =>
-      workspacesById[currentWorkspaceId] || mainWorkspace,
-    currentWorkspaceIsGit: (state, { currentWorkspace }) =>
-      currentWorkspace.providerId === 'githubWorkspace'
+    currentWorkspace: ({ currentWorkspaceId }, { workspacesById, mainWorkspace }) => workspacesById[currentWorkspaceId] || mainWorkspace,
+    currentWorkspaceIsGit: (state, { currentWorkspace }) => currentWorkspace.providerId === 'githubWorkspace'
       || currentWorkspace.providerId === 'gitlabWorkspace',
-    currentWorkspaceHasUniquePaths: (state, { currentWorkspace }) =>
-      currentWorkspace.providerId === 'githubWorkspace'
+    currentWorkspaceHasUniquePaths: (state, { currentWorkspace }) => currentWorkspace.providerId === 'githubWorkspace'
       || currentWorkspace.providerId === 'gitlabWorkspace',
     lastSyncActivityKey: (state, { currentWorkspace }) => `${currentWorkspace.id}/lastSyncActivity`,
     lastFocusKey: (state, { currentWorkspace }) => `${currentWorkspace.id}/lastWindowFocus`,
-    mainWorkspaceToken: (state, getters, rootState, rootGetters) =>
-      utils.someResult(Object.values(rootGetters['data/googleTokensBySub']), (token) => {
-        if (token.isLogin) {
-          return token;
-        }
-        return null;
-      }),
+    mainWorkspaceToken: (state, getters, rootState, rootGetters) => utils.someResult(Object.values(rootGetters['data/googleTokensBySub']), (token) => {
+      if (token.isLogin) {
+        return token;
+      }
+      return null;
+    }),
     syncToken: (state, { currentWorkspace, mainWorkspaceToken }, rootState, rootGetters) => {
       switch (currentWorkspace.providerId) {
         case 'googleDriveWorkspace':

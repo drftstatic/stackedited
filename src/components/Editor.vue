@@ -1,9 +1,9 @@
 <template>
   <div class="editor">
-    <pre class="editor__inner markdown-highlighting" :style="{padding: styles.editorPadding}" :class="{monospaced: computedSettings.editor.monospacedFontOnly}"></pre>
+    <pre class="editor__inner markdown-highlighting" :style="{padding: styles.editorPadding}" :class="{monospaced: computedSettings.editor.monospacedFontOnly}" />
     <div class="gutter" :style="{left: styles.editorGutterLeft + 'px'}">
-      <comment-list v-if="styles.editorGutterWidth"></comment-list>
-      <editor-new-discussion-button v-if="!isCurrentTemp"></editor-new-discussion-button>
+      <comment-list v-if="styles.editorGutterWidth" />
+      <editor-new-discussion-button v-if="!isCurrentTemp" />
     </div>
   </div>
 </template>
@@ -32,7 +32,7 @@ export default {
   },
   mounted() {
     const editorElt = this.$el.querySelector('.editor__inner');
-    const onDiscussionEvt = cb => (evt) => {
+    const onDiscussionEvt = (cb) => (evt) => {
       let elt = evt.target;
       while (elt && elt !== editorElt) {
         if (elt.discussionId) {
@@ -43,11 +43,11 @@ export default {
       }
     };
 
-    const classToggler = toggle => (discussionId) => {
+    const classToggler = (toggle) => (discussionId) => {
       editorElt.getElementsByClassName(`discussion-editor-highlighting--${discussionId}`)
-        .cl_each(elt => elt.classList.toggle('discussion-editor-highlighting--hover', toggle));
+        .cl_each((elt) => elt.classList.toggle('discussion-editor-highlighting--hover', toggle));
       document.getElementsByClassName(`comment--discussion-${discussionId}`)
-        .cl_each(elt => elt.classList.toggle('comment--hover', toggle));
+        .cl_each((elt) => elt.classList.toggle('comment--hover', toggle));
     };
 
     editorElt.addEventListener('mouseover', onDiscussionEvt(classToggler(true)));
@@ -61,11 +61,11 @@ export default {
       (discussionId, oldDiscussionId) => {
         if (oldDiscussionId) {
           editorElt.querySelectorAll(`.discussion-editor-highlighting--${oldDiscussionId}`)
-            .cl_each(elt => elt.classList.remove('discussion-editor-highlighting--selected'));
+            .cl_each((elt) => elt.classList.remove('discussion-editor-highlighting--selected'));
         }
         if (discussionId) {
           editorElt.querySelectorAll(`.discussion-editor-highlighting--${discussionId}`)
-            .cl_each(elt => elt.classList.add('discussion-editor-highlighting--selected'));
+            .cl_each((elt) => elt.classList.add('discussion-editor-highlighting--selected'));
         }
       },
     );

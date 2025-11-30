@@ -91,7 +91,7 @@ const editorSvc = Object.assign(new Vue(), editorSvcDiscussions, editorSvcUtils,
     this.previewCtxWithDiffs = null;
     editorSvc.$emit('previewCtxWithDiffs', null);
     const options = {
-      sectionHighlighter: section => Prism
+      sectionHighlighter: (section) => Prism
         .highlight(section.text, this.prismGrammars[section.data]),
       sectionParser: (text) => {
         this.parsingCtx = markdownConversionSvc.parseSections(this.converter, text);
@@ -212,7 +212,7 @@ const editorSvc = Object.assign(new Vue(), editorSvcDiscussions, editorSvcUtils,
     this.makeTextToPreviewDiffs();
 
     // Wait for images to load
-    const loadedPromises = loadingImages.map(imgElt => new Promise((resolve) => {
+    const loadedPromises = loadingImages.map((imgElt) => new Promise((resolve) => {
       if (!imgElt.src) {
         resolve();
         return;
@@ -282,8 +282,8 @@ const editorSvc = Object.assign(new Vue(), editorSvcDiscussions, editorSvcUtils,
    * Save editor selection/scroll state into the store.
    */
   saveContentState: allowDebounce(() => {
-    const scrollPosition = editorSvc.getScrollPosition() ||
-      store.getters['contentState/current'].scrollPosition;
+    const scrollPosition = editorSvc.getScrollPosition()
+      || store.getters['contentState/current'].scrollPosition;
     store.dispatch('contentState/patchCurrent', {
       selectionStart: editorSvc.clEditor.selectionMgr.selectionStart,
       selectionEnd: editorSvc.clEditor.selectionMgr.selectionEnd,
@@ -300,10 +300,10 @@ const editorSvc = Object.assign(new Vue(), editorSvcDiscussions, editorSvcUtils,
     if (range) {
       if (
         /* eslint-disable no-bitwise */
-        !(editorSvc.previewElt.compareDocumentPosition(range.startContainer) &
-          window.Node.DOCUMENT_POSITION_CONTAINED_BY) ||
-        !(editorSvc.previewElt.compareDocumentPosition(range.endContainer) &
-          window.Node.DOCUMENT_POSITION_CONTAINED_BY)
+        !(editorSvc.previewElt.compareDocumentPosition(range.startContainer)
+          & window.Node.DOCUMENT_POSITION_CONTAINED_BY)
+        || !(editorSvc.previewElt.compareDocumentPosition(range.endContainer)
+          & window.Node.DOCUMENT_POSITION_CONTAINED_BY)
         /* eslint-enable no-bitwise */
       ) {
         range = null;
@@ -424,7 +424,7 @@ const editorSvc = Object.assign(new Vue(), editorSvcDiscussions, editorSvcUtils,
 
     const imgCache = Object.create(null);
 
-    const hashImgElt = imgElt => `${imgElt.src}:${imgElt.width || -1}:${imgElt.height || -1}`;
+    const hashImgElt = (imgElt) => `${imgElt.src}:${imgElt.width || -1}:${imgElt.height || -1}`;
 
     const addToImgCache = (imgElt) => {
       const hash = hashImgElt(imgElt);
@@ -456,7 +456,7 @@ const editorSvc = Object.assign(new Vue(), editorSvcDiscussions, editorSvcUtils,
     const triggerImgCacheGc = cledit.Utils.debounce(() => {
       Object.entries(imgCache).forEach(([src, entries]) => {
         // Filter entries that are not attached to the DOM
-        const filteredEntries = entries.filter(imgElt => this.editorElt.contains(imgElt));
+        const filteredEntries = entries.filter((imgElt) => this.editorElt.contains(imgElt));
         if (filteredEntries.length) {
           imgCache[src] = filteredEntries;
         } else {
@@ -565,7 +565,8 @@ const editorSvc = Object.assign(new Vue(), editorSvcDiscussions, editorSvcUtils,
         }
         // Apply potential text and discussion changes
         this.applyContent();
-      }, {
+      },
+      {
         immediate: true,
       },
     );
@@ -573,7 +574,8 @@ const editorSvc = Object.assign(new Vue(), editorSvcDiscussions, editorSvcUtils,
     // Disable editor if hidden or if no content is loaded
     store.watch(
       () => store.getters['content/isCurrentEditable'],
-      editable => this.clEditor.toggleEditable(!!editable), {
+      (editable) => this.clEditor.toggleEditable(!!editable),
+      {
         immediate: true,
       },
     );

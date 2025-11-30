@@ -104,8 +104,8 @@ class AIService {
 
     this.reconnectAttempts++;
     const delay = Math.min(
-      this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1),
-      30000 // Max 30 seconds
+      this.reconnectDelay * 2 ** (this.reconnectAttempts - 1),
+      30000, // Max 30 seconds
     );
 
     console.log(`AI Service: Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})`);
@@ -140,7 +140,7 @@ class AIService {
           providerId: message.providerId,
           score: message.score,
           reason: message.reason,
-          alternatives: message.alternatives
+          alternatives: message.alternatives,
         });
         break;
 
@@ -153,7 +153,7 @@ class AIService {
         store.commit('aiChat/addMessage', {
           role: 'assistant',
           content: message.text,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
         break;
 
@@ -171,7 +171,7 @@ class AIService {
           role: 'system',
           content: `Error: ${message.message}`,
           timestamp: Date.now(),
-          isError: true
+          isError: true,
         });
         break;
 
@@ -214,7 +214,7 @@ class AIService {
       isFunctionCall: true,
       functionName: funcName,
       functionArgs: args,
-      functionResult: result
+      functionResult: result,
     });
 
     // Execute client-side function calls
@@ -236,14 +236,14 @@ class AIService {
    */
   applyUpdateNotepad(args) {
     const currentContent = store.getters['content/current'];
-    const trustMode = store.state.aiChat.trustMode;
+    const { trustMode } = store.state.aiChat;
 
     // Store edit for undo/review
     store.commit('aiChat/addPendingEdit', {
       type: 'updateNotepad',
       previousContent: currentContent.text,
       newContent: args.content,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     if (trustMode) {
@@ -261,23 +261,22 @@ class AIService {
   applySuggestEdit(args) {
     const { search, replace, explanation } = args;
     const currentContent = store.getters['content/current'];
-    const trustMode = store.state.aiChat.trustMode;
+    const { trustMode } = store.state.aiChat;
 
     const index = currentContent.text.indexOf(search);
     if (index === -1) {
       store.commit('aiChat/addMessage', {
         role: 'system',
-        content: `Could not find text to replace. The document may have changed.`,
+        content: 'Could not find text to replace. The document may have changed.',
         timestamp: Date.now(),
-        isError: true
+        isError: true,
       });
       return;
     }
 
-    const newContent =
-      currentContent.text.slice(0, index) +
-      replace +
-      currentContent.text.slice(index + search.length);
+    const newContent = currentContent.text.slice(0, index)
+      + replace
+      + currentContent.text.slice(index + search.length);
 
     // Store edit for undo/review
     store.commit('aiChat/addPendingEdit', {
@@ -287,7 +286,7 @@ class AIService {
       explanation,
       previousContent: currentContent.text,
       newContent,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     if (trustMode) {
@@ -301,7 +300,7 @@ class AIService {
    * Apply the pending edit
    */
   applyEdit() {
-    const pendingEdit = store.state.aiChat.pendingEdit;
+    const { pendingEdit } = store.state.aiChat;
     if (!pendingEdit) return;
 
     // Store in edit history for undo
@@ -309,7 +308,7 @@ class AIService {
 
     // Apply the edit
     store.dispatch('content/patchCurrent', {
-      text: pendingEdit.newContent
+      text: pendingEdit.newContent,
     });
 
     // Clear pending edit
@@ -337,7 +336,7 @@ class AIService {
     const lastEdit = store.getters['aiChat/lastEdit'];
     if (lastEdit?.previousContent) {
       store.dispatch('content/patchCurrent', {
-        text: lastEdit.previousContent
+        text: lastEdit.previousContent,
       });
       store.commit('aiChat/removeLastEdit');
       store.dispatch('notification/info', 'AI edit undone');
@@ -354,13 +353,13 @@ class AIService {
       () => {
         clearTimeout(this.syncTimeout);
         this.syncTimeout = setTimeout(() => this.syncCurrentDocument(), 500);
-      }
+      },
     );
 
     // Sync when switching files
     store.watch(
       () => store.getters['file/current']?.id,
-      () => this.syncCurrentDocument()
+      () => this.syncCurrentDocument(),
     );
 
     // Periodic full vault sync (every 30 seconds)
@@ -384,10 +383,10 @@ class AIService {
         currentFile: {
           id: currentFile.id,
           name: currentFile.name,
-          path: store.getters.pathsByItemId?.[currentFile.id] || currentFile.name
+          path: store.getters.pathsByItemId?.[currentFile.id] || currentFile.name,
         },
-        currentContent: currentContent?.text || ''
-      }
+        currentContent: currentContent?.text || '',
+      },
     });
   }
 
@@ -413,14 +412,14 @@ class AIService {
           name: file.name,
           path: store.getters.pathsByItemId?.[file.id] || file.name,
           text: content.text || '',
-          hash: content.hash
+          hash: content.hash,
         });
       }
     }
 
     this.send({
       type: 'vaultUpdate',
-      documents: vault
+      documents: vault,
     });
   }
 
@@ -434,7 +433,7 @@ class AIService {
     store.commit('aiChat/addMessage', {
       role: 'user',
       content: text,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     // Make sure current document is synced
@@ -443,7 +442,7 @@ class AIService {
     // Send to daemon
     this.send({
       type: 'chat',
-      text
+      text,
     });
   }
 
@@ -453,7 +452,7 @@ class AIService {
   setMode(mode) {
     this.send({
       type: 'setMode',
-      mode
+      mode,
     });
   }
 
@@ -463,7 +462,7 @@ class AIService {
   setProvider(providerId) {
     this.send({
       type: 'setProvider',
-      providerId
+      providerId,
     });
   }
 
@@ -473,7 +472,7 @@ class AIService {
   getSuggestions(text) {
     this.send({
       type: 'getSuggestions',
-      text
+      text,
     });
   }
 

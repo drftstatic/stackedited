@@ -13,7 +13,7 @@
         <div class="modal__title">Extensions</div>
         <div class="modal__sub-title">Configure the Markdown engine.</div>
         <form-entry label="Preset">
-          <select slot="field" class="textfield" v-model="preset" @keydown.enter="resolve()">
+          <select slot="field" v-model="preset" class="textfield" @keydown.enter="resolve()">
             <option v-for="(preset, id) in presets" :key="id" :value="preset">
               {{ preset }}
             </option>
@@ -22,41 +22,41 @@
         <div class="modal__title">Metadata</div>
         <div class="modal__sub-title">Add info to your publications (Wordpress, Blogger...).</div>
         <form-entry label="Title">
-          <input slot="field" class="textfield" type="text" v-model.trim="title" @keydown.enter="resolve()">
+          <input slot="field" v-model.trim="title" class="textfield" type="text" @keydown.enter="resolve()">
         </form-entry>
         <form-entry label="Author">
-          <input slot="field" class="textfield" type="text" v-model.trim="author" @keydown.enter="resolve()">
+          <input slot="field" v-model.trim="author" class="textfield" type="text" @keydown.enter="resolve()">
         </form-entry>
         <form-entry label="Tags" info="comma-separated">
-          <input slot="field" class="textfield" type="text" v-model.trim="tags" @keydown.enter="resolve()">
+          <input slot="field" v-model.trim="tags" class="textfield" type="text" @keydown.enter="resolve()">
         </form-entry>
         <form-entry label="Categories" info="comma-separated">
-          <input slot="field" class="textfield" type="text" v-model.trim="categories" @keydown.enter="resolve()">
+          <input slot="field" v-model.trim="categories" class="textfield" type="text" @keydown.enter="resolve()">
         </form-entry>
         <form-entry label="Excerpt">
-          <input slot="field" class="textfield" type="text" v-model.trim="excerpt" @keydown.enter="resolve()">
+          <input slot="field" v-model.trim="excerpt" class="textfield" type="text" @keydown.enter="resolve()">
         </form-entry>
         <form-entry label="Featured image">
-          <input slot="field" class="textfield" type="text" v-model.trim="featuredImage" @keydown.enter="resolve()">
+          <input slot="field" v-model.trim="featuredImage" class="textfield" type="text" @keydown.enter="resolve()">
         </form-entry>
         <form-entry label="Status">
-          <input slot="field" class="textfield" type="text" v-model.trim="status" @keydown.enter="resolve()">
+          <input slot="field" v-model.trim="status" class="textfield" type="text" @keydown.enter="resolve()">
           <div class="form-entry__info">
             <b>Example:</b> draft
           </div>
         </form-entry>
         <form-entry label="Date" info="YYYY-MM-DD">
-          <input slot="field" class="textfield" type="text" v-model.trim="date" @keydown.enter="resolve()">
+          <input slot="field" v-model.trim="date" class="textfield" type="text" @keydown.enter="resolve()">
         </form-entry>
       </div>
       <div v-if="tab === 'yaml'">
         <div class="form-entry" role="tabpanel" aria-label="YAML properties">
           <label class="form-entry__label">YAML</label>
           <div class="form-entry__field">
-            <code-editor lang="yaml" :value="yamlProperties" key="custom-properties" @changed="setYamlProperties"></code-editor>
+            <code-editor key="custom-properties" lang="yaml" :value="yamlProperties" @changed="setYamlProperties" />
           </div>
         </div>
-        <div class="modal__error modal__error--file-properties">{{error}}</div>
+        <div class="modal__error modal__error--file-properties">{{ error }}</div>
         <div class="modal__info modal__info--multiline">
           <p><strong>ProTip:</strong> You can manually toggle extensions:</p>
           <pre class=" language-yaml"><code class="prism  language-yaml"><span class="token key atrule">extensions</span><span class="token punctuation">:</span>
@@ -217,14 +217,14 @@ export default {
         this.setYamlTab();
       } else {
         const properties = this.properties || {};
-        if (Object.keys(metadataProperties).some(key => properties[key])) {
+        if (Object.keys(metadataProperties).some((key) => properties[key])) {
           badgeSvc.addBadge('setMetadata');
         }
         const extensions = properties.extensions || {};
         if (extensions.preset) {
           badgeSvc.addBadge('changePreset');
         }
-        if (Object.keys(extensions).filter(key => key !== 'preset').length) {
+        if (Object.keys(extensions).filter((key) => key !== 'preset').length) {
           badgeSvc.addBadge('changeExtension');
         }
         store.commit('content/patchItem', {

@@ -17,7 +17,7 @@ describe('ContextMenu.vue', () => {
 
   it('should open/close itself', async () => {
     const wrapper = mount();
-    expect(wrapper.contains('.context-menu__item')).toEqual(false);
+    expect(wrapper.find('.context-menu__item').exists()).toEqual(false);
     setTimeout(() => wrapper.find('.context-menu__item').trigger('click'), 1);
     const item = await store.dispatch('contextMenu/open', makeOptions());
     expect(item.name).toEqual(name);

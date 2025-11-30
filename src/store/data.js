@@ -39,7 +39,7 @@ const empty = (id) => {
 const localStorageIdSet = new Set(constants.localStorageDataIds);
 
 // Getter/setter/patcher factories
-const getter = id => (state) => {
+const getter = (id) => (state) => {
   const itemsById = localStorageIdSet.has(id)
     ? state.lsItemsById
     : state.itemsById;
@@ -48,8 +48,8 @@ const getter = id => (state) => {
   }
   return empty(id).data;
 };
-const setter = id => ({ commit }, data) => commit('setItem', itemTemplate(id, data));
-const patcher = id => ({ state, commit }, data) => {
+const setter = (id) => ({ commit }, data) => commit('setItem', itemTemplate(id, data));
+const patcher = (id) => ({ state, commit }, data) => {
   const itemsById = localStorageIdSet.has(id)
     ? state.lsItemsById
     : state.itemsById;
@@ -75,15 +75,13 @@ const toggleLayoutSetting = (name, value, featureId, getters, dispatch) => {
   }
 };
 
-const layoutSettingsToggler = (propertyName, featureId) => ({ getters, dispatch }, value) =>
-  toggleLayoutSetting(propertyName, value, featureId, getters, dispatch);
+const layoutSettingsToggler = (propertyName, featureId) => ({ getters, dispatch }, value) => toggleLayoutSetting(propertyName, value, featureId, getters, dispatch);
 
-const notEnoughSpace = (layoutConstants, showGutter) =>
-  document.body.clientWidth < layoutConstants.editorMinWidth +
-    layoutConstants.explorerWidth +
-    layoutConstants.sideBarWidth +
-    layoutConstants.buttonBarWidth +
-    (showGutter ? layoutConstants.gutterWidth : 0);
+const notEnoughSpace = (layoutConstants, showGutter) => document.body.clientWidth < layoutConstants.editorMinWidth
+    + layoutConstants.explorerWidth
+    + layoutConstants.sideBarWidth
+    + layoutConstants.buttonBarWidth
+    + (showGutter ? layoutConstants.gutterWidth : 0);
 
 // For templates
 const makeAdditionalTemplate = (name, value, helpers = '\n') => ({
@@ -101,7 +99,7 @@ const defaultTemplates = {
 };
 
 // For tokens
-const tokenAdder = providerId => ({ getters, dispatch }, token) => {
+const tokenAdder = (providerId) => ({ getters, dispatch }, token) => {
   dispatch('patchTokensByType', {
     [providerId]: {
       ...getters[`${providerId}TokensBySub`],
@@ -152,7 +150,7 @@ export default {
         const optType = Object.prototype.toString.call(opt);
         if (objType !== optType) {
           return obj;
-        } else if (objType !== '[object Object]') {
+        } if (objType !== '[object Object]') {
           return opt;
         }
         Object.keys(obj).forEach((key) => {
@@ -184,7 +182,7 @@ export default {
         result[currentFileId] = Date.now();
       }
       return Object.keys(result)
-        .filter(id => rootState.file.itemsById[id])
+        .filter((id) => rootState.file.itemsById[id])
         .sort((id1, id2) => result[id2] - result[id1])
         .slice(0, 20);
     },
@@ -216,10 +214,10 @@ export default {
     zendeskTokensBySub: (state, { tokensByType }) => tokensByType.zendesk || {},
     badgeCreations: getter('badgeCreations'),
     badgeTree: (state, { badgeCreations }) => features
-      .map(feature => feature.toBadge(badgeCreations)),
+      .map((feature) => feature.toBadge(badgeCreations)),
     allBadges: (state, { badgeTree }) => {
       const result = [];
-      const processBadgeNodes = nodes => nodes.forEach((node) => {
+      const processBadgeNodes = (nodes) => nodes.forEach((node) => {
         result.push(node);
         if (node.children) {
           processBadgeNodes(node.children);
@@ -248,8 +246,8 @@ export default {
       toggleLayoutSetting('showSideBar', value, 'toggleSideBar', getters, dispatch);
 
       // Close explorer if not enough space
-      if (getters.layoutSettings.showSideBar &&
-        notEnoughSpace(rootGetters['layout/constants'], rootGetters['discussion/currentDiscussion'])
+      if (getters.layoutSettings.showSideBar
+        && notEnoughSpace(rootGetters['layout/constants'], rootGetters['discussion/currentDiscussion'])
       ) {
         dispatch('patchLayoutSettings', {
           showExplorer: false,
@@ -261,8 +259,8 @@ export default {
       toggleLayoutSetting('showExplorer', value, 'toggleExplorer', getters, dispatch);
 
       // Close side bar if not enough space
-      if (getters.layoutSettings.showExplorer &&
-        notEnoughSpace(rootGetters['layout/constants'], rootGetters['discussion/currentDiscussion'])
+      if (getters.layoutSettings.showExplorer
+        && notEnoughSpace(rootGetters['layout/constants'], rootGetters['discussion/currentDiscussion'])
       ) {
         dispatch('patchLayoutSettings', {
           showSideBar: false,

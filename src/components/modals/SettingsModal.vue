@@ -9,19 +9,19 @@
           Default settings
         </tab>
       </div>
-      <div class="form-entry" v-if="tab === 'custom'" role="tabpanel" aria-label="Custom settings">
+      <div v-if="tab === 'custom'" class="form-entry" role="tabpanel" aria-label="Custom settings">
         <label class="form-entry__label">YAML</label>
         <div class="form-entry__field form-entry__field--code-editor">
-          <code-editor lang="yaml" :value="customSettings" key="custom-settings" @changed="setCustomSettings"></code-editor>
+          <code-editor key="custom-settings" lang="yaml" :value="customSettings" @changed="setCustomSettings" />
         </div>
       </div>
-      <div class="form-entry" v-else-if="tab === 'default'" role="tabpanel" aria-label="Default settings">
+      <div v-else-if="tab === 'default'" class="form-entry" role="tabpanel" aria-label="Default settings">
         <label class="form-entry__label">YAML</label>
         <div class="form-entry__field form-entry__field--code-editor">
-          <code-editor lang="yaml" :value="defaultSettings" key="default-settings" disabled="true"></code-editor>
+          <code-editor key="default-settings" lang="yaml" :value="defaultSettings" disabled="true" />
         </div>
       </div>
-      <div class="modal__error modal__error--settings">{{error}}</div>
+      <div class="modal__error modal__error--settings">{{ error }}</div>
     </div>
     <div class="modal__button-bar">
       <button class="button" @click="config.reject()">Cancel</button>
@@ -89,7 +89,7 @@ export default {
         const computedSettings = store.getters['data/computedSettings'];
         const customSettingsCount = Object
           .keys(customSettings)
-          .filter(key => key !== 'shortcuts' && computedSettings[key])
+          .filter((key) => key !== 'shortcuts' && computedSettings[key])
           .length;
         if (customSettingsCount) {
           badgeSvc.addBadge('changeSettings');

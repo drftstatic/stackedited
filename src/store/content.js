@@ -47,8 +47,7 @@ module.getters = {
     ]);
   },
   currentProperties: (state, { current }) => utils.computeProperties(current.properties),
-  isCurrentEditable: ({ revisionContent }, { current }, rootState, rootGetters) =>
-    !revisionContent && current.id && rootGetters['layout/styles'].showEditor,
+  isCurrentEditable: ({ revisionContent }, { current }, rootState, rootGetters) => !revisionContent && current.id && rootGetters['layout/styles'].showEditor,
 };
 
 module.actions = {

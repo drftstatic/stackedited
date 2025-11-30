@@ -1,15 +1,15 @@
 <template>
-  <div class="modal" v-if="config" @keydown.esc.stop="onEscape" @keydown.tab="onTab" @focusin="onFocusInOut" @focusout="onFocusInOut">
-    <div class="modal__sponsor-banner" v-if="!isSponsor">
+  <div v-if="config" class="modal" @keydown.esc.stop="onEscape" @keydown.tab="onTab" @focusin="onFocusInOut" @focusout="onFocusInOut">
+    <div v-if="!isSponsor" class="modal__sponsor-banner">
       StackEdit is <a class="not-tabbable" target="_blank" href="https://github.com/benweet/stackedit/">open source</a>, please consider
       <a class="not-tabbable" href="javascript:void(0)" @click="sponsor">sponsoring</a> for just $5.
     </div>
-    <component v-if="currentModalComponent" :is="currentModalComponent"></component>
+    <component :is="currentModalComponent" v-if="currentModalComponent" />
     <modal-inner v-else aria-label="Dialog">
-      <div class="modal__content" v-html="simpleModal.contentHtml(config)"></div>
+      <div class="modal__content" v-html="simpleModal.contentHtml(config)" />
       <div class="modal__button-bar">
-        <button class="button" v-if="simpleModal.rejectText" @click="config.reject()">{{simpleModal.rejectText}}</button>
-        <button class="button button--resolve" v-if="simpleModal.resolveText" @click="config.resolve()">{{simpleModal.resolveText}}</button>
+        <button v-if="simpleModal.rejectText" class="button" @click="config.reject()">{{ simpleModal.rejectText }}</button>
+        <button v-if="simpleModal.resolveText" class="button button--resolve" @click="config.resolve()">{{ simpleModal.resolveText }}</button>
       </div>
     </modal-inner>
   </div>
@@ -69,9 +69,9 @@ import ZendeskPublishModal from './modals/providers/ZendeskPublishModal';
 import CouchdbWorkspaceModal from './modals/providers/CouchdbWorkspaceModal';
 import CouchdbCredentialsModal from './modals/providers/CouchdbCredentialsModal';
 
-const getTabbables = container => container.querySelectorAll('a[href], button, .textfield, input[type=checkbox]')
+const getTabbables = (container) => container.querySelectorAll('a[href], button, .textfield, input[type=checkbox]')
   // Filter enabled and visible element
-  .cl_filter(el => !el.disabled && el.offsetParent !== null && !el.classList.contains('not-tabbable'));
+  .cl_filter((el) => !el.disabled && el.offsetParent !== null && !el.classList.contains('not-tabbable'));
 
 export default {
   components: {
@@ -142,6 +142,20 @@ export default {
       return simpleModals[this.config.type] || {};
     },
   },
+  mounted() {
+    this.$watch(
+      () => this.config,
+      (isOpen) => {
+        if (isOpen) {
+          const tabbables = getTabbables(this.$el);
+          if (tabbables[0]) {
+            tabbables[0].focus();
+          }
+        }
+      },
+      { immediate: true },
+    );
+  },
   methods: {
     async sponsor() {
       try {
@@ -185,20 +199,6 @@ export default {
         }
       }
     },
-  },
-  mounted() {
-    this.$watch(
-      () => this.config,
-      (isOpen) => {
-        if (isOpen) {
-          const tabbables = getTabbables(this.$el);
-          if (tabbables[0]) {
-            tabbables[0].focus();
-          }
-        }
-      },
-      { immediate: true },
-    );
   },
 };
 </script>

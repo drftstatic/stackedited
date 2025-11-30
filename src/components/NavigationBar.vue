@@ -2,52 +2,54 @@
   <nav class="navigation-bar" :class="{'navigation-bar--editor': styles.showEditor && !revisionContent, 'navigation-bar--light': light}">
     <!-- Explorer -->
     <div class="navigation-bar__inner navigation-bar__inner--left navigation-bar__inner--button">
-      <button class="navigation-bar__button navigation-bar__button--close button" v-if="light" @click="close()" v-title="'Close StackEdit'"><icon-check-circle></icon-check-circle></button>
-      <button class="navigation-bar__button navigation-bar__button--explorer-toggler button" v-else tour-step-anchor="explorer" @click="toggleExplorer()" v-title="'Toggle explorer'"><icon-folder></icon-folder></button>
+      <button v-if="light" v-title="'Close StackEdit'" class="navigation-bar__button navigation-bar__button--close button" @click="close()"><icon-check-circle /></button>
+      <button v-else v-title="'Toggle explorer'" class="navigation-bar__button navigation-bar__button--explorer-toggler button" tour-step-anchor="explorer" @click="toggleExplorer()"><icon-folder /></button>
     </div>
     <!-- Side bar -->
     <div class="navigation-bar__inner navigation-bar__inner--right navigation-bar__inner--button">
-      <a class="navigation-bar__button navigation-bar__button--stackedit button" v-if="light" href="app" target="_blank" v-title="'Open StackEdit'"><icon-provider provider-id="stackedit"></icon-provider></a>
-      <button class="navigation-bar__button navigation-bar__button--stackedit button" v-else tour-step-anchor="menu" @click="toggleSideBar()" v-title="'Toggle side bar'"><icon-provider provider-id="stackedit"></icon-provider></button>
+      <a v-if="light" v-title="'Open StackEdit'" class="navigation-bar__button navigation-bar__button--stackedit button" href="app" target="_blank"><icon-provider provider-id="stackedit" /></a>
+      <button v-else v-title="'Toggle side bar'" class="navigation-bar__button navigation-bar__button--stackedit button" tour-step-anchor="menu" @click="toggleSideBar()"><icon-provider provider-id="stackedit" /></button>
     </div>
     <div class="navigation-bar__inner navigation-bar__inner--right navigation-bar__inner--title flex flex--row">
       <!-- Spinner -->
       <div class="navigation-bar__spinner">
-        <div v-if="!offline && showSpinner" class="spinner"></div>
-        <icon-sync-off v-if="offline"></icon-sync-off>
+        <div v-if="!offline && showSpinner" class="spinner" />
+        <icon-sync-off v-if="offline" />
       </div>
       <!-- Title -->
-      <div class="navigation-bar__title navigation-bar__title--fake text-input"></div>
-      <div class="navigation-bar__title navigation-bar__title--text text-input" :style="{width: titleWidth + 'px'}">{{title}}</div>
-      <input class="navigation-bar__title navigation-bar__title--input text-input" :class="{'navigation-bar__title--focus': titleFocus, 'navigation-bar__title--scrolling': titleScrolling}" :style="{width: titleWidth + 'px'}" @focus="editTitle(true)" @blur="editTitle(false)" @keydown.enter="submitTitle(false)" @keydown.esc.stop="submitTitle(true)" @mouseenter="titleHover = true" @mouseleave="titleHover = false" v-model="title">
+      <div class="navigation-bar__title navigation-bar__title--fake text-input" />
+      <div class="navigation-bar__title navigation-bar__title--text text-input" :style="{width: titleWidth + 'px'}">{{ title }}</div>
+      <input v-model="title" class="navigation-bar__title navigation-bar__title--input text-input" :class="{'navigation-bar__title--focus': titleFocus, 'navigation-bar__title--scrolling': titleScrolling}" :style="{width: titleWidth + 'px'}" @focus="editTitle(true)" @blur="editTitle(false)" @keydown.enter="submitTitle(false)" @keydown.esc.stop="submitTitle(true)" @mouseenter="titleHover = true" @mouseleave="titleHover = false">
       <!-- Sync/Publish -->
       <div class="flex flex--row" :class="{'navigation-bar__hidden': styles.hideLocations}">
-        <a class="navigation-bar__button navigation-bar__button--location button" :class="{'navigation-bar__button--blink': location.id === currentLocation.id}" v-for="location in syncLocations" :key="location.id" :href="location.url" target="_blank" v-title="'Synchronized location'"><icon-provider :provider-id="location.providerId"></icon-provider></a>
-        <button class="navigation-bar__button navigation-bar__button--sync button" :disabled="!isSyncPossible || isSyncRequested || offline" @click="requestSync" v-title="'Synchronize now'"><icon-sync></icon-sync></button>
-        <a class="navigation-bar__button navigation-bar__button--location button" :class="{'navigation-bar__button--blink': location.id === currentLocation.id}" v-for="location in publishLocations" :key="location.id" :href="location.url" target="_blank" v-title="'Publish location'"><icon-provider :provider-id="location.providerId"></icon-provider></a>
-        <button class="navigation-bar__button navigation-bar__button--publish button" :disabled="!publishLocations.length || isPublishRequested || offline" @click="requestPublish" v-title="'Publish now'"><icon-upload></icon-upload></button>
+        <a v-for="location in syncLocations" :key="location.id" v-title="'Synchronized location'" class="navigation-bar__button navigation-bar__button--location button" :class="{'navigation-bar__button--blink': location.id === currentLocation.id}" :href="location.url" target="_blank"><icon-provider :provider-id="location.providerId" /></a>
+        <button v-title="'Synchronize now'" class="navigation-bar__button navigation-bar__button--sync button" :disabled="!isSyncPossible || isSyncRequested || offline" @click="requestSync"><icon-sync /></button>
+        <a v-for="location in publishLocations" :key="location.id" v-title="'Publish location'" class="navigation-bar__button navigation-bar__button--location button" :class="{'navigation-bar__button--blink': location.id === currentLocation.id}" :href="location.url" target="_blank"><icon-provider :provider-id="location.providerId" /></a>
+        <button v-title="'Publish now'" class="navigation-bar__button navigation-bar__button--publish button" :disabled="!publishLocations.length || isPublishRequested || offline" @click="requestPublish"><icon-upload /></button>
       </div>
       <!-- Revision -->
-      <div class="flex flex--row" v-if="revisionContent">
+      <div v-if="revisionContent" class="flex flex--row">
         <button class="navigation-bar__button navigation-bar__button--revision navigation-bar__button--restore button" @click="restoreRevision">Restore</button>
-        <button class="navigation-bar__button navigation-bar__button--revision button" @click="setRevisionContent()" v-title="'Close revision'"><icon-close></icon-close></button>
+        <button v-title="'Close revision'" class="navigation-bar__button navigation-bar__button--revision button" @click="setRevisionContent()"><icon-close /></button>
       </div>
     </div>
     <div class="navigation-bar__inner navigation-bar__inner--edit-pagedownButtons">
-      <button class="navigation-bar__button button" @click="undo" v-title="'Undo'" :disabled="!canUndo"><icon-undo></icon-undo></button>
-      <button class="navigation-bar__button button" @click="redo" v-title="'Redo'" :disabled="!canRedo"><icon-redo></icon-redo></button>
+      <button v-title="'Undo'" class="navigation-bar__button button" :disabled="!canUndo" @click="undo"><icon-undo /></button>
+      <button v-title="'Redo'" class="navigation-bar__button button" :disabled="!canRedo" @click="redo"><icon-redo /></button>
       <div v-for="button in pagedownButtons" :key="button.method">
-        <button class="navigation-bar__button button" v-if="button.method" @click="pagedownClick(button.method)" v-title="button.titleWithShortcut">
-          <component :is="button.iconClass"></component>
+        <button v-if="button.method" v-title="button.titleWithShortcut" class="navigation-bar__button button" @click="pagedownClick(button.method)">
+          <component :is="button.iconClass" />
         </button>
-        <div class="navigation-bar__spacer" v-else></div>
+        <div v-else class="navigation-bar__spacer" />
       </div>
     </div>
   </nav>
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters, mapActions } from 'vuex';
+import {
+  mapState, mapMutations, mapGetters, mapActions,
+} from 'vuex';
 import editorSvc from '../services/editorSvc';
 import syncSvc from '../services/syncSvc';
 import publishSvc from '../services/publishSvc';
@@ -66,7 +68,7 @@ const getShortcut = (method) => {
   let result = '';
   Object.entries(store.getters['data/computedSettings'].shortcuts).some(([keys, shortcut]) => {
     if (`${shortcut.method || shortcut}` === method) {
-      result = keys.split('+').map(key => key.toLowerCase()).map((key) => {
+      result = keys.split('+').map((key) => key.toLowerCase()).map((key) => {
         if (key === 'mod') {
           return mod;
         }
@@ -113,15 +115,15 @@ export default {
       publishLocations: 'current',
     }),
     pagedownButtons() {
-      return pagedownButtons.map(button => ({
+      return pagedownButtons.map((button) => ({
         ...button,
         titleWithShortcut: `${button.title}${getShortcut(button.method)}`,
         iconClass: `icon-${button.icon}`,
       }));
     },
     isSyncPossible() {
-      return store.getters['workspace/syncToken'] ||
-        store.getters['syncLocation/current'].length;
+      return store.getters['workspace/syncToken']
+        || store.getters['syncLocation/current'].length;
     },
     showSpinner() {
       return !store.state.queue.isEmpty;

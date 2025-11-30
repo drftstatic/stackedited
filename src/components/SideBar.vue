@@ -1,32 +1,31 @@
 <template>
   <div class="side-bar flex flex--column">
     <div class="side-title flex flex--row">
-      <button v-if="panel !== 'menu'" class="side-title__button button" @click="setPanel('menu')" v-title="'Main menu'">
-        <icon-dots-horizontal></icon-dots-horizontal>
+      <button v-if="panel !== 'menu'" v-title="'Main menu'" class="side-title__button button" @click="setPanel('menu')">
+        <icon-dots-horizontal />
       </button>
       <div class="side-title__title">
-        {{panelName}}
+        {{ panelName }}
       </div>
-      <button class="side-title__button button" @click="toggleSideBar(false)" v-title="'Close side bar'">
-        <icon-close></icon-close>
+      <button v-title="'Close side bar'" class="side-title__button button" @click="toggleSideBar(false)">
+        <icon-close />
       </button>
     </div>
     <div class="side-bar__inner">
-      <main-menu v-if="panel === 'menu'"></main-menu>
-      <workspaces-menu v-else-if="panel === 'workspaces'"></workspaces-menu>
-      <sync-menu v-else-if="panel === 'sync'"></sync-menu>
-      <publish-menu v-else-if="panel === 'publish'"></publish-menu>
-      <history-menu v-else-if="panel === 'history'"></history-menu>
-      <export-menu v-else-if="panel === 'export'"></export-menu>
-      <import-export-menu v-else-if="panel === 'importExport'"></import-export-menu>
-      <workspace-backup-menu v-else-if="panel === 'workspaceBackups'"></workspace-backup-menu>
-      <ai-chat v-else-if="panel === 'ai'"></ai-chat>
+      <main-menu v-if="panel === 'menu'" />
+      <workspaces-menu v-else-if="panel === 'workspaces'" />
+      <sync-menu v-else-if="panel === 'sync'" />
+      <publish-menu v-else-if="panel === 'publish'" />
+      <history-menu v-else-if="panel === 'history'" />
+      <export-menu v-else-if="panel === 'export'" />
+      <import-export-menu v-else-if="panel === 'importExport'" />
+      <workspace-backup-menu v-else-if="panel === 'workspaceBackups'" />
+      <ai-chat v-else-if="panel === 'ai'" />
       <div v-else-if="panel === 'help'" class="side-bar__panel side-bar__panel--help">
-        <pre class="markdown-highlighting" v-html="markdownSample"></pre>
+        <pre class="markdown-highlighting" v-html="markdownSample" />
       </div>
       <div class="side-bar__panel side-bar__panel--toc" :class="{'side-bar__panel--hidden': panel !== 'toc'}">
-        <toc>
-        </toc>
+        <toc />
       </div>
     </div>
   </div>

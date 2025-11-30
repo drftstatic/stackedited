@@ -21,8 +21,8 @@ export default {
         if (scrollTop >= sectionDesc[dimensionKey].endOffset) {
           return false;
         }
-        const posInSection = (scrollTop - sectionDesc[dimensionKey].startOffset) /
-          (sectionDesc[dimensionKey].height || 1);
+        const posInSection = (scrollTop - sectionDesc[dimensionKey].startOffset)
+          / (sectionDesc[dimensionKey].height || 1);
         result = {
           sectionIdx,
           posInSection,
@@ -41,11 +41,11 @@ export default {
     if (scrollPosition && this.previewCtxMeasured) {
       const sectionDesc = this.previewCtxMeasured.sectionDescList[scrollPosition.sectionIdx];
       if (sectionDesc) {
-        const editorScrollTop = sectionDesc.editorDimension.startOffset +
-          (sectionDesc.editorDimension.height * scrollPosition.posInSection);
+        const editorScrollTop = sectionDesc.editorDimension.startOffset
+          + (sectionDesc.editorDimension.height * scrollPosition.posInSection);
         this.editorElt.parentNode.scrollTop = Math.floor(editorScrollTop);
-        const previewScrollTop = sectionDesc.previewDimension.startOffset +
-          (sectionDesc.previewDimension.height * scrollPosition.posInSection);
+        const previewScrollTop = sectionDesc.previewDimension.startOffset
+          + (sectionDesc.previewDimension.height * scrollPosition.posInSection);
         this.previewElt.parentNode.scrollTop = Math.floor(previewScrollTop);
       }
     }
@@ -98,7 +98,7 @@ export default {
       }
       if (sectionDesc.previewText.length >= offset) {
         const previewToTextDiffs = sectionDesc.textToPreviewDiffs
-          .map(diff => [-diff[0], diff[1]]);
+          .map((diff) => [-diff[0], diff[1]]);
         editorOffset += diffMatchPatch.diff_xIndex(previewToTextDiffs, offset);
         return true;
       }

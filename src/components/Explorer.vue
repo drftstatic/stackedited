@@ -2,25 +2,25 @@
   <div class="explorer flex flex--column">
     <div class="side-title flex flex--row flex--space-between">
       <div class="flex flex--row">
-        <button class="side-title__button side-title__button--new-file button" @click="newItem()" v-title="'New file'">
-          <icon-file-plus></icon-file-plus>
+        <button v-title="'New file'" class="side-title__button side-title__button--new-file button" @click="newItem()">
+          <icon-file-plus />
         </button>
-        <button class="side-title__button side-title__button--new-folder button" @click="newItem(true)" v-title="'New folder'">
-          <icon-folder-plus></icon-folder-plus>
+        <button v-title="'New folder'" class="side-title__button side-title__button--new-folder button" @click="newItem(true)">
+          <icon-folder-plus />
         </button>
-        <button class="side-title__button side-title__button--delete button" @click="deleteItem()" v-title="'Delete'">
-          <icon-delete></icon-delete>
+        <button v-title="'Delete'" class="side-title__button side-title__button--delete button" @click="deleteItem()">
+          <icon-delete />
         </button>
-        <button class="side-title__button side-title__button--rename button" @click="editItem()" v-title="'Rename'">
-          <icon-pen></icon-pen>
+        <button v-title="'Rename'" class="side-title__button side-title__button--rename button" @click="editItem()">
+          <icon-pen />
         </button>
       </div>
-      <button class="side-title__button side-title__button--close button" @click="toggleExplorer(false)" v-title="'Close explorer'">
-        <icon-close></icon-close>
+      <button v-title="'Close explorer'" class="side-title__button side-title__button--close button" @click="toggleExplorer(false)">
+        <icon-close />
       </button>
     </div>
-    <div class="explorer__tree" :class="{'explorer__tree--new-item': !newChildNode.isNil}" v-if="!light" tabindex="0" @keydown.delete="deleteItem()">
-      <explorer-node :node="rootNode" :depth="0"></explorer-node>
+    <div v-if="!light" class="explorer__tree" :class="{'explorer__tree--new-item': !newChildNode.isNil}" tabindex="0" @keydown.delete="deleteItem()">
+      <explorer-node :node="rootNode" :depth="0" />
     </div>
   </div>
 </template>
@@ -51,7 +51,7 @@ export default {
     ...mapActions('data', [
       'toggleExplorer',
     ]),
-    newItem: isFolder => explorerSvc.newItem(isFolder),
+    newItem: (isFolder) => explorerSvc.newItem(isFolder),
     deleteItem: () => explorerSvc.deleteItem(),
     editItem() {
       const node = this.selectedNode;
@@ -66,7 +66,8 @@ export default {
       (currentFileId) => {
         store.commit('explorer/setSelectedId', currentFileId);
         store.dispatch('explorer/openNode', currentFileId);
-      }, {
+      },
+      {
         immediate: true,
       },
     );

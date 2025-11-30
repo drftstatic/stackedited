@@ -2,18 +2,18 @@
   <div class="history side-bar__panel side-bar__panel--menu">
     <div class="side-bar__info">
       <p v-if="syncLocations.length > 1">
-        <select slot="field" class="textfield" v-model="syncLocationId" @keydown.enter="resolve()">
+        <select slot="field" v-model="syncLocationId" class="textfield" @keydown.enter="resolve()">
           <option v-for="location in syncLocations" :key="location.id" :value="location.id">
             {{ location.description }}
           </option>
         </select>
       </p>
-      <p v-if="!historyContext">Synchronize <b>{{currentFileName}}</b> to enable revision history or <a href="javascript:void(0)" @click="signin">sign in with Google</a> to synchronize your main workspace.</p>
+      <p v-if="!historyContext">Synchronize <b>{{ currentFileName }}</b> to enable revision history or <a href="javascript:void(0)" @click="signin">sign in with Google</a> to synchronize your main workspace.</p>
       <p v-else-if="loading">Loading history…</p>
-      <p v-else-if="!revisionsWithSpacer.length"><b>{{currentFileName}}</b> has no history.</p>
-      <div class="menu-entry menu-entry--info flex flex--row flex--align-center" v-else>
+      <p v-else-if="!revisionsWithSpacer.length"><b>{{ currentFileName }}</b> has no history.</p>
+      <div v-else class="menu-entry menu-entry--info flex flex--row flex--align-center">
         <div class="menu-entry__icon menu-entry__icon--image">
-          <icon-provider :provider-id="syncLocation.providerId"></icon-provider>
+          <icon-provider :provider-id="syncLocation.providerId" />
         </div>
         <span v-if="syncLocation.url">
           The following revisions are stored in <a :href="syncLocation.url" target="_blank">{{ syncLocationProviderName }}</a>.
@@ -24,21 +24,21 @@
       </div>
     </div>
     <div>
-      <div class="revision" v-for="revision in revisionsWithSpacer" :key="revision.id">
-        <div class="history__spacer" v-if="revision.spacer"></div>
+      <div v-for="revision in revisionsWithSpacer" :key="revision.id" class="revision">
+        <div v-if="revision.spacer" class="history__spacer" />
         <a class="revision__button button flex flex--row" href="javascript:void(0)" @click="open(revision)">
           <div class="revision__icon">
-            <user-image :user-id="revision.sub"></user-image>
+            <user-image :user-id="revision.sub" />
           </div>
           <div class="revision__header flex flex--column">
-            <user-name :user-id="revision.sub"></user-name>
-            <div class="revision__created">{{revision.created | formatTime}}</div>
+            <user-name :user-id="revision.sub" />
+            <div class="revision__created">{{ revision.created | formatTime }}</div>
           </div>
         </a>
       </div>
     </div>
-    <div class="history__spacer history__spacer--last" v-if="revisions.length"></div>
-    <div class="flex flex--row flex--end" v-if="showMoreButton">
+    <div v-if="revisions.length" class="history__spacer history__spacer--last" />
+    <div v-if="showMoreButton" class="flex flex--row flex--end">
       <button class="history__button button" @click="showMore">More</button>
     </div>
   </div>
@@ -200,15 +200,14 @@ export default {
         }
       }
       if (revisionContentPromise) {
-        revisionContentPromise.then(revisionContent =>
-          store.dispatch('content/setRevisionContent', revisionContent));
+        revisionContentPromise.then((revisionContent) => store.dispatch('content/setRevisionContent', revisionContent));
       }
     },
     refreshHighlighters() {
       const { revisionContent } = this;
-      editorClassAppliers.forEach(editorClassApplier => editorClassApplier.stop());
+      editorClassAppliers.forEach((editorClassApplier) => editorClassApplier.stop());
       editorClassAppliers = [];
-      previewClassAppliers.forEach(previewClassApplier => previewClassApplier.stop());
+      previewClassAppliers.forEach((previewClassApplier) => previewClassApplier.stop());
       previewClassAppliers = [];
       if (revisionContent) {
         let offset = 0;

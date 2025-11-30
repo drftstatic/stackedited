@@ -11,11 +11,11 @@ cleanupOutdatedCaches();
 
 // Cache Google Fonts
 registerRoute(
-  ({ url }) => url.origin === 'https://fonts.googleapis.com' ||
-               url.origin === 'https://fonts.gstatic.com',
+  ({ url }) => url.origin === 'https://fonts.googleapis.com'
+               || url.origin === 'https://fonts.gstatic.com',
   new StaleWhileRevalidate({
     cacheName: 'google-fonts',
-  })
+  }),
 );
 
 // Cache images
@@ -23,7 +23,7 @@ registerRoute(
   ({ request }) => request.destination === 'image',
   new StaleWhileRevalidate({
     cacheName: 'images',
-  })
+  }),
 );
 
 // Network first for API calls
@@ -31,7 +31,7 @@ registerRoute(
   ({ url }) => url.pathname.startsWith('/api/'),
   new NetworkFirst({
     cacheName: 'api-cache',
-  })
+  }),
 );
 
 // Handle navigation requests with network-first
@@ -39,7 +39,7 @@ registerRoute(
   ({ request }) => request.mode === 'navigate',
   new NetworkFirst({
     cacheName: 'pages',
-  })
+  }),
 );
 
 // Respond to messages from clients

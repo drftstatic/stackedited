@@ -6,13 +6,12 @@ const conf = require('./conf');
 const s3Client = new S3Client({});
 const googleClient = new OAuth2Client(conf.values.googleClientId);
 
-const streamToString = (stream) =>
-  new Promise((resolve, reject) => {
-    const chunks = [];
-    stream.on('data', (chunk) => chunks.push(chunk));
-    stream.on('error', reject);
-    stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf-8')));
-  });
+const streamToString = (stream) => new Promise((resolve, reject) => {
+  const chunks = [];
+  stream.on('data', (chunk) => chunks.push(chunk));
+  stream.on('error', reject);
+  stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf-8')));
+});
 
 exports.getUser = async (id) => {
   try {
@@ -52,9 +51,7 @@ exports.getUserFromToken = async (idToken) => {
 exports.userInfo = async (req, res) => {
   try {
     const user = await exports.getUserFromToken(req.query.idToken);
-    res.send(Object.assign({
-      sponsorUntil: 0,
-    }, user));
+    res.send({ sponsorUntil: 0, ...user });
   } catch (err) {
     res.status(400).send(err ? err.message || err.toString() : 'invalid_token');
   }
@@ -76,11 +73,11 @@ exports.paypalIpn = async (req, res, next) => {
       sponsorUntil = Date.now() + (5 * 366 * 24 * 60 * 60 * 1000); // 5 years
     }
     if (
-      req.body.receiver_email !== conf.values.paypalReceiverEmail ||
-      req.body.payment_status !== 'Completed' ||
-      req.body.mc_currency !== 'USD' ||
-      (req.body.txn_type !== 'web_accept' && req.body.txn_type !== 'subscr_payment') ||
-      !userId || !sponsorUntil
+      req.body.receiver_email !== conf.values.paypalReceiverEmail
+      || req.body.payment_status !== 'Completed'
+      || req.body.mc_currency !== 'USD'
+      || (req.body.txn_type !== 'web_accept' && req.body.txn_type !== 'subscr_payment')
+      || !userId || !sponsorUntil
     ) {
       // Ignoring PayPal IPN
       return res.end();

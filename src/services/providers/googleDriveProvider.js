@@ -193,7 +193,7 @@ export default new Provider({
   },
   async listFileRevisions({ token, syncLocation }) {
     const revisions = await googleHelper.getFileRevisions(token, syncLocation.driveFileId);
-    return revisions.map(revision => ({
+    return revisions.map((revision) => ({
       id: revision.id,
       sub: `${googleHelper.subPrefix}:${revision.lastModifyingUser.permissionId}`,
       created: new Date(revision.modifiedTime).getTime(),

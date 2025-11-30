@@ -18,7 +18,7 @@ export default (empty) => {
     ...module.getters,
     groupedByFileId: (state, { items }) => {
       const groups = {};
-      items.forEach(item => addToGroup(groups, item));
+      items.forEach((item) => addToGroup(groups, item));
       return groups;
     },
     groupedByFileIdAndHash: (state, { items }) => {
@@ -46,7 +46,7 @@ export default (empty) => {
           const provider = providerRegistry.providersById[item.providerId];
           return provider && provider.getToken(item);
         })
-        .forEach(item => addToGroup(groups, item));
+        .forEach((item) => addToGroup(groups, item));
       return groups;
     },
     current: (state, { filteredGroupedByFileId }, rootState, rootGetters) => {

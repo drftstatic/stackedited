@@ -2,13 +2,13 @@
   <modal-inner aria-label="Synchronize with Dropbox">
     <div class="modal__content">
       <div class="modal__image">
-        <icon-provider provider-id="dropbox"></icon-provider>
+        <icon-provider provider-id="dropbox" />
       </div>
-      <p>Save <b>{{currentFileName}}</b> to your <b>Dropbox</b> and keep it synced.</p>
+      <p>Save <b>{{ currentFileName }}</b> to your <b>Dropbox</b> and keep it synced.</p>
       <form-entry label="File path" error="path">
-        <input slot="field" class="textfield" type="text" v-model.trim="path" @keydown.enter="resolve()">
+        <input slot="field" v-model.trim="path" class="textfield" type="text" @keydown.enter="resolve()">
         <div class="form-entry__info">
-          <b>Example:</b> {{config.token.fullAccess ? '' : '/Applications/StackEdit (restricted)'}}/path/to/My Document.md<br>
+          <b>Example:</b> {{ config.token.fullAccess ? '' : '/Applications/StackEdit (restricted)' }}/path/to/My Document.md<br>
           If the file exists, it will be overwritten.
         </div>
       </form-entry>

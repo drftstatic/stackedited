@@ -2,41 +2,41 @@
   <modal-inner class="modal__inner-1--publish-management" aria-label="Manage publication locations">
     <div class="modal__content">
       <div class="modal__image">
-        <icon-upload></icon-upload>
+        <icon-upload />
       </div>
-      <p v-if="publishLocations.length"><b>{{currentFileName}}</b> is published to the following location(s):</p>
-      <p v-else><b>{{currentFileName}}</b> is not published yet.</p>
+      <p v-if="publishLocations.length"><b>{{ currentFileName }}</b> is published to the following location(s):</p>
+      <p v-else><b>{{ currentFileName }}</b> is not published yet.</p>
       <div>
-        <div class="publish-entry flex flex--column" v-for="location in publishLocations" :key="location.id">
+        <div v-for="location in publishLocations" :key="location.id" class="publish-entry flex flex--column">
           <div class="publish-entry__header flex flex--row flex--align-center">
             <div class="publish-entry__icon flex flex--column flex--center">
-              <icon-provider :provider-id="location.providerId"></icon-provider>
+              <icon-provider :provider-id="location.providerId" />
             </div>
             <div class="publish-entry__description">
-              {{location.description}}
+              {{ location.description }}
             </div>
             <div class="publish-entry__buttons flex flex--row flex--center">
-              <button class="publish-entry__button button" @click="remove(location)" v-title="'Remove location'">
-                <icon-delete></icon-delete>
+              <button v-title="'Remove location'" class="publish-entry__button button" @click="remove(location)">
+                <icon-delete />
               </button>
             </div>
           </div>
           <div class="publish-entry__row flex flex--row flex--align-center">
             <div class="publish-entry__url">
-              {{location.url}}
+              {{ location.url }}
             </div>
-            <div class="publish-entry__buttons flex flex--row flex--center" v-if="location.url">
-              <button class="publish-entry__button button" v-clipboard="location.url" @click="info('Location URL copied to clipboard!')" v-title="'Copy URL'">
-                <icon-content-copy></icon-content-copy>
+            <div v-if="location.url" class="publish-entry__buttons flex flex--row flex--center">
+              <button v-clipboard="location.url" v-title="'Copy URL'" class="publish-entry__button button" @click="info('Location URL copied to clipboard!')">
+                <icon-content-copy />
               </button>
-              <a class="publish-entry__button button" v-if="location.url" :href="location.url" target="_blank" v-title="'Open location'">
-                <icon-open-in-new></icon-open-in-new>
+              <a v-if="location.url" v-title="'Open location'" class="publish-entry__button button" :href="location.url" target="_blank">
+                <icon-open-in-new />
               </a>
             </div>
           </div>
         </div>
       </div>
-      <div class="modal__info" v-if="publishLocations.length">
+      <div v-if="publishLocations.length" class="modal__info">
         <b>Tip:</b> Removing a location won't delete any file.
       </div>
     </div>

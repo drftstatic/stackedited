@@ -4,7 +4,7 @@ import store from '../../../store';
 import userSvc from '../../userSvc';
 import badgeSvc from '../../badgeSvc';
 
-const getScopes = token => [token.repoFullAccess ? 'repo' : 'public_repo', 'gist'];
+const getScopes = (token) => [token.repoFullAccess ? 'repo' : 'public_repo', 'gist'];
 
 const request = (token, options) => networkSvc.request({
   ...options,
@@ -22,7 +22,7 @@ const repoRequest = (token, owner, repo, options) => request(token, {
   ...options,
   url: `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${options.url}`,
 })
-  .then(res => res.body);
+  .then((res) => res.body);
 
 const getCommitMessage = (name, path) => {
   const message = store.getters['data/computedSettings'].git[name];

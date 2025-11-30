@@ -10,8 +10,8 @@ const getAppKey = (fullAccess) => {
   return store.getters['data/serverConf'].dropboxAppKey;
 };
 
-const httpHeaderSafeJson = args => args && JSON.stringify(args)
-  .replace(/[\u007f-\uffff]/g, c => `\\u${`000${c.charCodeAt(0).toString(16)}`.slice(-4)}`);
+const httpHeaderSafeJson = (args) => args && JSON.stringify(args)
+  .replace(/[\u007f-\uffff]/g, (c) => `\\u${`000${c.charCodeAt(0).toString(16)}`.slice(-4)}`);
 
 const request = ({ accessToken }, options, args) => networkSvc.request({
   ...options,
@@ -179,7 +179,7 @@ export default {
       window.Dropbox.choose({
         multiselect: true,
         linkType: 'direct',
-        success: files => resolve(files.map((file) => {
+        success: (files) => resolve(files.map((file) => {
           const path = file.link.replace(/.*\/view\/[^/]*/, '');
           return decodeURI(path);
         })),
