@@ -22,7 +22,7 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex';
-import Prism from 'prismjs';
+import Prism from '../../libs/prism';
 import UserImage from '../UserImage';
 import cledit from '../../services/editor/cledit';
 import editorSvc from '../../services/editorSvc';

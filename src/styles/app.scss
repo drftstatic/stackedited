@@ -13,6 +13,14 @@ body {
   /* Prevent body overscroll on Chrome */
   overflow: hidden;
   -webkit-overflow-scrolling: touch;
+
+  /* Fever dream vibes - subtle background gradient shift */
+  background: linear-gradient(135deg, $fever-ghost-white 0%, #fff 50%, rgba($fever-teal, 0.03) 100%);
+  transition: background 0.3s ease-in-out;
+
+  &.app--dark {
+    background: linear-gradient(135deg, $fever-ghost-dark 0%, #1e1e1e 50%, rgba($fever-purple, 0.05) 100%);
+  }
 }
 
 * {
@@ -40,9 +48,18 @@ body {
 ::-webkit-scrollbar-thumb {
   border-radius: 4px;
   background-color: #bbb;
+  transition: background-color 0.3s ease;
 
   .app--dark & {
     background-color: #666;
+  }
+
+  &:hover {
+    background-color: $fever-teal;
+
+    .app--dark & {
+      background-color: $fever-purple;
+    }
   }
 }
 
@@ -58,9 +75,20 @@ input[type=checkbox] {
   width: 100%;
   height: 100%;
   display: block;
+  transition: transform 0.3s ease-in-out, filter 0.3s ease;
 
   * {
     fill: currentColor;
+  }
+
+  /* Dreamlike hover effect */
+  &:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 3px rgba($fever-teal, 0.3));
+
+    .app--dark & {
+      filter: drop-shadow(0 0 3px rgba($fever-purple, 0.3));
+    }
   }
 }
 
@@ -91,6 +119,15 @@ textarea {
   background-image: none;
   border: 0;
   border-radius: $border-radius-base;
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+
+  &:focus {
+    box-shadow: 0 0 8px rgba($fever-teal, 0.3);
+
+    .app--dark & {
+      box-shadow: 0 0 8px rgba($fever-purple, 0.3);
+    }
+  }
 }
 
 .button {
@@ -118,6 +155,8 @@ textarea {
   border: 0;
   border-radius: $border-radius-base;
   text-decoration: none;
+  transition: all 0.3s ease-in-out;
+  letter-spacing: 0.5px; /* Slightly off feeling */
 
   &:active,
   &:focus,
@@ -127,6 +166,7 @@ textarea {
     background-color: rgba(0, 0, 0, 0.05);
     outline: 0;
     text-decoration: none;
+    transform: translateY(-1px);
   }
 
   .app--dark .layout__panel--editor &,
@@ -149,6 +189,7 @@ textarea {
       opacity: 0.33;
       background-color: transparent;
       cursor: not-allowed;
+      transform: none;
     }
   }
 }
@@ -180,9 +221,15 @@ textarea {
   max-width: 100%;
   color: inherit;
   height: 2.4rem;
+  transition: box-shadow 0.3s ease;
 
   &:focus {
     outline: none;
+    box-shadow: 0 0 8px rgba($fever-teal, 0.3);
+
+    .app--dark & {
+      box-shadow: 0 0 8px rgba($fever-purple, 0.3);
+    }
   }
 
   &[disabled] {
@@ -244,6 +291,7 @@ textarea {
   background-color: transparent;
   opacity: 0.75;
   flex: none;
+  transition: all 0.3s ease;
 
   /* prevent from seeing wrapped buttons */
   margin-bottom: 20px;
@@ -263,11 +311,23 @@ textarea {
   white-space: nowrap;
   text-overflow: ellipsis;
   width: 100%;
+  letter-spacing: 1px; /* Dreamy spacing */
 }
 
 .logo-background {
   background: no-repeat center url('../assets/logo.svg');
   background-size: contain;
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Dreamy floating animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .gutter {
@@ -290,6 +350,7 @@ textarea {
   width: 22px;
   height: 21px;
   line-height: 1;
+  transition: all 0.3s ease;
 
   .app--dark & {
     color: rgba(255, 255, 255, 0.33);
@@ -310,6 +371,7 @@ textarea {
 .discussion-preview-highlighting {
   background-color: mix($editor-background-light, $selection-highlighting-color, 70%);
   padding: 0.25em 0;
+  transition: background-color 0.3s ease;
 
   .app--dark & {
     background-color: mix($editor-background-dark, $selection-highlighting-color, 70%);

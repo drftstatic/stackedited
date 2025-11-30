@@ -97,7 +97,7 @@ export default {
       const names = {
         claude: 'Claude',
         gemini: 'Gemini',
-        codex: 'GPT',
+        openai: 'GPT',
       };
       return names[id] || id;
     },

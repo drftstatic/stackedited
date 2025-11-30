@@ -2,15 +2,22 @@
   <nav class="navigation-bar" :class="{'navigation-bar--editor': styles.showEditor && !revisionContent, 'navigation-bar--light': light}">
     <!-- Explorer -->
     <div class="navigation-bar__inner navigation-bar__inner--left navigation-bar__inner--button">
-      <button v-if="light" v-title="'Close StackEdit'" class="navigation-bar__button navigation-bar__button--close button" @click="close()"><icon-check-circle /></button>
+      <button v-if="light" v-title="'Close StackediTED'" class="navigation-bar__button navigation-bar__button--close button" @click="close()"><icon-check-circle /></button>
       <button v-else v-title="'Toggle explorer'" class="navigation-bar__button navigation-bar__button--explorer-toggler button" tour-step-anchor="explorer" @click="toggleExplorer()"><icon-folder /></button>
     </div>
     <!-- Side bar -->
     <div class="navigation-bar__inner navigation-bar__inner--right navigation-bar__inner--button">
-      <a v-if="light" v-title="'Open StackEdit'" class="navigation-bar__button navigation-bar__button--stackedit button" href="app" target="_blank"><icon-provider provider-id="stackedit" /></a>
+      <a v-if="light" v-title="'Open StackediTED'" class="navigation-bar__button navigation-bar__button--stackedit button" href="app" target="_blank"><icon-provider provider-id="stackedit" /></a>
       <button v-else v-title="'Toggle side bar'" class="navigation-bar__button navigation-bar__button--stackedit button" tour-step-anchor="menu" @click="toggleSideBar()"><icon-provider provider-id="stackedit" /></button>
     </div>
     <div class="navigation-bar__inner navigation-bar__inner--right navigation-bar__inner--title flex flex--row">
+      <!-- Branding -->
+      <div class="navigation-bar__branding">
+        <span class="navigation-bar__brand-name">StackediTED</span>
+        <a href="https://fladrycreative.com" target="_blank" class="navigation-bar__brand-link" title="A Fladry Creative Experiment">
+          <span class="navigation-bar__brand-experiment">a fladry creative experiment</span>
+        </a>
+      </div>
       <!-- Spinner -->
       <div class="navigation-bar__spinner">
         <div v-if="!offline && showSpinner" class="spinner" />
@@ -259,6 +266,63 @@ export default {
 
 .navigation-bar__hidden {
   display: none;
+}
+
+.navigation-bar__branding {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 16px;
+  line-height: 1.2;
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+.navigation-bar__brand-name {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, $fever-purple 0%, $fever-teal 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-transform: uppercase;
+
+  .app--dark & {
+    background: linear-gradient(135deg, $fever-teal 0%, $fever-purple 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.navigation-bar__brand-link {
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+.navigation-bar__brand-experiment {
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: lowercase;
+  color: $fever-purple-deep;
+  opacity: 0.6;
+
+  .app--dark & {
+    color: $fever-teal;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px rgba($fever-purple, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba($fever-teal, 0.5));
+  }
 }
 
 .navigation-bar__inner--left {

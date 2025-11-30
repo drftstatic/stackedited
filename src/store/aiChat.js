@@ -90,14 +90,13 @@ export default {
       const lastMessage = state.messages[state.messages.length - 1];
       if (lastMessage && lastMessage.role === 'assistant') {
         lastMessage.content = (lastMessage.content || '') + text;
-      } else {
-        // Start new assistant message for streaming
-        state.messages.push({
-          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          role: 'assistant',
-          content: text,
-          timestamp: Date.now(),
-        });
+      }
+    },
+
+    markLastMessageComplete(state) {
+      const lastMessage = state.messages[state.messages.length - 1];
+      if (lastMessage && lastMessage.role === 'assistant') {
+        lastMessage.isStreaming = false;
       }
     },
 

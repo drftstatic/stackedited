@@ -17,6 +17,7 @@ class AIService {
     this.messageQueue = [];
     this.syncInterval = null;
     this.syncTimeout = null;
+    this.hasReceivedChunks = false; // Track if we've streamed chunks for current response
   }
 
   /**
@@ -132,6 +133,7 @@ class AIService {
 
       case 'thinking':
         store.commit('aiChat/setThinking', true);
+        this.hasReceivedChunks = false; // Reset for new response
         break;
 
       case 'providerSelected':
@@ -145,16 +147,36 @@ class AIService {
         break;
 
       case 'chunk':
-        store.commit('aiChat/appendToLastMessage', message.text);
+        // Track that we've received streaming chunks
+        if (!this.hasReceivedChunks) {
+          // First chunk - create the assistant message
+          store.commit('aiChat/addMessage', {
+            role: 'assistant',
+            content: message.text,
+            timestamp: Date.now(),
+            isStreaming: true,
+          });
+          this.hasReceivedChunks = true;
+        } else {
+          // Subsequent chunks - append to existing message
+          store.commit('aiChat/appendToLastMessage', message.text);
+        }
         break;
 
       case 'response':
         store.commit('aiChat/setThinking', false);
-        store.commit('aiChat/addMessage', {
-          role: 'assistant',
-          content: message.text,
-          timestamp: Date.now(),
-        });
+        // Only add message if we didn't already stream chunks
+        // (streaming creates the message progressively via chunks)
+        if (!this.hasReceivedChunks) {
+          store.commit('aiChat/addMessage', {
+            role: 'assistant',
+            content: message.text,
+            timestamp: Date.now(),
+          });
+        } else {
+          // Mark streaming complete on the existing message
+          store.commit('aiChat/markLastMessageComplete');
+        }
         break;
 
       case 'functionCall':

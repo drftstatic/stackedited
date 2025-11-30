@@ -3,7 +3,7 @@
     <!-- Role indicator -->
     <div class="ai-message__role">
       <span v-if="message.role === 'user'">You</span>
-      <span v-else-if="message.role === 'assistant'">AI</span>
+      <span v-else-if="message.role === 'assistant'">Ted</span>
       <span v-else>System</span>
     </div>
 
@@ -85,11 +85,11 @@ export default {
     },
     formatFunctionName(name) {
       const names = {
-        updateNotepad: 'Updating document',
-        suggestEdit: 'Suggesting edit',
-        searchVault: 'Searching vault',
-        readDocument: 'Reading document',
-        webSearch: 'Searching web',
+        updateNotepad: 'Ted is updating the document',
+        suggestEdit: 'Ted has a suggestion',
+        searchVault: 'Ted is searching',
+        readDocument: 'Ted is reading',
+        webSearch: 'Ted is exploring the web',
       };
       return names[name] || name;
     },
@@ -106,30 +106,67 @@ export default {
   border-radius: 8px;
   font-size: 14px;
   line-height: 1.4;
+  animation: message-appear 0.3s ease-in-out;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateX(2px);
+  }
+}
+
+@keyframes message-appear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .ai-message--user {
-  background-color: rgba($link-color, 0.1);
+  background: linear-gradient(135deg, $fever-teal-alpha 0%, transparent 100%);
   margin-left: 20px;
+  border-left: 3px solid $fever-teal;
+
+  .app--dark & {
+    border-left-color: $fever-teal;
+  }
 
   .ai-message__role {
-    color: $link-color;
+    color: $fever-teal-dark;
+
+    .app--dark & {
+      color: $fever-teal;
+    }
   }
 }
 
 .ai-message--assistant {
-  background-color: rgba(0, 0, 0, 0.04);
+  background: linear-gradient(135deg, $fever-purple-alpha 0%, transparent 100%);
   margin-right: 20px;
+  border-left: 3px solid $fever-purple;
+
+  .app--dark & {
+    border-left-color: $fever-purple;
+  }
 
   .ai-message__role {
-    color: $secondary-text-color;
+    color: $fever-purple-deep;
+    font-weight: 600;
+
+    .app--dark & {
+      color: $fever-purple;
+    }
   }
 }
 
 .ai-message--system {
-  background-color: rgba(255, 193, 7, 0.1);
+  background: rgba(255, 193, 7, 0.1);
   font-size: 12px;
   margin: 8px 40px;
+  border-left: 3px solid #f57c00;
 
   .ai-message__role {
     color: #f57c00;
@@ -137,18 +174,24 @@ export default {
 }
 
 .ai-message--error {
-  background-color: rgba(244, 67, 54, 0.1);
+  background: rgba($fever-coral, 0.1);
+  border-left: 3px solid $fever-coral;
 
   .ai-message__role {
-    color: #f44336;
+    color: $fever-coral;
   }
 }
 
 .ai-message--function {
-  background-color: rgba(156, 39, 176, 0.1);
+  background: linear-gradient(135deg, rgba($fever-lime, 0.1) 0%, transparent 100%);
+  border-left: 3px solid $fever-lime;
 
   .ai-message__role {
-    color: #9c27b0;
+    color: darken($fever-lime, 20%);
+
+    .app--dark & {
+      color: $fever-lime;
+    }
   }
 }
 
@@ -157,6 +200,7 @@ export default {
   font-weight: 600;
   text-transform: uppercase;
   margin-bottom: 4px;
+  letter-spacing: 0.5px;
 }
 
 .ai-message__content {
@@ -170,6 +214,12 @@ export default {
     border-radius: 3px;
     font-family: monospace;
     font-size: 13px;
+    border: 1px solid rgba($fever-purple, 0.2);
+
+    .app--dark & {
+      background-color: rgba(255, 255, 255, 0.06);
+      border-color: rgba($fever-teal, 0.2);
+    }
   }
 
   pre.ai-message__code {
@@ -178,16 +228,36 @@ export default {
     border-radius: 4px;
     overflow-x: auto;
     margin: 8px 0;
+    border: 1px solid rgba($fever-purple, 0.2);
+
+    .app--dark & {
+      background-color: rgba(255, 255, 255, 0.06);
+      border-color: rgba($fever-teal, 0.2);
+    }
 
     code {
       background: none;
       padding: 0;
+      border: none;
     }
   }
 
   a {
-    color: $link-color;
+    color: $fever-teal-dark;
     text-decoration: underline;
+    transition: color 0.3s ease;
+
+    .app--dark & {
+      color: $fever-teal;
+    }
+
+    &:hover {
+      color: $fever-purple;
+
+      .app--dark & {
+        color: $fever-purple;
+      }
+    }
   }
 }
 
@@ -200,10 +270,18 @@ export default {
 
 .ai-message__function-icon {
   font-size: 16px;
+  animation: spin-slow 3s linear infinite;
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .ai-message__function-name {
   font-weight: 500;
+  font-style: italic;
 }
 
 .ai-message__function-explanation {
@@ -217,5 +295,6 @@ export default {
   color: $secondary-text-color;
   text-align: right;
   margin-top: 4px;
+  opacity: 0.6;
 }
 </style>

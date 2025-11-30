@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Prism from 'prismjs';
+import Prism from '../libs/prism';
 import cledit from '../services/editor/cledit';
 
 export default {

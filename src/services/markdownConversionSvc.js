@@ -1,5 +1,5 @@
 import DiffMatchPatch from 'diff-match-patch';
-import Prism from 'prismjs';
+import Prism from '../libs/prism';
 import MarkdownIt from 'markdown-it';
 import markdownGrammarSvc from './markdownGrammarSvc';
 import extensionSvc from './extensionSvc';

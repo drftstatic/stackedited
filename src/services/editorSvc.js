@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import DiffMatchPatch from 'diff-match-patch';
-import Prism from 'prismjs';
+import Prism from '../libs/prism';
 import markdownItPandocRenderer from 'markdown-it-pandoc-renderer';
 import cledit from './editor/cledit';
 import pagedown from '../libs/pagedown';

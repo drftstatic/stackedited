@@ -14,6 +14,8 @@ import http from 'http';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ClaudeProvider } from './providers/claude.js';
+import { GeminiProvider } from './providers/gemini.js';
+import { OpenAIProvider } from './providers/openai.js';
 import { VaultService } from './services/vaultService.js';
 import { CapabilityMatcher } from './services/capabilityMatcher.js';
 
@@ -41,8 +43,9 @@ export class AIDaemonServer {
 
     // Initialize providers
     this.providers = [
-      new ClaudeProvider(config.claude || {})
-      // Gemini and Codex providers will be added in Phase 4
+      new ClaudeProvider(config.claude || {}),
+      new GeminiProvider(config.gemini || {}),
+      new OpenAIProvider(config.openai || {})
     ];
 
     // Smart routing
@@ -136,13 +139,15 @@ export class AIDaemonServer {
       this.sessions.set(sessionId, session);
       console.log(`[Session ${sessionId.slice(0, 8)}] Connected`);
 
-      // Send welcome message
-      this.send(ws, {
-        type: 'connected',
-        sessionId,
-        mode: session.mode,
-        providerId: session.providerId,
-        providers: this.providers.map(p => p.getInfo())
+      // Send welcome message with provider availability
+      this.getProvidersWithStatus().then(providers => {
+        this.send(ws, {
+          type: 'connected',
+          sessionId,
+          mode: session.mode,
+          providerId: session.providerId,
+          providers
+        });
       });
 
       // Handle messages
@@ -386,6 +391,21 @@ export class AIDaemonServer {
     if (ws.readyState === ws.OPEN) {
       ws.send(JSON.stringify(data));
     }
+  }
+
+  /**
+   * Get all providers with their availability status
+   */
+  async getProvidersWithStatus() {
+    const status = [];
+    for (const provider of this.providers) {
+      const available = await provider.isAvailable();
+      status.push({
+        ...provider.getInfo(),
+        available
+      });
+    }
+    return status;
   }
 
   async start() {

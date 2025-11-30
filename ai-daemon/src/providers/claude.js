@@ -82,14 +82,19 @@ export class ClaudeProvider extends BaseProvider {
       console.log(`[Claude] Working directory: ${process.cwd()}`);
 
       const claude = spawn(this.cli, args, {
-        stdio: ['pipe', 'pipe', 'pipe'],
+        // Use 'ignore' for stdin since we pass everything via args
+        // This prevents CLI from waiting for stdin input
+        stdio: ['ignore', 'pipe', 'pipe'],
         env: {
           ...process.env,
           // Ensure we have proper PATH including homebrew
           PATH: process.env.PATH || '/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin',
           // Disable TTY detection which can cause hangs
           TERM: 'dumb',
-          CI: 'true'
+          CI: 'true',
+          // Force non-interactive mode
+          FORCE_COLOR: '0',
+          NO_COLOR: '1'
         },
         // Don't use shell - pass args directly
         shell: false,
@@ -98,6 +103,8 @@ export class ClaudeProvider extends BaseProvider {
         // Ensure stdio is separate from parent
         detached: false
       });
+
+      console.log(`[Claude] Process spawned with PID: ${claude.pid}`);
 
       let output = '';
       let errorOutput = '';
