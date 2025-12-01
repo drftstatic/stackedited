@@ -13,10 +13,10 @@ const MENTION_TO_PROVIDER = {
   gemini: 'gemini',
   gpt: 'openai',
   openai: 'openai',
-  xai: 'xai',
-  zai: 'xai',
+  zai: 'zai',
   grok: 'cursor',
   cursor: 'cursor',
+  composer: 'composer',
   human: 'human', // Special case - request human input
   all: 'all', // Special case - broadcast
 };

@@ -97,6 +97,7 @@ export default {
         openai: 'GPT',
         xai: 'X.AI',
         cursor: 'Grok',
+        composer: 'Composer',
       };
       return names[this.providerId] || 'AI';
     },
@@ -108,6 +109,7 @@ export default {
           openai: 'GPT',
           xai: 'X.AI',
           cursor: 'Grok',
+          composer: 'Composer',
         };
         const target = names[this.chaining.toProvider] || this.chaining.toProvider;
         return `Chaining to ${target} (Hop ${this.chaining.hop})...`;

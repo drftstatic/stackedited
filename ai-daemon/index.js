@@ -36,9 +36,19 @@ const config = {
     cli: process.env.GEMINI_CLI_PATH || 'gemini',
     model: process.env.GEMINI_MODEL || 'gemini-3-pro-preview'
   },
-  xai: {
-    apiKey: process.env.XAI_API_KEY,
-    model: process.env.XAI_MODEL || 'grok-beta'
+  zai: {
+    apiKey: process.env.ZAI_API_KEY,
+    model: process.env.ZAI_MODEL || 'glm-4.6'
+  },
+  cursor: {
+    cli: process.env.CURSOR_CLI_PATH || 'cursor-agent',
+    model: process.env.CURSOR_MODEL || 'grok',
+    apiKey: process.env.CURSOR_API_KEY
+  },
+  composer: {
+    cli: process.env.COMPOSER_CLI_PATH || 'cursor-agent',
+    model: process.env.COMPOSER_MODEL || 'composer-1',
+    apiKey: process.env.CURSOR_API_KEY // Same key as cursor
   }
 };
 

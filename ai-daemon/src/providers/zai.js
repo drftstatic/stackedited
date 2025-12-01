@@ -1,40 +1,40 @@
 /**
- * X.AI Provider
+ * Z.AI Provider
  *
- * Adapter for X.AI's API (Grok).
- * Uses direct API calls since no CLI is standard yet.
+ * Adapter for Z.AI's API (Chinese AI company)
+ * Uses direct API calls to https://api.z.ai
  */
 
 import { BaseProvider } from './base.js';
 
-export class XAIProvider extends BaseProvider {
+export class ZAIProvider extends BaseProvider {
   constructor(config = {}) {
     super({
-      id: 'xai',
-      name: 'X.AI',
-      model: config.model || 'grok-beta',
-      apiKey: config.apiKey || process.env.XAI_API_KEY,
+      id: 'zai',
+      name: 'Z.AI',
+      model: config.model || 'glm-4.6',
       capabilities: ['editing', 'code', 'reasoning'],
       ...config
     });
+    this.apiKey = config.apiKey || process.env.ZAI_API_KEY;
   }
 
   /**
-   * Check if X.AI API key is available
+   * Check if Z.AI API key is available
    */
   async isAvailable() {
-    return !!this.config.apiKey;
+    return !!this.apiKey;
   }
 
   /**
-   * Send message to X.AI API
+   * Send message to Z.AI API
    */
   async sendMessage(message, context, onChunk) {
-    if (!this.config.apiKey) {
-      throw new Error('X.AI API key not configured');
+    if (!this.apiKey) {
+      throw new Error('Z.AI API key not configured');
     }
 
-    console.log(`[X.AI] Sending message to ${this.config.model}`);
+    console.log(`[Z.AI] Sending message to ${this.config.model}`);
 
     const systemPrompt = this.buildSystemPrompt(context);
 
@@ -48,11 +48,12 @@ export class XAIProvider extends BaseProvider {
     ];
 
     try {
-      const response = await fetch('https://api.x.ai/v1/chat/completions', {
+      const response = await fetch('https://api.z.ai/api/paas/v4/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.config.apiKey}`
+          'Accept-Language': 'en-US,en',
+          'Authorization': `Bearer ${this.apiKey}`
         },
         body: JSON.stringify({
           model: this.config.model,
@@ -64,7 +65,7 @@ export class XAIProvider extends BaseProvider {
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`X.AI API error (${response.status}): ${errorText}`);
+        throw new Error(`Z.AI API error (${response.status}): ${errorText}`);
       }
 
       const decoder = new TextDecoder();
@@ -95,7 +96,7 @@ export class XAIProvider extends BaseProvider {
                 }
               }
             } catch (e) {
-              console.warn('[X.AI] Error parsing chunk:', e.message);
+              console.warn('[Z.AI] Error parsing chunk:', e.message);
             }
           }
         }
@@ -103,14 +104,14 @@ export class XAIProvider extends BaseProvider {
 
       return {
         text: fullText,
-        functionCalls: [] // Function calling not yet implemented for X.AI
+        functionCalls: [] // Function calling not yet implemented for Z.AI
       };
 
     } catch (error) {
-      console.error('[X.AI] Request failed:', error);
+      console.error('[Z.AI] Request failed:', error);
       throw error;
     }
   }
 }
 
-export default XAIProvider;
+export default ZAIProvider;

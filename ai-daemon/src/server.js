@@ -16,8 +16,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { ClaudeProvider } from './providers/claude.js';
 import { GeminiProvider } from './providers/gemini.js';
 import { OpenAIProvider } from './providers/openai.js';
-import { XAIProvider } from './providers/xai.js';
+import { ZAIProvider } from './providers/zai.js';
 import { CursorProvider } from './providers/cursor.js';
+import { ComposerProvider } from './providers/composer.js';
 import { VaultService } from './services/vaultService.js';
 import { CapabilityMatcher } from './services/capabilityMatcher.js';
 
@@ -48,8 +49,9 @@ export class AIDaemonServer {
       new ClaudeProvider(config.claude || {}),
       new GeminiProvider(config.gemini || {}),
       new OpenAIProvider(config.openai || {}),
-      new XAIProvider(config.xai || {}),
-      new CursorProvider(config.cursor || {})
+      new ZAIProvider(config.zai || {}),
+      new CursorProvider(config.cursor || {}),
+      new ComposerProvider(config.composer || {})
     ];
 
     // Smart routing
@@ -378,9 +380,10 @@ export class AIDaemonServer {
             'gemini': 'gemini',
             'gpt': 'openai',
             'openai': 'openai',
-            'xai': 'xai',
+            'zai': 'zai',
             'grok': 'cursor',
-            'cursor': 'cursor'
+            'cursor': 'cursor',
+            'composer': 'composer'
           };
 
           const mentionRegex = /@(\w+)/i;

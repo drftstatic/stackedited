@@ -77,8 +77,9 @@ export default {
         claude: 'Claude',
         gemini: 'Gemini',
         openai: 'GPT',
-        xai: 'X.AI',
+        zai: 'Z.AI',
         cursor: 'Grok',
+        composer: 'Composer',
       };
       return names[id] || id;
     },
@@ -232,8 +233,8 @@ export default {
   }
 }
 
-// X.AI - Amber
-.ai-provider__btn--xai {
+// Z.AI - Amber
+.ai-provider__btn--zai {
   border-color: rgba($fever-amber, 0.3);
   color: $fever-amber;
 
@@ -265,6 +266,24 @@ export default {
     border-color: $fever-lime;
     color: $fever-ghost-dark;
     box-shadow: 0 0 20px rgba($fever-lime, 0.4);
+  }
+}
+
+// Composer - Indigo
+.ai-provider__btn--composer {
+  border-color: rgba($fever-indigo, 0.3);
+  color: $fever-indigo;
+
+  &:hover:not(:disabled) {
+    background: rgba($fever-indigo, 0.1);
+    border-color: $fever-indigo;
+  }
+
+  &.ai-provider__btn--active {
+    background: $fever-indigo;
+    border-color: $fever-indigo;
+    color: white;
+    box-shadow: 0 0 20px rgba($fever-indigo, 0.4);
   }
 }
 
