@@ -16,7 +16,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ClaudeProvider } from './providers/claude.js';
 import { GeminiProvider } from './providers/gemini.js';
 import { OpenAIProvider } from './providers/openai.js';
-import { ZAIProvider } from './providers/zai.js';
+// import { ZAIProvider } from './providers/zai.js'; // Disabled - needs CLI wrapper
 import { CursorProvider } from './providers/cursor.js';
 import { ComposerProvider } from './providers/composer.js';
 import { VaultService } from './services/vaultService.js';
@@ -49,7 +49,8 @@ export class AIDaemonServer {
       new ClaudeProvider(config.claude || {}),
       new GeminiProvider(config.gemini || {}),
       new OpenAIProvider(config.openai || {}),
-      new ZAIProvider(config.zai || {}),
+      // Z.AI disabled - needs CLI wrapper implementation (see zai.js for details)
+      // new ZAIProvider(config.zai || {}),
       new CursorProvider(config.cursor || {}),
       new ComposerProvider(config.composer || {})
     ];
@@ -221,7 +222,9 @@ export class AIDaemonServer {
         break;
 
       case 'vaultUpdate':
+        console.log(`[Session ${session.id.slice(0, 8)}] Vault update received with ${message.documents?.length || 0} documents`);
         const result = this.vault.sync(message.documents || []);
+        console.log(`[Session ${session.id.slice(0, 8)}] Vault synced: ${result.count} documents, ${result.added} added, ${result.updated} updated, ${result.removed} removed`);
         this.send(session.ws, {
           type: 'vaultSynced',
           ...result

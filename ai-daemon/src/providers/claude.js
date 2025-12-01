@@ -183,13 +183,16 @@ export class ClaudeProvider extends BaseProvider {
       functionCalls: []
     };
 
-    // Look for tool_use blocks
-    const toolUseRegex = /<tool_use>([\s\S]*?)<\/tool_use>/g;
+    // Look for tool_use blocks - improved regex to handle attributes and whitespace variations
+    // Matches: <tool_use>, <tool_use name="foo">, <tool_use  >, etc.
+    const toolUseRegex = /<tool_use\b[^>]*>([\s\S]*?)<\/tool_use>/gi;
     let match;
     let lastIndex = 0;
     let textParts = [];
+    let toolCallCount = 0;
 
     while ((match = toolUseRegex.exec(output)) !== null) {
+      toolCallCount++;
       // Capture text before this tool call
       if (match.index > lastIndex) {
         textParts.push(output.slice(lastIndex, match.index));
@@ -203,13 +206,18 @@ export class ClaudeProvider extends BaseProvider {
           name: toolCall.name,
           arguments: toolCall.parameters || toolCall.arguments || {}
         });
+        console.log(`[Claude] Extracted tool call: ${toolCall.name}`);
       } catch (e) {
         // If JSON parsing fails, try to extract function name and args manually
         const nameMatch = match[1].match(/"name"\s*:\s*"(\w+)"/);
         if (nameMatch) {
-          console.warn(`Partial tool call parse for: ${nameMatch[1]}`);
+          console.warn(`[Claude] Partial tool call parse for: ${nameMatch[1]}`);
         }
       }
+    }
+
+    if (toolCallCount > 0) {
+      console.log(`[Claude] Total tool_use blocks found and removed: ${toolCallCount}`);
     }
 
     // Capture remaining text after last tool call

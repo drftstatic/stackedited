@@ -140,13 +140,15 @@ export class GeminiProvider extends BaseProvider {
       functionCalls: []
     };
 
-    // Look for tool_use blocks (similar to Claude format)
-    const toolUseRegex = /<tool_use>([\s\S]*?)<\/tool_use>/g;
+    // Look for tool_use blocks - improved regex to handle attributes and whitespace
+    const toolUseRegex = /<tool_use\b[^>]*>([\s\S]*?)<\/tool_use>/gi;
     let match;
     let lastIndex = 0;
     let textParts = [];
+    let toolCallCount = 0;
 
     while ((match = toolUseRegex.exec(output)) !== null) {
+      toolCallCount++;
       if (match.index > lastIndex) {
         textParts.push(output.slice(lastIndex, match.index));
       }
@@ -158,10 +160,15 @@ export class GeminiProvider extends BaseProvider {
           name: toolCall.name,
           arguments: toolCall.parameters || toolCall.arguments || {}
         });
+        console.log(`[Gemini] Extracted tool call: ${toolCall.name}`);
       } catch (e) {
         // If JSON parsing fails, log and continue
         console.warn(`[Gemini] Failed to parse tool call: ${e.message}`);
       }
+    }
+
+    if (toolCallCount > 0) {
+      console.log(`[Gemini] Total tool_use blocks found and removed: ${toolCallCount}`);
     }
 
     if (lastIndex < output.length) {

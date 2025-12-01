@@ -19,6 +19,7 @@ import syncedContent from './syncedContent';
 import userInfo from './userInfo';
 import workspace from './workspace';
 import aiChat from './aiChat';
+import authorship from './authorship';
 import locationTemplate from './locationTemplate';
 import emptyPublishLocation from '../data/empties/emptyPublishLocation';
 import emptySyncLocation from '../data/empties/emptySyncLocation';
@@ -49,6 +50,7 @@ const store = new Vuex.Store({
     userInfo,
     workspace,
     aiChat,
+    authorship,
   },
   state: {
     light: false,

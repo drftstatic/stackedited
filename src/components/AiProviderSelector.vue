@@ -34,6 +34,19 @@
           <span class="ai-provider__trust-label">TRUST</span>
         </button>
       </div>
+
+      <!-- Authorship Toggle -->
+      <div class="ai-provider__authorship">
+        <button
+          class="ai-provider__authorship-btn"
+          :class="{ 'ai-provider__authorship-btn--active': showAuthorship }"
+          @click="toggleAuthorship"
+          v-title="showAuthorship ? 'Hide authorship colors' : 'Show who wrote what with colors'"
+        >
+          <span class="ai-provider__authorship-icon">🎨</span>
+          <span class="ai-provider__authorship-label">COLORS</span>
+        </button>
+      </div>
     </div>
 
     <!-- Connection status -->
@@ -52,10 +65,10 @@ export default {
     ...mapState('aiChat', [
       'providerId',
       'providers',
-      'providers',
       'connected',
       'trustMode',
     ]),
+    ...mapState('authorship', ['showAuthorship']),
     allProviders() {
       // Return all providers, available ones first
       return [...this.providers].sort((a, b) => {
@@ -67,10 +80,15 @@ export default {
   },
   methods: {
     selectProvider(providerId) {
+      // Switch to manual mode when user explicitly selects a provider
+      aiService.setMode('manual');
       aiService.setProvider(providerId);
     },
     toggleTrustMode() {
       this.$store.dispatch('aiChat/toggleTrustMode');
+    },
+    toggleAuthorship() {
+      this.$store.dispatch('authorship/toggleVisualization');
     },
     getProviderShortName(id) {
       const names = {
@@ -108,7 +126,8 @@ export default {
   flex: 1;
 }
 
-.ai-provider__trust {
+.ai-provider__trust,
+.ai-provider__authorship {
   margin-left: 8px;
   padding-left: 8px;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
@@ -150,6 +169,46 @@ export default {
   font-weight: 700;
   letter-spacing: 0.5px;
   color: $fever-purple;
+  text-transform: uppercase;
+}
+
+// Authorship button (same styles as trust button)
+.ai-provider__authorship-btn {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  border: 1px solid rgba($fever-indigo, 0.3);
+  background: rgba($fever-indigo, 0.05);
+  border-radius: $border-radius-lg;
+  cursor: pointer;
+  transition: all $transition-base;
+  height: 100%;
+
+  &:hover {
+    background: rgba($fever-indigo, 0.1);
+  }
+
+  &.ai-provider__authorship-btn--active {
+    background: rgba($fever-indigo, 0.15);
+    border-color: $fever-indigo;
+
+    .ai-provider__authorship-label {
+      color: $fever-indigo;
+    }
+  }
+}
+
+.ai-provider__authorship-icon {
+  font-size: 12px;
+  margin-right: 6px;
+}
+
+.ai-provider__authorship-label {
+  font-family: $font-family-ui;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: $fever-indigo;
   text-transform: uppercase;
 }
 

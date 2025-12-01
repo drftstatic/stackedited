@@ -385,10 +385,34 @@ class AIService {
    */
   applyEdit() {
     const { pendingEdit } = store.state.aiChat;
+    const currentProviderId = store.state.aiChat.providerId;
     if (!pendingEdit) return;
 
     // Store in edit history for undo
     store.commit('aiChat/addEditToHistory', pendingEdit);
+
+    // Record authorship before applying
+    const currentContent = store.getters['content/current'];
+    if (pendingEdit.type === 'suggestEdit') {
+      // For targeted edits, find the position and record attribution
+      const searchIndex = currentContent.text.indexOf(pendingEdit.search);
+      if (searchIndex !== -1) {
+        store.dispatch('authorship/recordAIEdit', {
+          start: searchIndex,
+          end: searchIndex + pendingEdit.search.length,
+          newText: pendingEdit.replace,
+          providerId: currentProviderId,
+        });
+      }
+    } else if (pendingEdit.type === 'updateNotepad') {
+      // For full document replacement, record entire document as AI-authored
+      store.commit('authorship/replaceDocument', {
+        fileId: store.getters['file/current']?.id,
+        content: pendingEdit.newContent,
+        author: currentProviderId,
+        timestamp: Date.now(),
+      });
+    }
 
     // Apply the edit
     store.dispatch('content/patchCurrent', {
@@ -478,17 +502,27 @@ class AIService {
    * Sync entire vault to daemon
    */
   syncVault() {
-    if (!this.isConnected()) return;
+    if (!this.isConnected()) {
+      console.log('AI Service: Cannot sync vault - not connected');
+      return;
+    }
 
     const files = Object.values(store.getters['file/itemsById'] || {});
+    console.log('AI Service: syncVault() found', files.length, 'files in store');
+
     const vault = [];
 
     for (const file of files) {
       // Skip trash
-      if (file.parentId === 'trash') continue;
+      if (file.parentId === 'trash') {
+        console.log('AI Service: Skipping trash file:', file.name);
+        continue;
+      }
 
       const contentId = `${file.id}/content`;
       const content = store.state.content.itemsById?.[contentId];
+
+      console.log(`AI Service: File ${file.name} (${file.id}) - content exists:`, !!content);
 
       if (content) {
         vault.push({
@@ -500,6 +534,9 @@ class AIService {
         });
       }
     }
+
+    console.log('AI Service: Syncing vault with', vault.length, 'documents');
+    console.log('AI Service: Vault contents:', vault.map(d => ({ name: d.name, textLength: d.text.length })));
 
     this.send({
       type: 'vaultUpdate',

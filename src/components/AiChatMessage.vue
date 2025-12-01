@@ -11,7 +11,8 @@
     <div class="ai-message__content">
       <!-- Function call display -->
       <div v-if="message.isFunctionCall" class="ai-message__function">
-        <span class="ai-message__function-icon">&#9881;</span>
+        <span class="ai-message__function-icon">✨</span>
+        <span class="ai-message__function-label">AI Action:</span>
         <span class="ai-message__function-name">{{ formatFunctionName(message.functionName) }}</span>
         <span v-if="message.functionArgs?.explanation" class="ai-message__function-explanation">
           {{ message.functionArgs.explanation }}
@@ -59,6 +60,10 @@ export default {
     formattedContent() {
       // Simple markdown rendering for chat messages
       let content = this.message.content || '';
+
+      // SAFETY NET: Strip any remaining <tool_use> tags before processing
+      // This is a fallback in case backend parsing missed something
+      content = content.replace(/<tool_use\b[^>]*>[\s\S]*?<\/tool_use>/gi, '');
 
       // Escape HTML first
       content = content
@@ -476,29 +481,51 @@ export default {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
-}
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba($fever-teal, 0.08);
+  border-left: 3px solid $fever-teal;
+  border-radius: $border-radius-base;
 
-.ai-message__function-icon {
-  font-size: 18px;
-  animation: spin-slow 4s linear infinite;
-  filter: drop-shadow(0 0 4px rgba($fever-lime, 0.5));
-}
-
-@keyframes spin-slow {
-  to {
-    transform: rotate(360deg);
+  .app--dark & {
+    background: rgba($fever-teal, 0.12);
   }
 }
 
+.ai-message__function-icon {
+  font-size: 16px;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+.ai-message__function-label {
+  font-family: $font-family-ui;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: $fever-teal;
+  opacity: 0.8;
+}
+
 .ai-message__function-name {
-  font-family: $font-family-main;
-  font-weight: 500;
-  font-style: italic;
-  color: darken($fever-lime, 10%);
+  font-family: $font-family-monospace;
+  font-weight: 600;
+  font-size: 12px;
+  color: $fever-teal;
 
   .app--dark & {
-    color: $fever-lime;
+    color: lighten($fever-teal, 10%);
   }
 }
 
@@ -508,6 +535,7 @@ export default {
   font-style: italic;
   flex-basis: 100%;
   margin-top: 4px;
+  padding-left: 24px; // Align with icon + label
 }
 
 // ───────────────────────────────────────────────────────────────

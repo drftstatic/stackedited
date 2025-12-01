@@ -216,21 +216,28 @@ export class OpenAIProvider extends BaseProvider {
       result.text = output.trim();
     }
 
-    // Also look for <tool_use> XML blocks in the text (same format as Claude)
-    const toolUseRegex = /<tool_use>([\s\S]*?)<\/tool_use>/g;
+    // Also look for <tool_use> XML blocks in the text - improved regex
+    const toolUseRegex = /<tool_use\b[^>]*>([\s\S]*?)<\/tool_use>/gi;
     let match;
+    let toolCallCount = 0;
     while ((match = toolUseRegex.exec(result.text)) !== null) {
+      toolCallCount++;
       try {
         const toolCall = JSON.parse(match[1].trim());
         result.functionCalls.push({
           name: toolCall.name,
           arguments: toolCall.parameters || toolCall.arguments || {}
         });
+        console.log(`[OpenAI] Extracted tool call: ${toolCall.name}`);
         // Remove the tool_use block from the text
         result.text = result.text.replace(match[0], '').trim();
       } catch (e) {
         console.warn(`[OpenAI] Failed to parse tool_use block: ${e.message}`);
       }
+    }
+
+    if (toolCallCount > 0) {
+      console.log(`[OpenAI] Total tool_use blocks found and removed: ${toolCallCount}`);
     }
 
     return result;

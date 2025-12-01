@@ -1,8 +1,29 @@
 /**
- * Z.AI Provider
+ * Z.AI Provider - CURRENTLY DISABLED
  *
  * Adapter for Z.AI's API (Chinese AI company)
  * Uses direct API calls to https://api.z.ai
+ *
+ * ⚠️ ARCHITECTURAL ISSUE - NEEDS CLI WRAPPER
+ *
+ * This provider is currently disabled because it uses direct HTTP API calls
+ * instead of the CLI spawning pattern used by all other working providers
+ * (Claude, Gemini, OpenAI, Cursor, Composer).
+ *
+ * Problems with current implementation:
+ * 1. No real availability checking (only checks if API key exists)
+ * 2. Missing function call support (returns empty array)
+ * 3. Incomplete streaming and error handling
+ * 4. No timeout or retry logic
+ * 5. Doesn't follow the established CLI pattern
+ *
+ * To fix:
+ * 1. Create a CLI wrapper tool (like `zai-cli`) that wraps the Z.AI API
+ * 2. Modify this provider to use `spawn(cli, args)` like other providers
+ * 3. Implement proper tool call parsing and error handling
+ * 4. Test availability by spawning the CLI with --version flag
+ *
+ * Until fixed, this provider is commented out in server.js
  */
 
 import { BaseProvider } from './base.js';
