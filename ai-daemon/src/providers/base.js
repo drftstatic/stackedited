@@ -199,20 +199,9 @@ Example of correct response:
 
 Done!"`;
 
-    // Add vault context if available
-    if (context.vault?.length) {
-      prompt += `\n\n## Workspace Overview
-The user has ${context.vault.length} documents in their workspace:`;
-
-      // List first 20 documents
-      const docs = context.vault.slice(0, 20);
-      for (const doc of docs) {
-        prompt += `\n- ${doc.path || doc.name}`;
-      }
-      if (context.vault.length > 20) {
-        prompt += `\n- ... and ${context.vault.length - 20} more`;
-      }
-    }
+    // Vault context is intentionally removed - AI only sees current document
+    // This prevents AI from seeing entire drive contents
+    // If you need vault access, use searchVault or readDocument function calls
 
     return prompt;
   }

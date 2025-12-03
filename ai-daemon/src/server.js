@@ -305,11 +305,12 @@ export class AIDaemonServer {
         ...selection
       });
 
-      // Build context with vault
-      console.log('[Chat] Building context with vault');
+      // Build context WITHOUT the entire vault
+      // AI only sees the current document, not the entire drive
+      console.log('[Chat] Building context (current document only)');
       const context = {
-        ...session.context,
-        vault: this.vault.getAllDocuments()
+        ...session.context
+        // vault: this.vault.getAllDocuments() // REMOVED: Don't give AI access to entire drive
       };
 
       // Add user message to history ONLY if it's the first hop (user input)

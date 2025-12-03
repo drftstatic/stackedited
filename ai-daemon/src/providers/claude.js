@@ -70,10 +70,8 @@ export class ClaudeProvider extends BaseProvider {
         args.push('--system-prompt', systemPrompt);
       }
 
-      // Add web search if needed (detected by query intent)
-      if (this.shouldUseWebSearch(message)) {
-        args.push('--web-search');
-      }
+      // Note: --web-search is not available in Claude CLI --print mode
+      // Web search is only available in interactive Claude Code sessions
 
       // Add the message as the final argument
       args.push(fullPrompt);
@@ -147,28 +145,6 @@ export class ClaudeProvider extends BaseProvider {
         reject(new Error('Claude CLI timeout after 5 minutes'));
       }, 300000);
     });
-  }
-
-  /**
-   * Detect if message likely needs web search
-   */
-  shouldUseWebSearch(message) {
-    const searchIndicators = [
-      'search',
-      'look up',
-      'find out',
-      'research',
-      'what is the latest',
-      'current',
-      'today',
-      'recent',
-      'news',
-      '2025',
-      '2024'
-    ];
-
-    const lowerMessage = message.toLowerCase();
-    return searchIndicators.some(indicator => lowerMessage.includes(indicator));
   }
 
   /**
