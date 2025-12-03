@@ -199,9 +199,22 @@ Example of correct response:
 
 Done!"`;
 
-    // Vault context is intentionally removed - AI only sees current document
-    // This prevents AI from seeing entire drive contents
-    // If you need vault access, use searchVault or readDocument function calls
+    // Add Vault context if available
+    if (context.vault && context.vault.length > 0) {
+      prompt += `\n\n## Workbook Files (Vault)\n`;
+      prompt += `The following files are available in the workbook. You can read them using the readDocument tool or search them using searchVault.\n\n`;
+
+      // List files (limit to 100 to prevent context overflow)
+      const files = context.vault.slice(0, 100);
+      prompt += files.map(f => `- ${f.path || f.name}`).join('\n');
+
+      if (context.vault.length > 100) {
+        prompt += `\n\n...and ${context.vault.length - 100} more files. Use searchVault to find specific content.`;
+      }
+    }
+
+    // Vault context is now included above
+    // If you need full content access, use searchVault or readDocument function calls
 
     return prompt;
   }
