@@ -1,9 +1,16 @@
 import bezierEasing from 'bezier-easing';
 
+const createEasing = (x1, y1, x2, y2) => {
+  const f = bezierEasing(x1, y1, x2, y2);
+  f.toCSS = () => `cubic-bezier(${x1}, ${y1}, ${x2}, ${y2})`;
+  f.get = (x) => f(x);
+  return f;
+};
+
 const easings = {
-  materialIn: bezierEasing(0.75, 0, 0.8, 0.25),
-  materialOut: bezierEasing(0.25, 0.8, 0.25, 1),
-  inOut: bezierEasing(0.25, 0.1, 0.67, 1),
+  materialIn: createEasing(0.75, 0, 0.8, 0.25),
+  materialOut: createEasing(0.25, 0.8, 0.25, 1),
+  inOut: createEasing(0.25, 0.1, 0.67, 1),
 };
 
 const vendors = ['moz', 'webkit'];

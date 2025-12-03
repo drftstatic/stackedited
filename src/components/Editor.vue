@@ -5,6 +5,7 @@
       <comment-list v-if="styles.editorGutterWidth" />
       <editor-new-discussion-button v-if="!isCurrentTemp" />
     </div>
+    <authorship-overlay />
   </div>
 </template>
 
@@ -12,12 +13,14 @@
 import { mapGetters } from 'vuex';
 import CommentList from './gutters/CommentList';
 import EditorNewDiscussionButton from './gutters/EditorNewDiscussionButton';
+import AuthorshipOverlay from './AuthorshipOverlay';
 import store from '../store';
 
 export default {
   components: {
     CommentList,
     EditorNewDiscussionButton,
+    AuthorshipOverlay,
   },
   computed: {
     ...mapGetters('file', [
@@ -111,5 +114,54 @@ export default {
       font-size: inherit !important;
     }
   }
+}
+
+// ───────────────────────────────────────────────────────────────
+// AUTHORSHIP HIGHLIGHTS
+// ───────────────────────────────────────────────────────────────
+
+.authorship-highlight {
+  border-bottom: 2px solid transparent;
+  transition: all $transition-base;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.authorship-highlight--human {
+  // Human edits are usually default, maybe just a subtle underline or nothing
+  // border-bottom-color: rgba($body-color-light, 0.1);
+  opacity: 1;
+}
+
+.authorship-highlight--claude {
+  background-color: rgba($fever-amber, 0.1);
+  border-bottom-color: $fever-amber;
+}
+
+.authorship-highlight--gemini {
+  background-color: rgba($fever-blue, 0.1);
+  border-bottom-color: $fever-blue;
+}
+
+.authorship-highlight--openai { // GPT
+  background-color: rgba($fever-lime, 0.1);
+  border-bottom-color: $fever-lime;
+}
+
+.authorship-highlight--cursor { // Grok
+  background-color: rgba($fever-purple, 0.1);
+  border-bottom-color: $fever-purple;
+}
+
+.authorship-highlight--composer {
+  background-color: rgba($fever-teal, 0.1);
+  border-bottom-color: $fever-teal;
+}
+
+.authorship-highlight--zai {
+  background-color: rgba($fever-indigo, 0.1);
+  border-bottom-color: $fever-indigo;
 }
 </style>

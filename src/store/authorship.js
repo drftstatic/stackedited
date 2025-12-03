@@ -22,12 +22,12 @@ export default {
     // Color scheme for each author
     authorColors: {
       human: '#757575',      // Gray - neutral
-      claude: '#9b59b6',     // Purple
-      gemini: '#00bcd4',     // Teal
-      openai: '#ff6b6b',     // Coral
-      zai: '#ffc107',        // Amber
-      cursor: '#cddc39',     // Lime (Grok)
-      composer: '#673ab7',   // Indigo
+      claude: '#F59E0B',     // Orange (Amber)
+      gemini: '#3B82F6',     // Blue
+      openai: '#84CC16',     // Green (Lime)
+      zai: '#6366F1',        // Indigo
+      cursor: '#9D4EDD',     // Purple (Grok)
+      composer: '#2DD4BF',   // Teal
     },
   }),
 

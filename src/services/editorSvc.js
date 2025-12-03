@@ -10,6 +10,7 @@ import markdownGrammarSvc from './markdownGrammarSvc';
 import sectionUtils from './editor/sectionUtils';
 import extensionSvc from './extensionSvc';
 import editorSvcDiscussions from './editor/editorSvcDiscussions';
+import editorSvcAuthorship from './editor/editorSvcAuthorship';
 import editorSvcUtils from './editor/editorSvcUtils';
 import utils from './utils';
 import store from '../store';
@@ -41,7 +42,7 @@ class SectionDesc {
 }
 
 // Use a vue instance as an event bus
-const editorSvc = Object.assign(new Vue(), editorSvcDiscussions, editorSvcUtils, {
+const editorSvc = Object.assign(new Vue(), editorSvcDiscussions, editorSvcAuthorship, editorSvcUtils, {
   // Elements
   editorElt: null,
   previewElt: null,
@@ -348,6 +349,7 @@ const editorSvc = Object.assign(new Vue(), editorSvcDiscussions, editorSvcUtils,
     this.tocElt = tocElt;
 
     this.createClEditor(editorElt);
+    this.initAuthorship(this.clEditor);
 
     this.clEditor.on('contentChanged', (content, diffs, sectionList) => {
       this.parsingCtx = {

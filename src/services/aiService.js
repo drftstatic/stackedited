@@ -76,11 +76,41 @@ class AIService {
    */
   async init() {
     try {
+      // Wait for StackEdit to finish loading files from IndexedDB
+      await this.waitForFilesToLoad();
       await this.connect();
       this.setupVaultSync();
     } catch (err) {
       console.warn('AI Service: Initial connection failed, will retry');
     }
+  }
+
+  /**
+   * Wait for StackEdit to load files from IndexedDB before connecting
+   * This ensures vault sync will find files when it runs
+   */
+  waitForFilesToLoad() {
+    return new Promise((resolve) => {
+      const checkFiles = () => {
+        const files = Object.values(store.getters['file/itemsById'] || {});
+        if (files.length > 0) {
+          console.log(`AI Service: Files loaded (${files.length} files), proceeding with connection`);
+          resolve();
+        } else {
+          // Check again in 100ms
+          setTimeout(checkFiles, 100);
+        }
+      };
+
+      // Start checking after initial delay
+      setTimeout(checkFiles, 500);
+
+      // Timeout after 5 seconds even if no files (empty workspace is valid)
+      setTimeout(() => {
+        console.log('AI Service: Timeout waiting for files, connecting anyway (workspace may be empty)');
+        resolve();
+      }, 5000);
+    });
   }
 
   /**
@@ -342,25 +372,77 @@ class AIService {
   /**
    * Apply targeted edit
    */
+  /**
+   * Find text in document with loose whitespace matching
+   */
+  findFuzzyMatch(docText, searchText) {
+    // 1. Try exact match
+    const exactIndex = docText.indexOf(searchText);
+    if (exactIndex !== -1) {
+      return { start: exactIndex, end: exactIndex + searchText.length };
+    }
+
+    // 2. Try stripping all whitespace
+    const stripSpace = (str) => {
+      let stripped = '';
+      const map = []; // strippedIndex -> originalIndex
+      for (let i = 0; i < str.length; i += 1) {
+        if (!/\s/.test(str[i])) {
+          map.push(i);
+          stripped += str[i];
+        }
+      }
+      return { text: stripped, map };
+    };
+
+    const docStripped = stripSpace(docText);
+    const searchStripped = stripSpace(searchText);
+
+    if (searchStripped.text.length === 0) return null;
+
+    const matchIndex = docStripped.text.indexOf(searchStripped.text);
+    if (matchIndex !== -1) {
+      const start = docStripped.map[matchIndex];
+      const lastCharIndex = matchIndex + searchStripped.text.length - 1;
+      const end = docStripped.map[lastCharIndex] + 1;
+      return { start, end };
+    }
+
+    return null;
+  }
+
+  /**
+   * Apply targeted edit
+   */
   applySuggestEdit(args) {
     const { search, replace, explanation } = args;
     const currentContent = store.getters['content/current'];
     const { trustMode } = store.state.aiChat;
 
-    const index = currentContent.text.indexOf(search);
-    if (index === -1) {
+    const match = this.findFuzzyMatch(currentContent.text, search);
+
+    if (!match) {
+      // Show what we were searching for to help debug
+      const searchPreview = search.length > 100
+        ? `${search.substring(0, 100)}...`
+        : search;
       store.commit('aiChat/addMessage', {
         role: 'system',
-        content: 'Could not find text to replace. The document may have changed.',
+        content: `Could not find text to replace. The document may have changed.\n\nSearching for: "${searchPreview}"`,
         timestamp: Date.now(),
         isError: true,
+      });
+      console.error('[AI Service] Failed to find text:', {
+        search,
+        docLength: currentContent.text.length,
+        docPreview: currentContent.text.substring(0, 200)
       });
       return;
     }
 
-    const newContent = currentContent.text.slice(0, index)
+    const newContent = currentContent.text.slice(0, match.start)
       + replace
-      + currentContent.text.slice(index + search.length);
+      + currentContent.text.slice(match.end);
 
     // Store edit for undo/review
     store.commit('aiChat/addPendingEdit', {
@@ -500,8 +582,9 @@ class AIService {
 
   /**
    * Sync entire vault to daemon
+   * Proactively loads content for files that don't have it yet
    */
-  syncVault() {
+  async syncVault() {
     if (!this.isConnected()) {
       console.log('AI Service: Cannot sync vault - not connected');
       return;
@@ -520,7 +603,18 @@ class AIService {
       }
 
       const contentId = `${file.id}/content`;
-      const content = store.state.content.itemsById?.[contentId];
+      let content = store.state.content.itemsById?.[contentId];
+
+      // If content not loaded yet, load it explicitly
+      if (!content) {
+        console.log(`AI Service: Loading content for ${file.name} (${contentId})`);
+        try {
+          await store.dispatch('content/loadItem', contentId);
+          content = store.state.content.itemsById?.[contentId];
+        } catch (err) {
+          console.warn(`AI Service: Failed to load content for ${file.name}:`, err);
+        }
+      }
 
       console.log(`AI Service: File ${file.name} (${file.id}) - content exists:`, !!content);
 

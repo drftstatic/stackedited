@@ -145,6 +145,11 @@ export default {
   margin-bottom: 8px;
   padding-bottom: 6px;
   border-bottom: 1px solid $border-color;
+
+  .app--dark & {
+    color: rgba(255, 255, 255, 0.6);
+    border-bottom-color: $border-color-dark;
+  }
 }
 
 .authorship-overlay__legend-item {
@@ -166,6 +171,10 @@ export default {
   flex: 1;
   color: $text-color;
   font-weight: 500;
+
+  .app--dark & {
+    color: $body-color-dark;
+  }
 }
 
 .authorship-overlay__legend-percent {
@@ -173,6 +182,10 @@ export default {
   font-family: $font-family-monospace;
   font-size: 11px;
   margin-left: 8px;
+
+  .app--dark & {
+    color: rgba(255, 255, 255, 0.5);
+  }
 }
 
 // ───────────────────────────────────────────────────────────────

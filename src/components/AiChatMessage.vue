@@ -100,8 +100,9 @@ export default {
         claude: 'CLAUDE',
         gemini: 'GEMINI',
         openai: 'GPT',
-        xai: 'X.AI',
-        cursor: 'GROK',
+        xai: 'GROK',
+        cursor: 'CURSOR',
+        composer: 'COMPOSER',
       };
       return names[providerId] || 'AI';
     },
@@ -227,11 +228,19 @@ export default {
 // ───────────────────────────────────────────────────────────────
 
 .ai-message--claude {
-  border-left-color: $fever-purple;
-  background: linear-gradient(135deg, rgba($fever-purple, 0.1) 0%, transparent 100%);
+  border-left-color: $fever-amber;
+  background: linear-gradient(135deg, rgba($fever-amber, 0.1) 0%, transparent 100%);
 
-  .ai-message__role { color: $fever-purple; }
-  .app--dark & .ai-message__role { color: $fever-purple-light; }
+  .ai-message__role {
+    background: rgba($fever-amber, 0.15);
+    color: darken($fever-amber, 10%);
+    border: 1px solid rgba($fever-amber, 0.3);
+  }
+  .app--dark & .ai-message__role {
+    background: rgba($fever-amber, 0.2);
+    color: $fever-amber;
+    border-color: rgba($fever-amber, 0.4);
+  }
 }
 
 // ───────────────────────────────────────────────────────────────
@@ -239,11 +248,19 @@ export default {
 // ───────────────────────────────────────────────────────────────
 
 .ai-message--gemini {
-  border-left-color: $fever-teal;
-  background: linear-gradient(135deg, rgba($fever-teal, 0.1) 0%, transparent 100%);
+  border-left-color: $fever-blue;
+  background: linear-gradient(135deg, rgba($fever-blue, 0.1) 0%, transparent 100%);
 
-  .ai-message__role { color: $fever-teal-dark; }
-  .app--dark & .ai-message__role { color: $fever-teal; }
+  .ai-message__role {
+    background: rgba($fever-blue, 0.15);
+    color: darken($fever-blue, 10%);
+    border: 1px solid rgba($fever-blue, 0.3);
+  }
+  .app--dark & .ai-message__role {
+    background: rgba($fever-blue, 0.2);
+    color: $fever-blue;
+    border-color: rgba($fever-blue, 0.4);
+  }
 }
 
 // ───────────────────────────────────────────────────────────────
@@ -251,11 +268,19 @@ export default {
 // ───────────────────────────────────────────────────────────────
 
 .ai-message--openai {
-  border-left-color: $fever-coral;
-  background: linear-gradient(135deg, rgba($fever-coral, 0.1) 0%, transparent 100%);
+  border-left-color: $fever-lime;
+  background: linear-gradient(135deg, rgba($fever-lime, 0.1) 0%, transparent 100%);
 
-  .ai-message__role { color: $fever-coral-deep; }
-  .app--dark & .ai-message__role { color: $fever-coral; }
+  .ai-message__role {
+    background: rgba($fever-lime, 0.15);
+    color: darken($fever-lime, 20%);
+    border: 1px solid rgba($fever-lime, 0.3);
+  }
+  .app--dark & .ai-message__role {
+    background: rgba($fever-lime, 0.2);
+    color: $fever-lime;
+    border-color: rgba($fever-lime, 0.4);
+  }
 }
 
 // ───────────────────────────────────────────────────────────────
@@ -263,11 +288,24 @@ export default {
 // ───────────────────────────────────────────────────────────────
 
 .ai-message--xai {
-  border-left-color: $fever-amber;
-  background: linear-gradient(135deg, rgba($fever-amber, 0.1) 0%, transparent 100%);
+  border-left-color: $fever-ghost-dark;
+  background: linear-gradient(135deg, rgba($fever-ghost-dark, 0.05) 0%, transparent 100%);
 
-  .ai-message__role { color: darken($fever-amber, 10%); }
-  .app--dark & .ai-message__role { color: $fever-amber; }
+  .ai-message__role {
+    background: rgba($fever-ghost-dark, 0.1);
+    color: $fever-ghost-dark;
+    border: 1px solid rgba($fever-ghost-dark, 0.2);
+  }
+  .app--dark & {
+    border-left-color: $fever-ghost-white;
+    background: linear-gradient(135deg, rgba($fever-ghost-white, 0.05) 0%, transparent 100%);
+
+    .ai-message__role {
+      background: rgba($fever-ghost-white, 0.1);
+      color: $fever-ghost-white;
+      border-color: rgba($fever-ghost-white, 0.3);
+    }
+  }
 }
 
 // ───────────────────────────────────────────────────────────────
@@ -275,11 +313,35 @@ export default {
 // ───────────────────────────────────────────────────────────────
 
 .ai-message--cursor {
-  border-left-color: $fever-lime;
-  background: linear-gradient(135deg, rgba($fever-lime, 0.1) 0%, transparent 100%);
+  border-left-color: $fever-purple;
+  background: linear-gradient(135deg, rgba($fever-purple, 0.1) 0%, transparent 100%);
 
-  .ai-message__role { color: darken($fever-lime, 15%); }
-  .app--dark & .ai-message__role { color: $fever-lime; }
+  .ai-message__role {
+    background: rgba($fever-purple, 0.15);
+    color: darken($fever-purple, 10%);
+    border: 1px solid rgba($fever-purple, 0.3);
+  }
+  .app--dark & .ai-message__role {
+    background: rgba($fever-purple, 0.2);
+    color: $fever-purple-light;
+    border-color: rgba($fever-purple, 0.4);
+  }
+}
+
+.ai-message--composer {
+  border-left-color: $fever-teal;
+  background: linear-gradient(135deg, rgba($fever-teal, 0.1) 0%, transparent 100%);
+
+  .ai-message__role {
+    background: rgba($fever-teal, 0.15);
+    color: darken($fever-teal, 10%);
+    border: 1px solid rgba($fever-teal, 0.3);
+  }
+  .app--dark & .ai-message__role {
+    background: rgba($fever-teal, 0.2);
+    color: $fever-teal;
+    border-color: rgba($fever-teal, 0.4);
+  }
 }
 
 @keyframes message-shimmer {
@@ -385,12 +447,16 @@ export default {
 // ───────────────────────────────────────────────────────────────
 
 .ai-message__role {
+  display: inline-block;
   font-family: $font-family-ui;
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  margin-bottom: 6px;
-  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  line-height: 1.4;
 }
 
 .ai-message__content {

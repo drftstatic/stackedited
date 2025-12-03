@@ -51,6 +51,8 @@ $fever-amber: #F59E0B;
 $fever-amber-glow: #FCD34D;
 $fever-indigo: #6366F1;
 $fever-indigo-glow: #A5B4FC;
+$fever-blue: #3B82F6;
+$fever-blue-glow: #60A5FA;
 
 // Ghost tones (backgrounds)
 $fever-ghost-white: #F0F0FF;
@@ -142,7 +144,9 @@ $editor-font-weight-bold: 600;
 // ───────────────────────────────────────────────────────────────
 
 $body-bg: #fff;
+$body-bg-dark: $fever-ghost-dark;
 $secondary-text-color: rgba(0, 0, 0, 0.54);
+$text-color: $body-color-light;
 $font-color: $body-color-light;
 
 // ───────────────────────────────────────────────────────────────
@@ -173,10 +177,10 @@ $noise-pattern: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http
 
 // Scanline pattern
 $scanlines: repeating-linear-gradient(0deg,
-    rgba(0, 0, 0, 0.03) 0px,
-    rgba(0, 0, 0, 0.03) 1px,
-    transparent 1px,
-    transparent 2px);
+                rgba(0, 0, 0, 0.03) 0px,
+                rgba(0, 0, 0, 0.03) 1px,
+                transparent 1px,
+                transparent 2px);
 
 // ───────────────────────────────────────────────────────────────
 // Z-INDEX SCALE
