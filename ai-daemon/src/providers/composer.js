@@ -52,8 +52,8 @@ export class ComposerProvider extends BaseProvider {
         const fullPrompt = `${systemPrompt}\n\n${message}`;
 
         return new Promise((resolve, reject) => {
-            // Build args: --model <model> [--api-key <key>] <prompt>
-            const args = [];
+            // Build args: --print --output-format text --model <model> [--api-key <key>] <prompt>
+            const args = ['--print', '--output-format', 'text'];
 
             // Add model if specified
             if (this.model) {
@@ -69,7 +69,16 @@ export class ComposerProvider extends BaseProvider {
             args.push(fullPrompt);
 
             console.log(`[Composer] Executing: ${this.cli} ${args.slice(0, -1).join(' ')} "<prompt ${fullPrompt.length} chars>"`);
-            const child = spawn(this.cli, args);
+            const child = spawn(this.cli, args, {
+                stdio: ['ignore', 'pipe', 'pipe'],
+                env: {
+                  ...process.env,
+                  TERM: 'dumb',
+                  CI: 'true',
+                  FORCE_COLOR: '0',
+                  NO_COLOR: '1'
+                }
+            });
 
             let fullText = '';
             let errorText = '';

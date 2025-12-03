@@ -202,6 +202,7 @@ export class AIDaemonServer {
       case 'setProvider':
         if (this.providers.find(p => p.id === message.providerId)) {
           session.providerId = message.providerId;
+          session.mode = 'manual'; // Set mode to manual when user explicitly selects provider
           this.send(session.ws, {
             type: 'providerChanged',
             providerId: session.providerId
