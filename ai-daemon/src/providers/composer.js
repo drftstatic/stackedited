@@ -25,23 +25,20 @@ export class ComposerProvider extends BaseProvider {
      * Check if Cursor CLI is available
      */
     async isAvailable() {
-        try {
-            console.log(`[Composer] Checking availability of ${this.cli}`);
-            const process = spawn(this.cli, ['--help']);
-            return new Promise((resolve) => {
-                process.on('error', (err) => {
-                    console.error(`[Composer] Availability check failed: ${err.message}`);
-                    resolve(false);
-                });
-                process.on('close', (code) => {
-                    console.log(`[Composer] Availability check exited with code ${code}`);
-                    resolve(code === 0);
-                });
+        return new Promise((resolve) => {
+            const proc = spawn(this.cli, ['--version'], {
+                stdio: ['pipe', 'pipe', 'pipe']
             });
-        } catch (e) {
-            console.error(`[Composer] Availability check exception: ${e.message}`);
-            return false;
-        }
+
+            proc.on('close', (code) => resolve(code === 0));
+            proc.on('error', () => resolve(false));
+
+            // Timeout after 5 seconds
+            setTimeout(() => {
+              proc.kill();
+              resolve(false);
+            }, 5000);
+        });
     }
 
     /**
@@ -55,8 +52,8 @@ export class ComposerProvider extends BaseProvider {
         const fullPrompt = `${systemPrompt}\n\n${message}`;
 
         return new Promise((resolve, reject) => {
-            // Build args: --print --output-format text --model <model> [--api-key <key>] <prompt>
-            const args = ['--print', '--output-format', 'text'];
+            // Build args: --model <model> [--api-key <key>] <prompt>
+            const args = [];
 
             // Add model if specified
             if (this.model) {
@@ -102,11 +99,15 @@ export class ComposerProvider extends BaseProvider {
 
             child.on('close', (code) => {
                 clearTimeout(timeout);
+                console.log(`[Composer] Process exited with code: ${code}`);
+                console.log(`[Composer] Output length: ${fullText.length}`);
+                console.log(`[Composer] Error output: ${errorText}`);
+
                 if (code !== 0) {
                     if (fullText) {
-                        console.warn(`[Composer] Process exited with code ${code} but returned text.`);
+                        console.warn(`[Composer] Exited with code ${code} but has output`);
                     } else {
-                        reject(new Error(`Cursor agent exited with code ${code}: ${errorText}`));
+                        reject(new Error(`cursor-agent exited with code ${code}: ${errorText}`));
                         return;
                     }
                 }
