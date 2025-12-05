@@ -441,11 +441,11 @@ export default {
     padding: 0.25em 0;
 
     &.revision-diff--insert {
-      background-color: mix(#fff, $selection-highlighting-color, 60%);
+      background-color: $selection-highlight-light;
     }
 
     &.revision-diff--delete {
-      background-color: mix(#fff, $error-color, 60%);
+      background-color: $error-color-light;
       text-decoration: line-through;
     }
   }

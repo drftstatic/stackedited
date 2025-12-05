@@ -77,7 +77,7 @@
 
 .menu-entry__label--warning {
   color: #fff;
-  background-color: darken($error-color, 10);
+  background-color: $error-color-dark;
   opacity: 1;
 }
 

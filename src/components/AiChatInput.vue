@@ -252,41 +252,41 @@ export default {
     box-shadow: 0 4px 12px rgba($fever-teal, 0.3);
   }
 
-  // Provider-specific overrides
+  // Provider-specific overrides (using pre-computed colors to avoid Sass deprecations)
   &--claude {
-    background: linear-gradient(135deg, $fever-amber 0%, darken($fever-amber, 10%) 100%);
+    background: linear-gradient(135deg, $fever-amber 0%, $fever-amber-dark 100%);
     box-shadow: 0 4px 12px rgba($fever-amber, 0.3);
-    .app--dark & { background: linear-gradient(135deg, $fever-amber 0%, darken($fever-amber, 10%) 100%); }
+    .app--dark & { background: linear-gradient(135deg, $fever-amber 0%, $fever-amber-dark 100%); }
   }
 
   &--gemini {
-    background: linear-gradient(135deg, $fever-blue 0%, darken($fever-blue, 10%) 100%);
+    background: linear-gradient(135deg, $fever-blue 0%, $fever-blue-dark 100%);
     box-shadow: 0 4px 12px rgba($fever-blue, 0.3);
-    .app--dark & { background: linear-gradient(135deg, $fever-blue 0%, darken($fever-blue, 10%) 100%); }
+    .app--dark & { background: linear-gradient(135deg, $fever-blue 0%, $fever-blue-dark 100%); }
   }
 
   &--openai {
-    background: linear-gradient(135deg, $fever-lime 0%, darken($fever-lime, 10%) 100%);
+    background: linear-gradient(135deg, $fever-lime 0%, $fever-lime-dark 100%);
     box-shadow: 0 4px 12px rgba($fever-lime, 0.3);
-    .app--dark & { background: linear-gradient(135deg, $fever-lime 0%, darken($fever-lime, 10%) 100%); }
+    .app--dark & { background: linear-gradient(135deg, $fever-lime 0%, $fever-lime-dark 100%); }
   }
 
   &--zai, &--xai, &--glm, &--ted {
-    background: linear-gradient(135deg, $fever-indigo 0%, darken($fever-indigo, 10%) 100%);
+    background: linear-gradient(135deg, $fever-indigo 0%, $fever-indigo-dark 100%);
     box-shadow: 0 4px 12px rgba($fever-indigo, 0.3);
-    .app--dark & { background: linear-gradient(135deg, $fever-indigo 0%, darken($fever-indigo, 10%) 100%); }
+    .app--dark & { background: linear-gradient(135deg, $fever-indigo 0%, $fever-indigo-dark 100%); }
   }
 
   &--cursor {
-    background: linear-gradient(135deg, $fever-purple 0%, darken($fever-purple, 10%) 100%);
+    background: linear-gradient(135deg, $fever-purple 0%, $fever-purple-dark 100%);
     box-shadow: 0 4px 12px rgba($fever-purple, 0.3);
-    .app--dark & { background: linear-gradient(135deg, $fever-purple 0%, darken($fever-purple, 10%) 100%); }
+    .app--dark & { background: linear-gradient(135deg, $fever-purple 0%, $fever-purple-dark 100%); }
   }
 
   &--composer {
-    background: linear-gradient(135deg, $fever-teal 0%, darken($fever-teal, 10%) 100%);
+    background: linear-gradient(135deg, $fever-teal 0%, $fever-teal-dark 100%);
     box-shadow: 0 4px 12px rgba($fever-teal, 0.3);
-    .app--dark & { background: linear-gradient(135deg, $fever-teal 0%, darken($fever-teal, 10%) 100%); }
+    .app--dark & { background: linear-gradient(135deg, $fever-teal 0%, $fever-teal-dark 100%); }
   }
 
   // Shimmer effect on button

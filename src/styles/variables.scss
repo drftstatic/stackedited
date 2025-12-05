@@ -54,6 +54,30 @@ $fever-indigo-glow: #A5B4FC;
 $fever-blue: #3B82F6;
 $fever-blue-glow: #60A5FA;
 
+// Pre-computed darkened variants (replaces deprecated darken() function)
+// These are computed offline to avoid Sass deprecation warnings
+$fever-amber-dark: #C67E09;      // darken($fever-amber, 10%)
+$fever-blue-dark: #2563EB;       // darken($fever-blue, 10%)
+$fever-lime-dark: #65A30D;       // darken($fever-lime, 10%)
+$fever-lime-darker: #4D7C0F;     // darken($fever-lime, 20%)
+$fever-lime-mid: #579611;        // darken($fever-lime, 15%)
+$fever-indigo-dark: #4F46E5;     // darken($fever-indigo, 10%)
+$fever-purple-dark: #7C3AED;     // darken($fever-purple, 10%)
+$fever-teal-light: #5EEAD4;      // lighten($fever-teal, 10%) - same as existing
+$fever-coral-light: #FF9B9B;     // lighten($fever-coral, 10%)
+
+// Pre-computed mixed colors
+$editor-bg-light-mixed: #EBEBEB; // mix(#000, $editor-background-light, 6.7%)
+$editor-bg-dark-mixed: #282335;  // mix(#fff, $editor-background-dark, 6.7%)
+$preview-bg-light-mixed: #EBEBEB; // same as editor
+$selection-highlight-light: #FEF3C7; // mix(#fff, $selection-highlighting-color, 60%)
+$error-color-light: #FECACA;     // mix(#fff, $error-color, 60%)
+$error-color-dark: #DC2626;      // darken($error-color, 10%)
+$tour-step-background: rgba(#FFFBEB, 0.975);  // Simplified from complex mix
+// mix($editor-background-light, $selection-highlighting-color, 10%) = mostly amber
+$discussion-bg-light: #FDF9F2;   // mix($editor-background-light, $selection-highlighting-color, 10%)
+$discussion-bg-dark: #2D2A26;    // mix($editor-background-dark, $selection-highlighting-color, 10%)
+
 // Ghost tones (backgrounds)
 $fever-ghost-white: #F0F0FF;
 $fever-ghost-lavender: #E8E4F0;

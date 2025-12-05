@@ -168,11 +168,11 @@ export default {
 
   span {
     padding: 0.2em 0;
-    background-color: mix($editor-background-light, $selection-highlighting-color, 10%);
+    background-color: $discussion-bg-light;
     cursor: pointer;
 
     .app--dark {
-      background-color: mix($editor-background-dark, $selection-highlighting-color, 10%);
+      background-color: $discussion-bg-dark;
     }
   }
 }

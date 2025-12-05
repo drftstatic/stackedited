@@ -138,7 +138,7 @@ export default {
   position: absolute;
 }
 
-$tour-step-background: transparentize(mix(#f3f3f3, $selection-highlighting-color, 75%), 0.025);
+// Pre-computed tour background (moved to variables.scss)
 $tour-step-width: 240px;
 
 .tour-step__inner {

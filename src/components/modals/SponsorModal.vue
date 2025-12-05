@@ -92,7 +92,7 @@ export default {
     font-size: 0.6rem;
     font-weight: 600;
     padding: 0.1em 0.2em;
-    background-color: darken($error-color, 10);
+    background-color: $error-color-dark;
     border-radius: 3px;
     color: #fff;
     margin-left: -0.5em;

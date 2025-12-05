@@ -228,6 +228,6 @@ $small-button-size: 22px;
   padding: 0.15em 0.35em;
   border-radius: 3px;
   color: #fff;
-  background-color: darken($error-color, 10);
+  background-color: $error-color-dark;
 }
 </style>

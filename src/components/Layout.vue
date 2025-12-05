@@ -292,10 +292,10 @@ export default {
   .comment-list__current-discussion,
   .sticky-comment,
   .current-discussion {
-    background-color: mix(#000, $editor-background-light, 6.7%);
+    background-color: $editor-bg-light-mixed;
 
     .app--dark & {
-      background-color: mix(#fff, $editor-background-dark, 6.7%);
+      background-color: $editor-bg-dark-mixed;
     }
   }
 }
@@ -317,7 +317,7 @@ $preview-background-dark: #252525;
   .comment-list__current-discussion,
   .sticky-comment,
   .current-discussion {
-    background-color: mix(#000, $preview-background-light, 6.7%);
+    background-color: $preview-bg-light-mixed;
   }
 }
 

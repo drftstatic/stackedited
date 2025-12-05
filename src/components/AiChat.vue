@@ -446,7 +446,7 @@ export default {
 }
 
 .ai-chat__status--error .ai-chat__status-dot {
-  background: radial-gradient(circle, lighten($fever-coral, 10%) 0%, $fever-coral 100%);
+  background: radial-gradient(circle, $fever-coral-light 0%, $fever-coral 100%);
   box-shadow: 0 0 12px rgba($fever-coral, 0.6);
   animation: error-pulse 1s infinite;
 }

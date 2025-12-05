@@ -235,7 +235,7 @@ export default {
 
   .ai-message__role {
     background: rgba($fever-amber, 0.15);
-    color: darken($fever-amber, 10%);
+    color: $fever-amber-dark;
     border: 1px solid rgba($fever-amber, 0.3);
   }
   .app--dark & .ai-message__role {
@@ -255,7 +255,7 @@ export default {
 
   .ai-message__role {
     background: rgba($fever-blue, 0.15);
-    color: darken($fever-blue, 10%);
+    color: $fever-blue-dark;
     border: 1px solid rgba($fever-blue, 0.3);
   }
   .app--dark & .ai-message__role {
@@ -275,7 +275,7 @@ export default {
 
   .ai-message__role {
     background: rgba($fever-lime, 0.15);
-    color: darken($fever-lime, 20%);
+    color: $fever-lime-darker;
     border: 1px solid rgba($fever-lime, 0.3);
   }
   .app--dark & .ai-message__role {
@@ -320,7 +320,7 @@ export default {
 
   .ai-message__role {
     background: rgba($fever-purple, 0.15);
-    color: darken($fever-purple, 10%);
+    color: $fever-purple-dark;
     border: 1px solid rgba($fever-purple, 0.3);
   }
   .app--dark & .ai-message__role {
@@ -336,7 +336,7 @@ export default {
 
   .ai-message__role {
     background: rgba($fever-teal, 0.15);
-    color: darken($fever-teal, 10%);
+    color: $fever-teal-dark;
     border: 1px solid rgba($fever-teal, 0.3);
   }
   .app--dark & .ai-message__role {
@@ -436,7 +436,7 @@ export default {
   }
 
   .ai-message__role {
-    color: darken($fever-lime, 15%);
+    color: $fever-lime-mid;
 
     .app--dark & {
       color: $fever-lime-glow;
@@ -593,7 +593,7 @@ export default {
   color: $fever-teal;
 
   .app--dark & {
-    color: lighten($fever-teal, 10%);
+    color: $fever-teal-light;
   }
 }
 
