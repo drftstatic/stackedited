@@ -35,8 +35,8 @@ export class ComposerProvider extends BaseProvider {
 
             // Timeout after 5 seconds
             setTimeout(() => {
-              proc.kill();
-              resolve(false);
+                proc.kill();
+                resolve(false);
             }, 5000);
         });
     }
@@ -72,11 +72,11 @@ export class ComposerProvider extends BaseProvider {
             const child = spawn(this.cli, args, {
                 stdio: ['ignore', 'pipe', 'pipe'],
                 env: {
-                  ...process.env,
-                  TERM: 'dumb',
-                  CI: 'true',
-                  FORCE_COLOR: '0',
-                  NO_COLOR: '1'
+                    ...process.env,
+                    TERM: 'dumb',
+                    CI: 'true',
+                    FORCE_COLOR: '0',
+                    NO_COLOR: '1'
                 }
             });
 
@@ -140,8 +140,10 @@ export class ComposerProvider extends BaseProvider {
         let match;
         let lastIndex = 0;
         let textParts = [];
+        let toolCallCount = 0;
 
         while ((match = toolUseRegex.exec(output)) !== null) {
+            toolCallCount++;
             if (match.index > lastIndex) {
                 textParts.push(output.slice(lastIndex, match.index));
             }
@@ -163,9 +165,33 @@ export class ComposerProvider extends BaseProvider {
             textParts.push(output.slice(lastIndex));
         }
 
-        result.text = result.functionCalls.length === 0
-            ? output.trim()
-            : textParts.join('').trim();
+        // If no tool calls found, entire output is text
+        if (result.functionCalls.length === 0) {
+            result.text = output.trim();
+        } else {
+            result.text = textParts.join('').trim();
+        }
+
+        // Also check for markdown code block function calls (alternative format)
+        if (result.functionCalls.length === 0) {
+            const jsonBlockRegex = /```(?:json)?\s*\n(\{[\s\S]*?"(?:name|function)"[\s\S]*?\})\s*\n```/g;
+            while ((match = jsonBlockRegex.exec(output)) !== null) {
+                try {
+                    const parsed = JSON.parse(match[1]);
+                    if (parsed.name && (parsed.parameters || parsed.arguments)) {
+                        result.functionCalls.push({
+                            name: parsed.name,
+                            arguments: parsed.parameters || parsed.arguments || {}
+                        });
+                        console.log(`[Composer] Extracted tool call from markdown: ${parsed.name}`);
+                        // Remove this block from text
+                        result.text = result.text.replace(match[0], '').trim();
+                    }
+                } catch (e) {
+                    // Not a valid function call JSON
+                }
+            }
+        }
 
         return result;
     }

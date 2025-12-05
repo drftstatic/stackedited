@@ -25,7 +25,9 @@ export default {
       claude: '#F59E0B',     // Orange (Amber)
       gemini: '#3B82F6',     // Blue
       openai: '#84CC16',     // Green (Lime)
-      zai: '#6366F1',        // Indigo
+      glm: '#6366F1',        // Indigo (Z.AI)
+      zai: '#6366F1',        // Indigo (Z.AI alias)
+      xai: '#6366F1',        // Indigo (X.AI alias)
       cursor: '#9D4EDD',     // Purple (Grok)
       composer: '#2DD4BF',   // Teal
     },

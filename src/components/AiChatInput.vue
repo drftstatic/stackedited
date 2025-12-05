@@ -13,6 +13,7 @@
       <button
         v-title="'Send message (Enter)'"
         class="ai-input__send button"
+        :class="`ai-input__send--${providerId}`"
         :disabled="!canSend"
         @click="send"
       >
@@ -63,6 +64,7 @@ export default {
       'thinking',
       'trustMode',
       'editHistory',
+      'providerId',
     ]),
     canSend() {
       return this.connected && !this.thinking && this.text.trim().length > 0;
@@ -248,6 +250,43 @@ export default {
   .app--dark & {
     background: linear-gradient(135deg, $fever-teal 0%, $fever-purple 100%);
     box-shadow: 0 4px 12px rgba($fever-teal, 0.3);
+  }
+
+  // Provider-specific overrides
+  &--claude {
+    background: linear-gradient(135deg, $fever-amber 0%, darken($fever-amber, 10%) 100%);
+    box-shadow: 0 4px 12px rgba($fever-amber, 0.3);
+    .app--dark & { background: linear-gradient(135deg, $fever-amber 0%, darken($fever-amber, 10%) 100%); }
+  }
+
+  &--gemini {
+    background: linear-gradient(135deg, $fever-blue 0%, darken($fever-blue, 10%) 100%);
+    box-shadow: 0 4px 12px rgba($fever-blue, 0.3);
+    .app--dark & { background: linear-gradient(135deg, $fever-blue 0%, darken($fever-blue, 10%) 100%); }
+  }
+
+  &--openai {
+    background: linear-gradient(135deg, $fever-lime 0%, darken($fever-lime, 10%) 100%);
+    box-shadow: 0 4px 12px rgba($fever-lime, 0.3);
+    .app--dark & { background: linear-gradient(135deg, $fever-lime 0%, darken($fever-lime, 10%) 100%); }
+  }
+
+  &--zai, &--xai, &--glm, &--ted {
+    background: linear-gradient(135deg, $fever-indigo 0%, darken($fever-indigo, 10%) 100%);
+    box-shadow: 0 4px 12px rgba($fever-indigo, 0.3);
+    .app--dark & { background: linear-gradient(135deg, $fever-indigo 0%, darken($fever-indigo, 10%) 100%); }
+  }
+
+  &--cursor {
+    background: linear-gradient(135deg, $fever-purple 0%, darken($fever-purple, 10%) 100%);
+    box-shadow: 0 4px 12px rgba($fever-purple, 0.3);
+    .app--dark & { background: linear-gradient(135deg, $fever-purple 0%, darken($fever-purple, 10%) 100%); }
+  }
+
+  &--composer {
+    background: linear-gradient(135deg, $fever-teal 0%, darken($fever-teal, 10%) 100%);
+    box-shadow: 0 4px 12px rgba($fever-teal, 0.3);
+    .app--dark & { background: linear-gradient(135deg, $fever-teal 0%, darken($fever-teal, 10%) 100%); }
   }
 
   // Shimmer effect on button

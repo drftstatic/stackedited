@@ -103,6 +103,8 @@ export default {
         xai: 'GROK',
         cursor: 'CURSOR',
         composer: 'COMPOSER',
+        glm: 'Z.AI',
+        ted: 'TED',
       };
       return names[providerId] || 'AI';
     },
@@ -284,26 +286,26 @@ export default {
 }
 
 // ───────────────────────────────────────────────────────────────
-// X.AI MESSAGES - Amber
-// ───────────────────────────────────────────────────────────────
-
-.ai-message--xai {
-  border-left-color: $fever-ghost-dark;
-  background: linear-gradient(135deg, rgba($fever-ghost-dark, 0.05) 0%, transparent 100%);
+// X.AI MESSAGES - Indigo
+.ai-message--xai,
+.ai-message--glm,
+.ai-message--ted {
+  border-left-color: $fever-indigo;
+  background: linear-gradient(135deg, rgba($fever-indigo, 0.1) 0%, transparent 100%);
 
   .ai-message__role {
-    background: rgba($fever-ghost-dark, 0.1);
-    color: $fever-ghost-dark;
-    border: 1px solid rgba($fever-ghost-dark, 0.2);
+    background: rgba($fever-indigo, 0.15);
+    color: $fever-indigo;
+    border: 1px solid rgba($fever-indigo, 0.3);
   }
   .app--dark & {
-    border-left-color: $fever-ghost-white;
-    background: linear-gradient(135deg, rgba($fever-ghost-white, 0.05) 0%, transparent 100%);
+    border-left-color: $fever-indigo-glow;
+    background: linear-gradient(135deg, rgba($fever-indigo, 0.1) 0%, transparent 100%);
 
     .ai-message__role {
-      background: rgba($fever-ghost-white, 0.1);
-      color: $fever-ghost-white;
-      border-color: rgba($fever-ghost-white, 0.3);
+      background: rgba($fever-indigo, 0.2);
+      color: $fever-indigo-glow;
+      border-color: rgba($fever-indigo, 0.4);
     }
   }
 }

@@ -6,6 +6,15 @@
         <span class="ai-chat__title-text">AI Chat</span>
         <span class="ai-chat__title-subtitle">multi-provider workspace</span>
       </div>
+      <!-- Task Panel Toggle -->
+      <button
+        class="ai-chat__task-toggle"
+        @click="toggleTaskPanel"
+        v-title="'Toggle task panel'"
+      >
+        <span class="ai-chat__task-icon">📋</span>
+        <span v-if="taskCount > 0" class="ai-chat__task-badge">{{ taskCount }}</span>
+      </button>
       <!-- Connection Status -->
       <div class="ai-chat__status" :class="statusClass">
         <span class="ai-chat__status-dot" />
@@ -80,6 +89,11 @@ export default {
       'connectionStatus',
       'currentProvider',
     ]),
+    ...mapGetters('tasks', ['filteredTasks']),
+    taskCount() {
+      // Count non-completed tasks
+      return this.filteredTasks.filter((t) => t.status !== 'completed').length;
+    },
     statusClass() {
       return `ai-chat__status--${this.connectionStatus}`;
     },
@@ -139,6 +153,9 @@ export default {
       this.$store.commit('aiChat/setAwaitingHuman', false);
       // Optionally send a signal to server that human is back/approved
       // For now, just clearing the state allows user to type
+    },
+    toggleTaskPanel() {
+      this.$store.commit('tasks/toggleTaskPanel');
     },
   },
 };
@@ -308,6 +325,75 @@ export default {
 
   .app--dark & {
     color: $fever-teal-light;
+  }
+}
+
+// ───────────────────────────────────────────────────────────────
+// TASK PANEL TOGGLE - Button to show/hide task panel
+// ───────────────────────────────────────────────────────────────
+
+.ai-chat__task-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin: 0 8px;
+  border: 1px solid rgba($fever-indigo, 0.3);
+  background: rgba($fever-indigo, 0.05);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all $transition-base;
+
+  &:hover {
+    background: rgba($fever-indigo, 0.1);
+    border-color: $fever-indigo;
+    transform: scale(1.05);
+  }
+
+  .app--dark & {
+    border-color: rgba($fever-indigo, 0.4);
+    background: rgba($fever-indigo, 0.08);
+
+    &:hover {
+      background: rgba($fever-indigo, 0.15);
+    }
+  }
+}
+
+.ai-chat__task-icon {
+  font-size: 16px;
+}
+
+.ai-chat__task-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: $fever-coral;
+  color: white;
+  font-family: $font-family-monospace;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba($fever-coral, 0.4);
+  animation: task-badge-pulse 2s infinite;
+}
+
+@keyframes task-badge-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 6px rgba($fever-coral, 0.4);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 2px 10px rgba($fever-coral, 0.6);
   }
 }
 

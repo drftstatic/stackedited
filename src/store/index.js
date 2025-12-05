@@ -20,6 +20,7 @@ import userInfo from './userInfo';
 import workspace from './workspace';
 import aiChat from './aiChat';
 import authorship from './authorship';
+import tasks from './tasks';
 import locationTemplate from './locationTemplate';
 import emptyPublishLocation from '../data/empties/emptyPublishLocation';
 import emptySyncLocation from '../data/empties/emptySyncLocation';
@@ -51,6 +52,7 @@ const store = new Vuex.Store({
     workspace,
     aiChat,
     authorship,
+    tasks,
   },
   state: {
     light: false,

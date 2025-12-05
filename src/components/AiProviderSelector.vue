@@ -22,19 +22,6 @@
         </button>
       </div>
 
-      <!-- Trust Mode Toggle -->
-      <div class="ai-provider__trust">
-        <button
-          class="ai-provider__trust-btn"
-          :class="{ 'ai-provider__trust-btn--active': trustMode }"
-          @click="toggleTrustMode"
-          v-title="trustMode ? 'Trust Mode ON: AI continues autonomously' : 'Trust Mode OFF: AI pauses for human approval'"
-        >
-          <span class="ai-provider__trust-icon">{{ trustMode ? '🔓' : '🔒' }}</span>
-          <span class="ai-provider__trust-label">TRUST</span>
-        </button>
-      </div>
-
       <!-- Authorship Toggle -->
       <div class="ai-provider__authorship">
         <button
@@ -66,7 +53,6 @@ export default {
       'providerId',
       'providers',
       'connected',
-      'trustMode',
     ]),
     ...mapState('authorship', ['showAuthorship']),
     allProviders() {
@@ -84,9 +70,6 @@ export default {
       aiService.setMode('manual');
       aiService.setProvider(providerId);
     },
-    toggleTrustMode() {
-      this.$store.dispatch('aiChat/toggleTrustMode');
-    },
     toggleAuthorship() {
       this.$store.dispatch('authorship/toggleVisualization');
     },
@@ -94,7 +77,9 @@ export default {
       const names = {
         claude: 'Claude',
         gemini: 'Gemini',
+        ted: 'TED',
         openai: 'GPT',
+        glm: 'Z.AI',
         zai: 'Z.AI',
         cursor: 'Grok',
         composer: 'Composer',
@@ -126,53 +111,13 @@ export default {
   flex: 1;
 }
 
-.ai-provider__trust,
 .ai-provider__authorship {
   margin-left: 8px;
   padding-left: 8px;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.ai-provider__trust-btn {
-  display: flex;
-  align-items: center;
-  padding: 6px 10px;
-  border: 1px solid rgba($fever-purple, 0.3);
-  background: rgba($fever-purple, 0.05);
-  border-radius: $border-radius-lg;
-  cursor: pointer;
-  transition: all $transition-base;
-  height: 100%;
-
-  &:hover {
-    background: rgba($fever-purple, 0.1);
-  }
-
-  &.ai-provider__trust-btn--active {
-    background: rgba($fever-teal, 0.15);
-    border-color: $fever-teal;
-
-    .ai-provider__trust-label {
-      color: $fever-teal;
-    }
-  }
-}
-
-.ai-provider__trust-icon {
-  font-size: 12px;
-  margin-right: 6px;
-}
-
-.ai-provider__trust-label {
-  font-family: $font-family-ui;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  color: $fever-purple;
-  text-transform: uppercase;
-}
-
-// Authorship button (same styles as trust button)
+// Authorship button
 .ai-provider__authorship-btn {
   display: flex;
   align-items: center;
@@ -238,62 +183,8 @@ export default {
   }
 }
 
-// Claude - Purple
+// Claude - Amber
 .ai-provider__btn--claude {
-  border-color: rgba($fever-purple, 0.3);
-  color: $fever-purple;
-
-  &:hover:not(:disabled) {
-    background: rgba($fever-purple, 0.1);
-    border-color: $fever-purple;
-  }
-
-  &.ai-provider__btn--active {
-    background: $fever-purple;
-    border-color: $fever-purple;
-    color: white;
-    box-shadow: 0 0 20px rgba($fever-purple, 0.4);
-  }
-}
-
-// Gemini - Teal
-.ai-provider__btn--gemini {
-  border-color: rgba($fever-teal, 0.3);
-  color: $fever-teal;
-
-  &:hover:not(:disabled) {
-    background: rgba($fever-teal, 0.1);
-    border-color: $fever-teal;
-  }
-
-  &.ai-provider__btn--active {
-    background: $fever-teal;
-    border-color: $fever-teal;
-    color: white;
-    box-shadow: 0 0 20px rgba($fever-teal, 0.4);
-  }
-}
-
-// OpenAI/GPT - Coral
-.ai-provider__btn--openai {
-  border-color: rgba($fever-coral, 0.3);
-  color: $fever-coral;
-
-  &:hover:not(:disabled) {
-    background: rgba($fever-coral, 0.1);
-    border-color: $fever-coral;
-  }
-
-  &.ai-provider__btn--active {
-    background: $fever-coral;
-    border-color: $fever-coral;
-    color: white;
-    box-shadow: 0 0 20px rgba($fever-coral, 0.4);
-  }
-}
-
-// Z.AI - Amber
-.ai-provider__btn--zai {
   border-color: rgba($fever-amber, 0.3);
   color: $fever-amber;
 
@@ -310,8 +201,44 @@ export default {
   }
 }
 
-// Cursor/Grok - Lime
-.ai-provider__btn--cursor {
+// Gemini - Blue
+.ai-provider__btn--gemini {
+  border-color: rgba($fever-blue, 0.3);
+  color: $fever-blue;
+
+  &:hover:not(:disabled) {
+    background: rgba($fever-blue, 0.1);
+    border-color: $fever-blue;
+  }
+
+  &.ai-provider__btn--active {
+    background: $fever-blue;
+    border-color: $fever-blue;
+    color: white;
+    box-shadow: 0 0 20px rgba($fever-blue, 0.4);
+  }
+}
+
+// Ted - Indigo (Project Manager)
+.ai-provider__btn--ted {
+  border-color: rgba($fever-indigo, 0.3);
+  color: $fever-indigo;
+
+  &:hover:not(:disabled) {
+    background: rgba($fever-indigo, 0.1);
+    border-color: $fever-indigo;
+  }
+
+  &.ai-provider__btn--active {
+    background: $fever-indigo;
+    border-color: $fever-indigo;
+    color: white;
+    box-shadow: 0 0 20px rgba($fever-indigo, 0.4);
+  }
+}
+
+// OpenAI/GPT - Lime
+.ai-provider__btn--openai {
   border-color: rgba($fever-lime, 0.3);
   color: $fever-lime;
 
@@ -328,21 +255,57 @@ export default {
   }
 }
 
-// Composer - Indigo
-.ai-provider__btn--composer {
-  border-color: rgba($fever-indigo, 0.3);
-  color: $fever-indigo;
+// GLM - Amber (Z.AI DevPack)
+.ai-provider__btn--glm {
+  border-color: rgba($fever-amber, 0.3);
+  color: $fever-amber;
 
   &:hover:not(:disabled) {
-    background: rgba($fever-indigo, 0.1);
-    border-color: $fever-indigo;
+    background: rgba($fever-amber, 0.1);
+    border-color: $fever-amber;
   }
 
   &.ai-provider__btn--active {
-    background: $fever-indigo;
-    border-color: $fever-indigo;
+    background: $fever-amber;
+    border-color: $fever-amber;
+    color: $fever-ghost-dark;
+    box-shadow: 0 0 20px rgba($fever-amber, 0.4);
+  }
+}
+
+// Cursor/Grok - Purple
+.ai-provider__btn--cursor {
+  border-color: rgba($fever-purple, 0.3);
+  color: $fever-purple;
+
+  &:hover:not(:disabled) {
+    background: rgba($fever-purple, 0.1);
+    border-color: $fever-purple;
+  }
+
+  &.ai-provider__btn--active {
+    background: $fever-purple;
+    border-color: $fever-purple;
     color: white;
-    box-shadow: 0 0 20px rgba($fever-indigo, 0.4);
+    box-shadow: 0 0 20px rgba($fever-purple, 0.4);
+  }
+}
+
+// Composer - Teal
+.ai-provider__btn--composer {
+  border-color: rgba($fever-teal, 0.3);
+  color: $fever-teal;
+
+  &:hover:not(:disabled) {
+    background: rgba($fever-teal, 0.1);
+    border-color: $fever-teal;
+  }
+
+  &.ai-provider__btn--active {
+    background: $fever-teal;
+    border-color: $fever-teal;
+    color: white;
+    box-shadow: 0 0 20px rgba($fever-teal, 0.4);
   }
 }
 

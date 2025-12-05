@@ -36,6 +36,11 @@ const config = {
     cli: process.env.GEMINI_CLI_PATH || 'gemini',
     model: process.env.GEMINI_MODEL || 'gemini-3-pro-preview'
   },
+  glm: {
+    cli: 'claude', // Uses Claude CLI but with Z.AI proxy
+    model: 'opus', // DevPack maps 'opus' to GLM-4.6
+    apiKey: process.env.GLM_API_KEY
+  },
   zai: {
     apiKey: process.env.ZAI_API_KEY,
     model: process.env.ZAI_MODEL || 'glm-4.6'

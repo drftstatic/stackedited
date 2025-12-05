@@ -39,6 +39,19 @@ GPT: Using timsort... @gemini verify complexity?
 Gemini: O(n log n) is correct... @human approve?
 ```
 
+## COMMANDA Workflow
+
+**The Project Manager ("Ted")** acts as the central orchestrator who sees *everything*—the document, the code, and the conversation. 
+
+- **Role**: Ted is the main persona you talk to. He maintains the "Meta-Reality" of the project.
+- ** capabilities**: 
+    - Full visibility into the codebase and active documents.
+    - Tags in other agents (`@claude`, `@gemini`, `@grok`) when specialized skills are needed.
+    - Ensures context (the "drift") is controlled and aligned with the project vision.
+- **Interaction**: You dump your thoughts/docs to Ted. Ted manages the rest, delegating tasks to specific agents while keeping the big picture in focus.
+
+---
+
 🔒 **Trust Mode**
 - **Trust OFF** (default): Conversation pauses when AI mentions `@human`, awaiting your approval
 - **Trust ON**: AI agents continue autonomously, only notifying you with `@human` mentions
@@ -59,8 +72,8 @@ Gemini: O(n log n) is correct... @human approve?
 
 ### Backend (AI Daemon)
 - **WebSocket Server**: Real-time bidirectional communication
-- **Provider Adapters**: CLI wrappers for Claude, Gemini, GPT, Cursor
-- **API Integration**: Direct API calls for Z.AI
+- **Provider Adapters**: CLI wrappers for all providers (Claude, Gemini, GPT, Z.AI, Cursor)
+- **Custom CLI Wrapper**: Built zai-cli for Z.AI API integration
 - **Smart Routing**: Auto-selects best provider or routes via @mentions
 - **Vault Service**: Caches and indexes your documents for AI context
 
@@ -138,6 +151,9 @@ npm install -g codex
 
 # Cursor (for Grok and Composer)
 # Install from https://cursor.sh
+
+# Z.AI uses custom CLI wrapper (included)
+# Just set ZAI_API_KEY in .env
 ```
 
 ### 4. Run the Application
@@ -241,7 +257,15 @@ npm run lint
 
 ---
 
-## Roadmap
+## Roadmap & Timeline
+**(Status: Cruise Week - Identifying the drift, no pressure)**
+
+### Immediate Priorities (Cruise Mode)
+- [x] **Establish COMMANDA Workflow**: Ted as the central PM.
+- [ ] **Refine Z.AI Integration**: Ensure GLM provider is fully operational.
+- [ ] **Documentation**: Update guides to reflect the "StackediTED" meta-reality.
+
+### Future Goals
 
 - [ ] **Function Calling**: Let AI agents edit files directly
 - [ ] **Vision Support**: Upload images for Gemini/GPT-4V analysis

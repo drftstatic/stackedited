@@ -62,6 +62,12 @@
       </div>
     </div>
     <tour v-if="!light && !layoutSettings.welcomeTourFinished" />
+    <!-- Task Panel (Floating) -->
+    <task-panel />
+    <!-- Quick Task Capture (Keyboard Shortcut: C) -->
+    <quick-task-capture ref="quickTaskCapture" />
+    <!-- Authorship Overlay (for color visualization) -->
+    <authorship-overlay />
   </div>
 </template>
 
@@ -79,8 +85,12 @@ import StickyComment from './gutters/StickyComment';
 import CurrentDiscussion from './gutters/CurrentDiscussion';
 import FindReplace from './FindReplace';
 import AiChat from './AiChat';
+import TaskPanel from './TaskPanel';
+import QuickTaskCapture from './QuickTaskCapture';
+import AuthorshipOverlay from './AuthorshipOverlay';
 import editorSvc from '../services/editorSvc';
 import markdownConversionSvc from '../services/markdownConversionSvc';
+import keyboardSvc from '../services/keyboardSvc';
 import store from '../store';
 
 export default {
@@ -97,6 +107,9 @@ export default {
     CurrentDiscussion,
     FindReplace,
     AiChat,
+    TaskPanel,
+    QuickTaskCapture,
+    AuthorshipOverlay,
   },
   data: () => ({
     isResizing: false,
@@ -194,6 +207,26 @@ export default {
     window.addEventListener('mouseup', this.saveSelection);
     window.addEventListener('focusin', this.saveSelection);
     window.addEventListener('contextmenu', this.saveSelection);
+
+    // Initialize keyboard shortcuts
+    keyboardSvc.init();
+
+    // Register global shortcuts
+    // C - Quick task capture
+    keyboardSvc.register('c', () => {
+      this.$refs.quickTaskCapture?.show();
+    }, {
+      context: 'global',
+      description: 'Quick add task',
+    });
+
+    // T - Toggle task panel
+    keyboardSvc.register('t', () => {
+      this.$store.dispatch('tasks/togglePanel');
+    }, {
+      context: 'global',
+      description: 'Toggle task panel',
+    });
   },
   mounted() {
     const editorElt = this.$el.querySelector('.editor__inner');
@@ -216,6 +249,9 @@ export default {
     window.removeEventListener('mouseup', this.saveSelection);
     window.removeEventListener('focusin', this.saveSelection);
     window.removeEventListener('contextmenu', this.saveSelection);
+
+    // Cleanup keyboard service
+    keyboardSvc.destroy();
   },
 };
 </script>

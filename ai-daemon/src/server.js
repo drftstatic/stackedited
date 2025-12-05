@@ -14,9 +14,11 @@ import http from 'http';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ClaudeProvider } from './providers/claude.js';
+import { TedProvider } from './providers/ted.js';
 import { GeminiProvider } from './providers/gemini.js';
 import { OpenAIProvider } from './providers/openai.js';
-// import { ZAIProvider } from './providers/zai.js'; // Disabled - needs CLI wrapper
+import { GLMProvider } from './providers/glm.js';
+// import { ZAIProvider } from './providers/zai.js'; // Disabled - DevPack subscription not compatible with direct API
 import { CursorProvider } from './providers/cursor.js';
 import { ComposerProvider } from './providers/composer.js';
 import { VaultService } from './services/vaultService.js';
@@ -48,9 +50,10 @@ export class AIDaemonServer {
     this.providers = [
       new ClaudeProvider(config.claude || {}),
       new GeminiProvider(config.gemini || {}),
+      new TedProvider(config.ted || config.gemini || {}), // Ted shares Gemini config
       new OpenAIProvider(config.openai || {}),
-      // Z.AI disabled - needs CLI wrapper implementation (see zai.js for details)
-      // new ZAIProvider(config.zai || {}),
+      new GLMProvider(config.glm || {}),
+      // new ZAIProvider(config.zai || {}), // Disabled - DevPack subscription works via Claude Code proxy
       new CursorProvider(config.cursor || {}),
       new ComposerProvider(config.composer || {})
     ];
@@ -255,9 +258,9 @@ export class AIDaemonServer {
   async handleChat(session, message, options = {}) {
     const text = message.text;
     const { mentions, targetProvider, hasHumanMention, trustMode } = message;
-    const { hopCount = 0 } = options;
+    const { hopCount = 0, providerChain = [] } = options;
 
-    console.log(`[Chat] Starting chat handler for: "${text?.slice(0, 50)}..." (Hop: ${hopCount})`);
+    console.log(`[Chat] Starting chat handler for: "${text?.slice(0, 50)}..." (Hop: ${hopCount}, Chain: ${providerChain.join(' -> ')})`);
 
     // Allow empty text if it's a chain (responding to history)
     if (!text?.trim() && hopCount === 0) {
@@ -297,6 +300,9 @@ export class AIDaemonServer {
         provider = result.provider;
         selection = result.selection;
       }
+
+      // Add current provider to chain
+      const currentChain = [...providerChain, provider.id];
 
       // Send provider selection info
       console.log(`[Chat] Provider selected: ${provider?.id}, sending selection info`);
@@ -359,7 +365,8 @@ export class AIDaemonServer {
       if (response.text) {
         session.context.history.push({
           role: 'assistant',
-          content: response.text
+          content: response.text,
+          providerId: provider.id
         });
 
         this.send(session.ws, {
@@ -378,14 +385,16 @@ export class AIDaemonServer {
         }
 
         // CHAINING LOGIC
-        // Check for other provider mentions
-        if (hopCount < 3) {
+        // Increased limit to 10 hops for productive collaboration
+        // Add loop detection to prevent same agent being called consecutively
+        if (hopCount < 10) {
           const mentionMap = {
             'claude': 'claude',
             'gemini': 'gemini',
             'gpt': 'openai',
             'openai': 'openai',
-            'zai': 'zai',
+            'zai': 'glm',
+            'glm': 'glm',
             'grok': 'cursor',
             'cursor': 'cursor',
             'composer': 'composer'
@@ -398,7 +407,26 @@ export class AIDaemonServer {
             const mentionedName = match[1].toLowerCase();
             const nextProviderId = mentionMap[mentionedName];
 
+            // Prevent same agent from being called twice in a row (loop detection)
             if (nextProviderId && nextProviderId !== 'human') {
+              // Check if this would create an immediate loop (same agent twice in a row)
+              const lastProvider = currentChain[currentChain.length - 1];
+              if (nextProviderId === lastProvider) {
+                console.log(`[Chat] Prevented immediate loop: ${provider.id} tried to tag itself`);
+                this.send(session.ws, { type: 'done' });
+                return;
+              }
+
+              // Check for oscillation (A->B->A->B pattern)
+              if (currentChain.length >= 2) {
+                const secondLast = currentChain[currentChain.length - 2];
+                if (nextProviderId === secondLast) {
+                  console.log(`[Chat] Prevented oscillation: ${currentChain.slice(-2).join('<->')} pattern detected`);
+                  this.send(session.ws, { type: 'done' });
+                  return;
+                }
+              }
+
               console.log(`[Chat] Chaining to ${nextProviderId} (Hop ${hopCount + 1})`);
 
               // Notify client
@@ -408,15 +436,21 @@ export class AIDaemonServer {
                 hop: hopCount + 1
               });
 
-              // Recursive call
+              // Recursive call with updated chain
               await this.handleChat(
                 session,
                 { ...message, text: null }, // No new user text
-                { hopCount: hopCount + 1, targetProvider: nextProviderId }
+                {
+                  hopCount: hopCount + 1,
+                  targetProvider: nextProviderId,
+                  providerChain: currentChain
+                }
               );
               return; // Done with this handler
             }
           }
+        } else {
+          console.log(`[Chat] Max hop count (10) reached, stopping chain`);
         }
       }
 
@@ -451,6 +485,7 @@ export class AIDaemonServer {
 
       case 'updateNotepad':
       case 'suggestEdit':
+      case 'updateDocument':
         // These are handled client-side
         // Return acknowledgment for the AI
         return {

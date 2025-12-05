@@ -16,24 +16,18 @@
         <span class="authorship-overlay__legend-percent">{{ stats.percent }}%</span>
       </div>
     </div>
-
-    <!-- Color Highlights (rendered as background highlights in editor) -->
-    <div class="authorship-overlay__highlights">
-      <div
-        v-for="(range, index) in authorshipRanges"
-        :key="`${range.author}-${index}`"
-        class="authorship-overlay__highlight"
-        :style="getHighlightStyle(range)"
-        :title="`Written by ${getAuthorName(range.author)} at ${formatTimestamp(range.timestamp)}`"
-      />
-    </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex';
+import editorSvc from '../services/editorSvc';
 
 export default {
+  data: () => ({
+    decorations: [], // Track applied decorations for cleanup
+  }),
+
   computed: {
     ...mapState('authorship', ['showAuthorship']),
     ...mapGetters('authorship', ['getFileAuthorship', 'getAuthorColor']),
@@ -71,6 +65,28 @@ export default {
     },
   },
 
+  watch: {
+    showAuthorship: {
+      immediate: true,
+      handler(newValue) {
+        if (newValue) {
+          this.applyAuthorshipHighlights();
+        } else {
+          this.clearAuthorshipHighlights();
+        }
+      },
+    },
+
+    authorshipRanges: {
+      deep: true,
+      handler() {
+        if (this.showAuthorship) {
+          this.applyAuthorshipHighlights();
+        }
+      },
+    },
+  },
+
   methods: {
     getAuthorName(author) {
       const names = {
@@ -81,24 +97,81 @@ export default {
         zai: 'Z.AI',
         cursor: 'Grok',
         composer: 'Composer',
+        glm: 'Z.AI',
       };
       return names[author] || author;
     },
 
-    getHighlightStyle(range) {
-      const color = this.getAuthorColor(range.author);
-      return {
-        backgroundColor: `${color}15`, // 15 = ~8% opacity in hex
-        borderLeft: `3px solid ${color}`,
-        // Position would be calculated based on text offset in the editor
-        // This is a simplified version - real implementation would need
-        // to calculate pixel positions from character offsets
-      };
+    applyAuthorshipHighlights() {
+      // Clear existing highlights
+      this.clearAuthorshipHighlights();
+
+      const { clEditor } = editorSvc;
+      if (!clEditor || !clEditor.setOption) return;
+
+      // Inject CSS for authorship colors dynamically
+      this.injectAuthorshipStyles();
+
+      // Apply CSS classes to text ranges based on authorship
+      this.authorshipRanges.forEach((range) => {
+        const className = `authorship-${range.author}`;
+        try {
+          const from = clEditor.posFromIndex(range.start);
+          const to = clEditor.posFromIndex(range.end);
+          const marker = clEditor.markText(from, to, {
+            className,
+            title: `Written by ${this.getAuthorName(range.author)}`,
+          });
+          this.decorations.push(marker);
+        } catch (err) {
+          // Range might be invalid if document changed
+          console.warn('Failed to apply authorship highlight:', err);
+        }
+      });
     },
 
-    formatTimestamp(timestamp) {
-      return new Date(timestamp).toLocaleString();
+    clearAuthorshipHighlights() {
+      // Remove all markers
+      this.decorations.forEach((marker) => {
+        try {
+          marker.clear();
+        } catch (err) {
+          // Marker might already be cleared
+        }
+      });
+      this.decorations = [];
     },
+
+    injectAuthorshipStyles() {
+      // Check if styles already injected
+      if (document.getElementById('authorship-styles')) return;
+
+      const styleEl = document.createElement('style');
+      styleEl.id = 'authorship-styles';
+
+      const styles = Object.keys(this.$store.state.authorship.authorColors)
+        .map((author) => {
+          const color = this.getAuthorColor(author);
+          return `.authorship-${author} {
+            background-color: ${color}20 !important;
+            border-bottom: 2px solid ${color}80;
+            border-radius: 2px;
+          }`;
+        })
+        .join('\n');
+
+      styleEl.textContent = styles;
+      document.head.appendChild(styleEl);
+    },
+  },
+
+  beforeDestroy() {
+    this.clearAuthorshipHighlights();
+    // Remove injected styles
+    const styleEl = document.getElementById('authorship-styles');
+    if (styleEl) {
+      styleEl.remove();
+    }
   },
 };
 </script>
@@ -188,25 +261,6 @@ export default {
   }
 }
 
-// ───────────────────────────────────────────────────────────────
-// HIGHLIGHTS - Color-coded text ranges
-// ───────────────────────────────────────────────────────────────
-
-.authorship-overlay__highlights {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.authorship-overlay__highlight {
-  position: absolute;
-  border-radius: 2px;
-  transition: background-color $transition-base;
-  pointer-events: auto;
-  cursor: help;
-
-  &:hover {
-    opacity: 0.8;
-  }
-}
+// Highlights are now applied via CodeMirror markers with dynamic CSS injection
+// See injectAuthorshipStyles() method
 </style>

@@ -93,6 +93,32 @@ export class BaseProvider {
           },
           required: ['query']
         }
+      },
+      {
+        name: 'updateDocument',
+        description: 'Update ANY document in the vault by its path. Use this to edit files that are not undoubtedly the current active file.',
+        parameters: {
+          type: 'object',
+          properties: {
+            path: {
+              type: 'string',
+              description: 'The exact path of the file to update (e.g., "folder/doc.md")'
+            },
+            search: {
+              type: 'string',
+              description: 'The exact text to find and replace (must exist in document)'
+            },
+            replace: {
+              type: 'string',
+              description: 'The new text to replace the search text with'
+            },
+            explanation: {
+              type: 'string',
+              description: 'Brief explanation of why this change improves the document'
+            }
+          },
+          required: ['path', 'search', 'replace', 'explanation']
+        }
       }
     ];
   }
@@ -122,9 +148,12 @@ Today's date: ${today}
 - **@claude** - Best for creative writing, editing prose, and nuanced communication
 - **@gemini** - Best for technical accuracy, code review, and structured analysis
 - **@gpt** - Best for detailed examples, code generation, and expanding ideas
+- **@glm** - Best for deep reasoning and complex logic (via Z.AI)
 - **@grok** - Best for quick insights and alternative perspectives
 - **@composer** - Best for composing longer content and synthesizing information
 - **@human** - Request human approval or clarification (pauses in non-trust mode)
+
+**IMPORTANT FORMATTING:** When mentioning agents, use ONLY the simple format shown above (e.g., "@claude", "@gemini", "@gpt"). DO NOT use file paths, full names, or verbose greetings. Just the simple @name format.
 
 **When to use agent collaboration:**
 1. **Get a second opinion**: "@gemini can you verify the technical accuracy of this code?"
@@ -167,7 +196,8 @@ You can respond conversationally OR use function calls to edit the document:
 2. **updateNotepad** - For major rewrites when the document needs significant restructuring.
 3. **searchVault** - To find related content across all user documents.
 4. **readDocument** - To read a specific document for context.
-5. **webSearch** - To research current information from the web.
+5. **updateDocument** - To edit ANY document in the vault (not just the current one).
+6. **webSearch** - To research current information from the web.
 
 ## Guidelines
 - Prefer suggestEdit for small, focused changes (most common)
@@ -185,6 +215,9 @@ For targeted edits (preferred for most changes):
 
 For full document replacement (only when major restructuring needed):
 <tool_use>{"name": "updateNotepad", "parameters": {"content": "full new document content"}}</tool_use>
+
+For editing OTHER files (background edits):
+<tool_use>{"name": "updateDocument", "parameters": {"path": "folder/doc.md", "search": "text to find", "replace": "new text", "explanation": "fixing..."}}</tool_use>
 
 IMPORTANT:
 - You can include conversational text BEFORE or AFTER the <tool_use> block

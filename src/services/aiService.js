@@ -11,9 +11,11 @@ import store from '../store';
 const MENTION_TO_PROVIDER = {
   claude: 'claude',
   gemini: 'gemini',
+  ted: 'ted', // Ted (Project Manager)
   gpt: 'openai',
   openai: 'openai',
-  zai: 'zai',
+  glm: 'glm',
+  zai: 'glm',
   grok: 'cursor',
   cursor: 'cursor',
   composer: 'composer',
@@ -341,6 +343,10 @@ class AIService {
         this.applySuggestEdit(args);
         break;
 
+      case 'updateDocument':
+        this.applyUpdateDocument(args);
+        break;
+
       // searchVault and readDocument are handled server-side
     }
   }
@@ -382,7 +388,15 @@ class AIService {
       return { start: exactIndex, end: exactIndex + searchText.length };
     }
 
-    // 2. Try stripping all whitespace
+    // 2. Try case-insensitive match
+    const lowerDoc = docText.toLowerCase();
+    const lowerSearch = searchText.toLowerCase();
+    const caseInsensitiveIndex = lowerDoc.indexOf(lowerSearch);
+    if (caseInsensitiveIndex !== -1) {
+      return { start: caseInsensitiveIndex, end: caseInsensitiveIndex + searchText.length };
+    }
+
+    // 3. Try stripping all whitespace
     const stripSpace = (str) => {
       let stripped = '';
       const map = []; // strippedIndex -> originalIndex
@@ -406,6 +420,17 @@ class AIService {
       const lastCharIndex = matchIndex + searchStripped.text.length - 1;
       const end = docStripped.map[lastCharIndex] + 1;
       return { start, end };
+    }
+
+    // 4. Try partial match (first 50 chars) as last resort
+    if (searchText.length > 50) {
+      const partialSearch = searchText.substring(0, 50);
+      const partialIndex = docText.indexOf(partialSearch);
+      if (partialIndex !== -1) {
+        // Find the end by looking for a reasonable boundary
+        const maxEnd = Math.min(partialIndex + searchText.length + 100, docText.length);
+        return { start: partialIndex, end: maxEnd };
+      }
     }
 
     return null;
@@ -463,8 +488,130 @@ class AIService {
   }
 
   /**
-   * Apply the pending edit
+   * Apply edit to ANY document
    */
+  async applyUpdateDocument(args) {
+    const {
+      path, search, replace, explanation,
+    } = args;
+
+    // Find file by path
+    const files = Object.values(store.getters['file/itemsById'] || {});
+    // pathsByItemId is id -> path
+    let targetFile = null;
+    const pathLower = path.toLowerCase();
+
+    // 1. Exact match via pathsByItemId
+    const pathsByItemId = store.getters.pathsByItemId || {};
+    const exactId = Object.keys(pathsByItemId).find(id => pathsByItemId[id] === path);
+    if (exactId) {
+      targetFile = store.getters['file/itemsById'][exactId];
+    }
+
+    // 2. If not found, iterate and try fuzzy match on name/path
+    if (!targetFile) {
+      for (const file of files) {
+        // Skip trash
+        if (file.parentId === 'trash') continue;
+
+        const currentPath = pathsByItemId[file.id] || file.name;
+        if (currentPath.toLowerCase() === pathLower || file.name.toLowerCase() === pathLower) {
+          targetFile = file;
+          break;
+        }
+      }
+    }
+
+    if (!targetFile) {
+      store.commit('aiChat/addMessage', {
+        role: 'system',
+        content: `Error: Could not find file "${path}" in the workspace.`,
+        timestamp: Date.now(),
+        isError: true,
+      });
+      return;
+    }
+
+    // Load content if needed
+    const contentId = `${targetFile.id}/content`;
+    let content = store.state.content.itemsById?.[contentId];
+
+    if (!content) {
+      try {
+        console.log(`[AI Service] Loading content for ${targetFile.name}`);
+        await store.dispatch('content/loadItem', contentId);
+        content = store.state.content.itemsById?.[contentId];
+      } catch (err) {
+        store.commit('aiChat/addMessage', {
+          role: 'system',
+          content: `Error: Failed to load content for "${targetFile.name}".`,
+          timestamp: Date.now(),
+          isError: true,
+        });
+        return;
+      }
+    }
+
+    if (!content) {
+      store.commit('aiChat/addMessage', {
+        role: 'system',
+        content: `Error: File "${targetFile.name}" is empty or could not be read.`,
+        timestamp: Date.now(),
+        isError: true,
+      });
+      return;
+    }
+
+    // Apply match logic
+    const Match = this.findFuzzyMatch(content.text, search);
+
+    if (!Match) {
+      // Show what we were searching for to help debug
+      const searchPreview = search.length > 100
+        ? `${search.substring(0, 100)}...`
+        : search;
+
+      store.commit('aiChat/addMessage', {
+        role: 'system',
+        content: `Could not find text to replace in "${targetFile.name}".\n\nSearching for: "${searchPreview}"`,
+        timestamp: Date.now(),
+        isError: true,
+      });
+      console.error('[AI Service] Failed to find text in', targetFile.name, {
+        search,
+        docLength: content.text.length
+      });
+      return;
+    }
+
+    const newContent = content.text.slice(0, Match.start)
+      + replace
+      + content.text.slice(Match.end);
+
+    // Commit the change
+    store.commit('content/patchItem', {
+      id: content.id,
+      text: newContent,
+    });
+
+    // Record authorship
+    store.dispatch('authorship/recordAIEdit', {
+      start: Match.start,
+      end: Match.start + replace.length,
+      newText: replace,
+      providerId: store.state.aiChat.providerId,
+      fileId: targetFile.id
+    });
+
+    store.dispatch('notification/info', `Updated ${targetFile.name}`);
+
+    // Add success message to chat
+    store.commit('aiChat/addMessage', {
+      role: 'system',
+      content: `✅ Updated **${targetFile.name}**\n\n_"${explanation}"_`,
+      timestamp: Date.now(),
+    });
+  }
   applyEdit() {
     const { pendingEdit } = store.state.aiChat;
     const currentProviderId = store.state.aiChat.providerId;
@@ -649,7 +796,7 @@ class AIService {
 
     // Check for @human mention - may need to pause based on trust mode
     const hasHumanMention = mentions.includes('human');
-    const { trustMode } = store.state.aiChat;
+    const { trustMode, providerId } = store.state.aiChat;
 
     // Add user message to UI immediately
     store.commit('aiChat/addMessage', {
@@ -658,6 +805,18 @@ class AIService {
       timestamp: Date.now(),
       mentions, // Store mentions for display
     });
+
+    // Create task if message has AI @mentions (not @human or @all)
+    if (mentions.length > 0) {
+      const aiMentions = mentions.filter((m) => m !== 'human' && m !== 'all');
+      if (aiMentions.length > 0) {
+        store.dispatch('tasks/createTaskFromMessage', {
+          messageText: text,
+          mentions,
+          providerId: providerId || 'human',
+        });
+      }
+    }
 
     // Make sure current document is synced
     this.syncCurrentDocument();
