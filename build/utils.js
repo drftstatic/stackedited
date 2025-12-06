@@ -55,12 +55,16 @@ exports.cssLoaders = function (options) {
     sass: generateLoaders('sass', {
       indentedSyntax: true,
       sassOptions: {
-        indentedSyntax: true
+        indentedSyntax: true,
+        quietDeps: true,
+        silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'legacy-js-api']
       }
     }),
     scss: generateLoaders('sass', {
       sassOptions: {
-        outputStyle: 'expanded'
+        outputStyle: 'expanded',
+        quietDeps: true,
+        silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'legacy-js-api']
       }
     }),
     stylus: generateLoaders('stylus'),

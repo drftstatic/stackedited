@@ -414,10 +414,10 @@ export default {
 .layout--revision {
   .cledit-section *,
   .cl-preview-section * {
-    color: transparentize($editor-color-light, 0.5) !important;
+    color: rgba($editor-color-light, 0.5) !important;
 
     .app--dark & {
-      color: transparentize($editor-color-dark, 0.5) !important;
+      color: rgba($editor-color-dark, 0.5) !important;
     }
   }
 
